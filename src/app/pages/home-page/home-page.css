@@ -1,0 +1,61 @@
+.home-page{
+    background-color: white;
+    box-shadow: 10px 10px 50px rgb(0, 0, 0, 0.5);
+    padding: 40px 40px 50px 50px; /* top | right | bottom | left */
+    margin-bottom: 0px;
+
+    h1 {
+        font-weight: bold;
+        font-size: 2em;
+        text-align: center;
+        padding-bottom: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+        font-weight: bold;
+        padding-top: 0.8em;
+        padding-bottom: 0.5em;  
+        color: var(--green-charter);   
+    }
+
+    h3 {
+        font-size: 1.1em;
+        font-weight: bold;
+        padding-top: 0.8em;
+        padding-bottom: 0.2em;
+        color: var(--green-charter);
+    }
+
+    h4 {
+        font-size: 1.0em;
+        font-weight: bold;
+        padding-top: 0.8em;
+        padding-bottom: 0.2em;
+        color: var(--green-charter);
+    }
+
+    p {
+        padding-left: 1em;
+        text-align: justify;
+    }
+
+    ul {
+        padding-left: 3.0em;
+    }
+
+    .icon {
+        color: var(--purple-charter);
+    }
+
+    a {
+        color: var(--purple-charter); /* Change la couleur des liens */
+        text-decoration: none; /* Supprime le soulignement */
+    }
+    
+    /* Pour changer la couleur au survol */
+    a:hover {
+        color: var(--green-charter); /* Change la couleur au survol */
+        text-decoration: underline; /* Ajoute un soulignement au survol si souhaité */
+    }
+}

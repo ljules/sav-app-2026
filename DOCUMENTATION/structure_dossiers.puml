@@ -1,0 +1,71 @@
+@startuml
+title Arborescence du projet (Angular 20 - conventions modernes)
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam DefaultFontName Arial
+skinparam packageStyle rectangle
+
+package "project-root" {
+
+  folder "public" {
+    file "favicon.ico"
+    folder "img" {
+      folder "logos"
+      folder "backgrounds"
+      folder "icons"
+    }
+  }
+
+  folder "src" {
+    folder "app" {
+
+      folder "pages" {
+        folder "home-page" {
+          file "home-page.ts"
+          file "home-page.html"
+          file "home-page.scss"
+          file "home-page.spec.ts"
+        }
+
+        folder "login-page"
+        folder "subscribe-page"
+        folder "account-manager-page"
+        folder "recipe-calculator-page"
+        folder "recipe-manager-page"
+        folder "users-manager-page"
+        folder "ingredient-manager-page"
+        folder "about-page"
+      }
+
+      folder "components" {
+        folder "navbar" {
+          file "navbar.ts"
+          file "navbar.html"
+          file "navbar.scss"
+          file "navbar.spec.ts"
+        }
+      }
+
+      folder "services" {
+        file "(services Angular)"
+      }
+
+      folder "models" {
+        file "(interfaces, types, DTO)"
+      }
+
+      file "app.routes.ts"
+      file "app.config.ts"
+      file "app.ts"
+      file "app.html"
+      file "app.spec.ts"
+    }
+  }
+
+  file "angular.json"
+  file "package.json"
+  file "tsconfig.json"
+}
+
+@enduml

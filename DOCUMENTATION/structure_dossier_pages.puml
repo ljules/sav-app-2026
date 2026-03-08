@@ -1,0 +1,71 @@
+@startuml
+title Arborescence - src/app/pages
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam DefaultFontName Arial
+skinparam packageStyle rectangle
+
+package "src" {
+  package "app" {
+    package "pages" {
+
+      folder "home-page" {
+        file "home-page.component.ts"
+        file "home-page.component.html"
+        file "home-page.component.scss"
+      }
+
+      folder "login-page" {
+        file "login-page.component.ts"
+        file "login-page.component.html"
+        file "login-page.component.scss"
+      }
+
+      folder "subscribe-page" {
+        file "subscribe-page.component.ts"
+        file "subscribe-page.component.html"
+        file "subscribe-page.component.scss"
+      }
+
+      folder "account-manager-page" {
+        file "account-manager-page.component.ts"
+        file "account-manager-page.component.html"
+        file "account-manager-page.component.scss"
+      }
+
+      folder "recipe-calculator-page" {
+        file "recipe-calculator-page.component.ts"
+        file "recipe-calculator-page.component.html"
+        file "recipe-calculator-page.component.scss"
+      }
+
+      folder "recipe-manager-page" {
+        file "recipe-manager-page.component.ts"
+        file "recipe-manager-page.component.html"
+        file "recipe-manager-page.component.scss"
+      }
+
+      folder "users-manager-page" {
+        file "users-manager-page.component.ts"
+        file "users-manager-page.component.html"
+        file "users-manager-page.component.scss"
+      }
+
+      folder "ingredient-manager-page" {
+        file "ingredient-manager-page.component.ts"
+        file "ingredient-manager-page.component.html"
+        file "ingredient-manager-page.component.scss"
+      }
+
+      folder "about-page" {
+        file "about-page.component.ts"
+        file "about-page.component.html"
+        file "about-page.component.scss"
+      }
+
+    }
+  }
+}
+
+@enduml

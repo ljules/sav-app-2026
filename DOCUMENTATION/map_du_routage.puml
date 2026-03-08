@@ -1,0 +1,33 @@
+@startuml
+title Structure du Router Angular (app.routes.ts)
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam DefaultFontName Arial
+top to bottom direction
+
+rectangle "Routes" {
+
+  rectangle "path: ''\nredirectTo: 'home'\npathMatch: 'full'" as ROOT
+
+  rectangle "path: 'home'\ncomponent: HomePageComponent" as HOME
+
+  rectangle "path: 'login'\ncomponent: LoginPageComponent" as LOGIN
+  rectangle "path: 'subscribe'\ncomponent: SubscribePageComponent" as SUBSCRIBE
+  rectangle "path: 'account'\ncomponent: AccountManagerPageComponent" as ACCOUNT
+
+  rectangle "path: 'recipe-calculator'\ncomponent: RecipeCalculatorPageComponent" as CALC
+  rectangle "path: 'recipe-manager'\ncomponent: RecipeManagerPageComponent" as RM
+
+  rectangle "path: 'users-manager'\ncomponent: UsersManagerPageComponent" as UM
+  rectangle "path: 'ingredient-manager'\ncomponent: IngredientManagerPageComponent" as IM
+
+  rectangle "path: 'about'\ncomponent: AboutPageComponent" as ABOUT
+
+  rectangle "path: '**'\nredirectTo: 'home'" as FALLBACK
+}
+
+ROOT --> HOME
+FALLBACK --> HOME
+
+@enduml

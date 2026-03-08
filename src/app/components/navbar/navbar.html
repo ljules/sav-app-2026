@@ -1,0 +1,74 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+
+    <!-- Logo / Brand -->
+    <a class="navbar-brand" routerLink="/home">
+      SavonApp
+    </a>
+
+    <!-- Burger button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+
+      <!-- Left navigation -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/recipe-calculator" routerLinkActive="active">
+            Calculator
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/recipe-manager" routerLinkActive="active">
+            Recipes
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ingredients-manager" routerLinkActive="active">
+            Ingredients
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/users-manager" routerLinkActive="active">
+            Users
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/about" routerLinkActive="active">
+            About
+          </a>
+        </li>
+
+      </ul>
+
+      <!-- Right side -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/login" routerLinkActive="active">
+            Login
+          </a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>

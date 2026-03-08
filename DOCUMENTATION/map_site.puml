@@ -1,0 +1,46 @@
+@startuml
+title Arborescence de navigation (routes Angular)
+
+skinparam monochrome true
+skinparam shadowing false
+skinparam DefaultFontName Arial
+
+left to right direction
+
+rectangle "App (Router)" as APP
+
+rectangle "/ (redirect)" as ROOT
+rectangle "/home\nHomePage" as HOME
+
+rectangle "/login\nLoginPage" as LOGIN
+rectangle "/subscribe\nSubscribePage" as SUBSCRIBE
+rectangle "/account\nAccountManagerPage" as ACCOUNT
+
+rectangle "/recipe-calculator\nRecipeCalculatorPage" as CALC
+rectangle "/recipe-manager\nRecipeManagerPage" as RM
+
+rectangle "/ingredient-manager\nIngredientManagerPage" as IM
+rectangle "/users-manager\nUsersManagerPage" as UM
+
+rectangle "/about\nAboutPage" as ABOUT
+
+rectangle "** (fallback)\nredirect -> /home" as FALLBACK
+
+APP --> ROOT
+ROOT --> HOME
+
+HOME --> LOGIN : Auth
+LOGIN --> SUBSCRIBE : "Créer un compte"
+LOGIN --> ACCOUNT : "Après connexion (plus tard)"
+
+HOME --> CALC : Recettes
+CALC --> RM : "Gérer les recettes"
+
+HOME --> IM : Gestion
+IM --> UM : "Gestion utilisateurs"
+
+HOME --> ABOUT : Infos
+
+APP --> FALLBACK
+
+@enduml

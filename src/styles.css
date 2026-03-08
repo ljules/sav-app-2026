@@ -1,1 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+-------------------------------------
+Définition des constantes de styles :
+-------------------------------------
+*/
+:root {
+    /* Hauteur de la top barre :*/
+    --top-bar-height: 70px; 
+
+    /* Définition des couleurs de la charte graphique : */
+    --green-charter: rgb(138, 160, 23);
+    --brown-charter: rgb(74, 64, 56);
+    --dark-charter: rgb(46, 46, 46);
+    --purple-charter: rgb(126, 31, 162);
+    --dark-side-charter: rgb(35, 35, 35);
+
+  }
+
+
+/*
+--------------------
+Définition du fond :
+--------------------
+*/
+body {
+    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/backgrounds/fond.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; /*contain*/ 
+    background-attachment: fixed;
+  }
