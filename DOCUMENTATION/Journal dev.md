@@ -619,13 +619,13 @@ export class HomePage {
 
     <div class="container row mb-4">
         <div class="col-12 col-lg-5 text-center py-4 ms-4">
-            <img    src="/logos/Logo-Sav-App-02.jpeg"
+            <img    src="./logos/Logo-Sav-App-02.jpeg"
             alt="Logo standard de la société ADEPRO"
             style="width: 300px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
         </div>
     
         <div class="col-12 col-lg-5 text-center py-4 ms-0">
-            <img    src="/backgrounds/fond-01.jpeg"
+            <img    src="./backgrounds/fond-01.jpeg"
             alt="Logo standard de la société ADEPRO"
             style="width: 300px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
         </div>
@@ -641,7 +641,7 @@ export class HomePage {
     </p>
     
     <div class="text-center mt-3 mb-4">
-        <img    src="/logos/adepro_logo_trans.png"
+        <img    src="./logos/adepro_logo_trans.png"
         alt="Logo standard de la société ADEPRO"
         style="width: 200px;">
     </div>
@@ -985,7 +985,7 @@ Ouvrir le fichier template du composant **header** et implémenter le code final
             <a  class="navbar-brand me-auto"
                 routerLink="home"
                 routerLinkActive="active">
-                        <img    src="/logos/logo.png"
+                        <img    src="./logos/logo.png"
                                 alt="SavApp Logo"
                                 class="logo img-fluid"
                         >
