@@ -1,8 +1,41 @@
-.navbar-brand {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
+    .nav-bar-fluid {        
+        background: var(--dark-side-charter);
+        box-shadow: 0px 20px 10px rgba(0, 0, 0, 0.2);
 
-.nav-link.active {
-  font-weight: 600;
-}
+        .nav-bar-content {
+            background: var(--dark-charter);
+            border-top: 4px solid var(--green-charter);
+            border-left: solid 1px var(--green-charter);
+            border-right: solid 1px var(--green-charter);
+
+            .nav-link {
+                color: white;             
+            }
+      
+            .active {
+                color: var(--green-charter);            
+            }
+      
+            .admin-only {
+                background: var(--purple-charter);
+            }
+        }
+    }
+
+    .navbar-nav {
+        gap: 0px; /* Supprime l'espace entre les éléments */
+        margin: 2px;
+    }
+    
+    .navbar-toggler {
+        width: 55px;
+        background-color: var(--purple-charter);
+        color: white;
+    }
+
+    .nav-item {
+        margin: 0px; /* Contrôle l'espace entre chaque élément */
+        padding: 0px 5px 0px 5px;
+        border-left: 1px solid;  
+        border-color: rgb(110, 110, 110);        
+    } 

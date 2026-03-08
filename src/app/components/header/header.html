@@ -1,0 +1,51 @@
+<header class="app-header fixed-top">
+
+    <div class="top-bar-fluid container-fluid p-0">        
+        <div class="top-bar-content container-xl p-0">
+            <a  class="navbar-brand me-auto"
+                routerLink="home"
+                routerLinkActive="active">
+                        <img    src="/logos/logo.png"
+                                alt="SavApp Logo"
+                                class="logo img-fluid"
+                        >
+            </a>
+                
+            <!-- Menu utilisateur : -->
+            <div class="user-menu align-items-center me-3">
+            
+                <span class="user-name text-dark bg-light rounded-1 ps-2">
+                    John DOE
+                </span>
+
+                <!-- Bouton Dropdown Bootstrap -->
+                <button class="dropdown-btn rounded-pill dropdown-toggle"
+                        type="button"
+                        id="userDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                </button>
+
+                <!-- Contenu du menu dropdown -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a  class="dropdown-item"
+                            routerLink="/login">Se connecter</a></li>
+                    <li><a  class="dropdown-item"
+                            routerLink="/account">Mon compte</a></li>
+                    <li><a  class="dropdown-item"
+                            routerLink="/subscribe">Créer un compte</a></li>
+
+                    <!-- <li><hr class="dropdown-divider"></li> -->
+                    <!-- <li><a  class="dropdown-item text-danger"
+                            routerLink="#" (click)="logout()">Déconnexion</a></li> -->
+                </ul>
+
+            </div>
+        </div>
+    </div> 
+
+
+    <!-- Composant navbar -->
+    <app-navbar></app-navbar>
+
+</header>

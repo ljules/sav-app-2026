@@ -571,11 +571,11 @@ Ouvrir le fichier **`src/app/footer/footer.ts`** et ajouter l'import du routeur 
 <div style="page-break-after: always;"></div>
 
 
-## Implémentation de la page d'accueil (composant **`home-page`**) :
+## <u>**Implémentation de la page d'accueil (composant **`home-page`**) :**</u>
 
-Si vous n'avez rien réalisé ou peu avancé sur la page d'accueil nous vous proposons des éléments de correction que vous partiellement ou totalement intégrer dans votre projet.
+Si vous n'avez rien réalisé ou peu avancé sur le contenu de la page d'accueil, nous vous proposons des éléments de correction que vous pouvez partiellement ou totalement intégrer dans votre projet.
 
-Ici la page est normalement déjà accessible (le routeur a été renseigné pour rediriger directement dessus, la barre de navigation permet d'y retourner).
+Normalement la page est déjà accessible (le routeur a été renseigné pour rediriger directement dessus, la barre de navigation permet d'y retourner).
 
 Vous trouverez ci-dessous le code du correctif pour le fichier de template. Vous trouverez également le contenu **CSS** pour ce composant (fichier **`src/app/pages/home-page/home-page.css`**)
 
@@ -732,8 +732,419 @@ Jusqu'à présent nous avons directement intégré le composant **navbar**. Dans
 - Création du composant **header**
 - Intégration du composant enfant **navbar** dans son parent **header**
 - Epuration :
-    - Suppression du lien d'accès à page **about**
+    - Suppression du lien d'accès à la page **about**
     - Ajout d'icônes
-    - Affichage : icônes + textes en affichage large et dans le menu hamburger
-    - Affichage : icônes seuls en affichage étroit
+    - Application des éléments de style CSS
     
+
+### <u>**A FAIRE :**</u>
+
+#### <u>**Génération du composant header :**</u>
+
+Exécuter la commande **CLI Angular** pour générer le composant **header** :
+- **`ng g c components/header`**
+
+
+#### <u>**Intégration du composant enfant navbar dans son parent header :**</u>
+
+Il faut importer le composant **navbar** dans le composant **header** en renseignent l'identifiant de la classe du composant **navbar** dans le fichier **Type Script** du **header** et le _selecteur_ de l'enfant **navbar** dans le fichier **html** du parent **header**.
+
+
+##### <u>**Import dans le header (fichier : `src/app/components/header/header.ts`) :**</u>
+
+``` ts
+import { Component } from '@angular/core';
+import { Navbar } from '../navbar/navbar';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+
+@Component({
+  selector: 'app-header',
+  imports: [Navbar, RouterLink, RouterLinkActive],
+  templateUrl: './header.html',
+  styleUrl: './header.css',
+})
+
+export class Header {
+
+}
+```
+
+<div style="page-break-after: always;"></div>
+
+
+##### <u>**Insertion du sélecteur (fichier : `src/app/components/header/header.html`) :**</u>
+
+``` html
+<app-navbar></app-navbar>
+```
+
+
+
+#### <u>**Mise à jour du composant app**</u>
+
+Actuellement le composant **app** accueille le composant **navbar**, il faut le substituer par son parent **header**.
+
+##### <u>**Insertion du sélecteur (fichier : `src/app/app.ts`) :**</u>
+
+``` ts
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Footer } from './components/footer/footer';
+import { Header } from './components/header/header';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, Header, Footer], // Remplacement de Navbar par Header
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+
+export class App {
+  protected readonly title = signal('sav-app');
+}
+```
+
+
+##### <u>**Insertion du sélecteur (fichier : `src/app/app.html`) :**</u>
+
+``` html
+<!-- HEADER DE L'APPLICATION -->
+<app-header></app-header>
+
+<!-- AFFICHAGE DU CONTENU ROUTE : -->
+<div class="main-content container my-5 min-vh-100">
+    <router-outlet></router-outlet>
+</div>
+
+<!-- FOOTER DE L'APPLICATION -->
+<app-footer></app-footer>
+```
+
+
+<div style="page-break-after: always;"></div>
+
+
+#### <u>**Code HTML & CSS final du composant navbar**</u>
+
+##### <u>**Code HTML (fichier : `src/app/components/navbar/navbar.html`) :**</u>
+
+Le code final épuré pour le template du composant **navbar** :
+
+``` html
+<nav class="nav-bar-fluid container-fluid  navbar navbar-expand-sm p-0 mb-4">
+        
+    <div class="container-xl nav-bar-content p-0">
+        
+        <!-- Bouton Toggle (menu hamburger) : -->
+        <button class="navbar-toggler ms-3 mt-2 mb-2"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"  
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+        </button>
+
+            <!-- Conteneur des liens du menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <!-- Cale la navbar sur la droite -->
+            <!-- <div class="me-auto"></div> -->
+            <ul class="navbar-nav nav-underline">
+
+                <!-- Accès à la page home -->
+                <li class="nav-item border-0">
+                    <a  class="nav-link"
+                        routerLink="home"
+                        routerLinkActive="active"
+                        title="Retour à la page d'accueil">
+                            <i class="bi bi-house-fill"></i>
+                    </a>
+                </li>
+
+                <!-- Accès à la page de calcul d'une recette SaF -->
+                <li class="nav-item">
+                    <a  class="nav-link"
+                        routerLink="recipe-calculator"
+                        routerLinkActive="active"
+                        title="Calculer une recette de savon">
+                            <i class="bi bi-calculator-fill"> </i>
+                            Calculateur
+                    </a>
+                </li>
+
+                <!-- Accès aux recettes de l'utilisateur -->
+                <li class="nav-item">
+                    <a  class="nav-link"
+                        routerLink="recipe-manager"
+                        routerLinkActive="active"
+                        title="Gérer mes recettes (retrouver ,modifier, supprimer...)">
+                            <i class="bi bi-journal-text"> </i>
+                            Mes recettes
+                    </a>
+                </li>
+
+                <!-- Accès gestion des utilisateurs pour l'administrateur  -->
+                <li class="nav-item admin-only">
+                    <a  class="nav-link"
+                        routerLink="users-manager"
+                        routerLinkActive="active"
+                        title="Gérer les utilisateurs">
+                            <i class="bi bi-people-fill"> </i>
+                            Utilisateurs
+                    </a>
+                </li>
+
+                <!-- Accès gestion des ingrédients pour l'administrateur -->
+                <li class="nav-item admin-only">
+                    <a  class="nav-link"
+                        routerLink="ingredients-manager"
+                        routerLinkActive="active"
+                        title="Gérer les ingrédients (corps gras et agents alcalins)">
+                            <i class="bi bi-collection-fill"> </i>
+                            Ingrédients
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
+
+<div style="page-break-after: always;"></div>
+
+
+##### <u>**Code CSS (fichier : `src/app/components/navbar/navbar.css`) :**</u>
+
+Afin d'avoir un rendu satisfaisant, nous allons ajouter du code **css** spéficique à notre composant :
+
+``` css
+    .nav-bar-fluid {        
+        background: var(--dark-side-charter);
+        box-shadow: 0px 20px 10px rgba(0, 0, 0, 0.2);
+
+        .nav-bar-content {
+            background: var(--dark-charter);
+            border-top: 4px solid var(--green-charter);
+            border-left: solid 1px var(--green-charter);
+            border-right: solid 1px var(--green-charter);
+
+            .nav-link {
+                color: white;             
+            }
+      
+            .active {
+                color: var(--green-charter);            
+            }
+      
+            .admin-only {
+                background: var(--purple-charter);
+            }
+        }
+    }
+
+    .navbar-nav {
+        gap: 0px; /* Supprime l'espace entre les éléments */
+        margin: 2px;
+    }
+    
+    .navbar-toggler {
+        width: 55px;
+        background-color: var(--purple-charter);
+        color: white;
+    }
+
+    .nav-item {
+        margin: 0px; /* Contrôle l'espace entre chaque élément */
+        padding: 0px 5px 0px 5px;
+        border-left: 1px solid;  
+        border-color: rgb(110, 110, 110);        
+    } 
+```
+
+
+
+<div style="page-break-after: always;"></div>
+
+
+#### <u>**Finalisation du composant header**</u>
+
+Nous avons pour le momement uniquement implémenter le code permettant d'insérer le composant **navbar** dans le **header**. Il est temps d'implémenter le code spécifique à notre **header**. 
+
+
+##### <u>**Code CSS (fichier : `src/app/components/header/header.html`) :**</u>
+
+Ouvrir le fichier template du composant **header** et implémenter le code final :
+
+``` html
+<header class="app-header fixed-top">
+
+    <div class="top-bar-fluid container-fluid p-0">        
+        <div class="top-bar-content container-xl p-0">
+            <a  class="navbar-brand me-auto"
+                routerLink="home"
+                routerLinkActive="active">
+                        <img    src="/logos/logo.png"
+                                alt="SavApp Logo"
+                                class="logo img-fluid"
+                        >
+            </a>
+                
+            <!-- Menu utilisateur : -->
+            <div class="user-menu align-items-center me-3">
+            
+                <span class="user-name text-dark bg-light rounded-1 ps-2">
+                    John DOE
+                </span>
+
+                <!-- Bouton Dropdown Bootstrap -->
+                <button class="dropdown-btn rounded-pill dropdown-toggle"
+                        type="button"
+                        id="userDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                </button>
+
+                <!-- Contenu du menu dropdown -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a  class="dropdown-item"
+                            routerLink="/login">Se connecter</a></li>
+                    <li><a  class="dropdown-item"
+                            routerLink="/account">Mon compte</a></li>
+                    <li><a  class="dropdown-item"
+                            routerLink="/subscribe">Créer un compte</a></li>
+
+                    <!-- <li><hr class="dropdown-divider"></li> -->
+                    <!-- <li><a  class="dropdown-item text-danger"
+                            routerLink="#" (click)="logout()">Déconnexion</a></li> -->
+                </ul>
+
+            </div>
+        </div>
+    </div> 
+
+
+    <!-- Composant navbar -->
+    <app-navbar></app-navbar>
+
+</header>
+```
+
+<div style="page-break-after: always;"></div>
+
+
+##### <u>**Code CSS (fichier : `src/app/components/header/header.css`) :**</u>
+
+
+Ouvrir le fichier **css** du composant **header** et implémenter le code final :
+
+``` css
+.app-header {
+    .top-bar-fluid {
+        height: var(--top-bar-height);
+        background: var(--dark-side-charter);        
+    }
+
+    .top-bar-content {
+        height: var(--top-bar-height);
+        background: var(--brown-charter);
+        border-left: solid 1px var(--green-charter);
+        border-right: solid 1px var(--green-charter);
+        display: flex;          /* Ajout pour aligner les éléments */
+        align-items: center;    /* Centre verticalement les éléments */      
+    }
+  
+    .logo {
+        height: var(--top-bar-height);
+    }  
+    
+    .user-menu {        
+        display: flex;
+        height: 30px;
+        border-radius: 15px;
+        /* align-items: center; */
+        background: var(--green-charter);
+        padding: 0px;        
+  
+        .user-name {
+            min-width: 120px;
+            color: white;
+            margin-left: 10px;
+            margin-right: 0px; 
+            padding-right: 0px;
+            transform: translateX(8px);          
+        }
+  
+        .dropdown-btn {
+            width: 30px;
+            height: 30px;
+            background: var(--purple-charter);
+            border: none;
+            margin-right: 0px;
+            color: white;
+            font-size: 20px;
+            z-index: 2;                     
+      }   
+      
+        /* Style du menu dropdown */
+        .dropdown-menu {
+            z-index: 1021;
+            min-width: 150px;
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Espacement des éléments */
+        .dropdown-item {
+            padding: 5px 10px;
+        }
+
+        /* Style au survol */
+        .dropdown-item:hover {
+            background: var(--green-charter);
+            color: white;
+        }
+    }
+  }
+```
+
+<div style="page-break-after: always;"></div>
+
+
+#### <u>**Ajustements sur le composant parent app**</u>
+
+Si vous avez optez pour un header **top fixed** (fixé en haut de la page durant le scroll vertical), alors le contenu principal présenté par le router risque d'être en partie masqué par le header. Nous allons remédier à cela en appliquant une marge grâce à des élément de style css.
+
+##### <u>**Code CSS (fichier : `src/app/app.html`) :**</u>
+
+
+
+Ouvrir le fichier template du composant **app** et implémenter le code final :
+
+``` html
+<!-- HEADER DE L'APPLICATION -->
+<app-header></app-header>
+
+<!-- AFFICHAGE DU CONTENU ROUTE : -->
+<div class="main-content container min-vh-100">
+    <router-outlet></router-outlet>
+</div>
+
+<!-- FOOTER DE L'APPLICATION -->
+<app-footer></app-footer>
+
+```
+
+##### <u>**Code CSS (fichier : `src/app/app.css`) :**</u>
+
+
+Ouvrir le fichier **css** du composant **app** et implémenter le code final :
+
+``` css
+.main-content {
+    margin-top: 160px;
+    margin-bottom: 50px;
+}
+```
+
+
