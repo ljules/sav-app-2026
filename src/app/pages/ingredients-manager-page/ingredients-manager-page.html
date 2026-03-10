@@ -1,62 +1,146 @@
 <div class="container">
-    <div class="card  border-success-subtle shadow">
+    <div class="card shadow">
 
-        <div class="card-header bg-success text-light fw-bold h5 ">
+        <div class="card-header text-light">
             <i class="bi bi-flask-fill"></i> Gestion des Ingrédients
         </div>
 
         <div class="card-body p-0">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover m-0">
                 <thead class="table-success">
                     <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>SAP (NaOH)</th>
-                        <th>INS</th>
-                        <th>Iode</th>
-                        <!-- TODO 1 : Ajouter les caractérisitiques manquantes -->
+                        <th title="Identifiant unique (clé primaire)">
+                            ID
+                        </th>
+                        <th title="Nom de l'ingrédient">
+                            Nom
+                        </th>
+                        <th title="Indice ce saponification : Quantité de potasse pour 1 g de graisse">
+                            SAP
+                        </th>
+                        <th title="Ionide Number Saponification : Note globale de qualité">
+                            INS
+                        </th>
+                        <th title="Indice d'Iode : Mesure du potentiel oxydatif">
+                            Iode
+                        </th>
+                        <th title="Pouvoir Lavant : Efficacité du savon à déloger les impurtés">
+                            Lavant
+                        </th>
+                        <th title="Douceur : Pouvoir émollient du savon">
+                            Douc.
+                        </th>
+                        <th title="Dureté : Solidité physique du savon">
+                            Dur.
+                        </th>
+                        <th title="Solubilité : Facilité du savon à de dissoudre dans l'eau">
+                            Sol.
+                        </th>
+                        <th title="Séchage : Capacité du savon à perdre son humidité">
+                            Séch.
+                        </th>
+                        <th title="Volume de mousse : Capacité du savon à produire des bulles">
+                            Vol.
+                        </th>
+                        <th title="Tenue de mousse : Mesure la consistance crémeuse de la mousse">
+                            Tenue
+                        </th>                        
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    @for (item of ingredients; track item.id) {
-                    <tr>
-                        <td>{{ item.id }}</td>
-                        <td><strong>{{ item.nom }}</strong></td>
-                        <td>{{ item.sapo }}</td>
-                        <td>{{ item.ins }}</td>
-                        <td>{{ item.iode }}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-warning me-2">
-                                <i class="bi bi-pencil-fill"></i>
-                                <!-- TODO 3 : Ouvrir le modal ou insérer un formulaire dans ligne pour permettre la saisi -->
-                            </button>
-                            <button class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash-fill"></i>
-                                <!-- TODO 2 : Récupérer et appeler la méthode de suppression de la logique -->
-                            </button>
-                        </td>
-                    </tr>
-                    } 
-                    
-                    <!-- Message affiché si problème accès API -->
-                    @empty {
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            Aucun ingrédient trouvé.
-                            Vérifiez que votre API Backend est bien lancée sur le port 8080.
-                        </td>
-                    </tr>
+                @for (item of ingredients; track item.id) {
+                <tr>
+                    <!-- Formulaire de de saisie d'un corps gras : -->
+                    @if (ingredientSelectionne?.id === item.id) {
+                    <td>{{ item.id }}</td>
+                    <td><input [(ngModel)]="ingredientSelectionne!.nom" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.sapo" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.ins" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.iode" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.lavant" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.douceur" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.durete" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.solubilite" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.sechage" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.volMousse" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.tenueMousse" class="form-control form-control-sm"></td>
+                    <td class="text-center">
+                        <button (click)="saveIngredient()" class="btn btn-sm btn-success me-1"><i class="bi bi-check-lg"></i></button>
+                        <button (click)="ingredientSelectionne = null" class="btn btn-sm btn-secondary"><i class="bi bi-x-lg"></i></button>
+                    </td>
+
+                    <!-- Affichage des ingrédients : -->
+                    } @else {
+                    <td>{{ item.id }}</td>
+                    <td><strong>{{ item.nom }}</strong></td>
+                    <td>{{ item.sapo }}</td>
+                    <td>{{ item.ins }}</td>
+                    <td>{{ item.iode }}</td>
+                    <td>{{ item.lavant}}</td>
+                    <td>{{ item.douceur }}</td>
+                    <td>{{ item.durete }}</td>
+                    <td>{{ item.solubilite }}</td>
+                    <td>{{ item.sechage }}</td>
+                    <td>{{ item.volMousse }}</td>
+                    <td>{{ item.tenueMousse }}</td>
+                    <td class="text-center">
+                        <button (click)="editerIngredient(item)"
+                            class="btn btn-sm btn-outline-warning me-2"                            
+                            title="Modifier l'ingrédient">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button (click)="deleteIngredient(item.id)"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Supprimer l'ingrédient">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
                     }
+                </tr>
+                }
+
+                <!-- Message affiché si problème accès API -->
+                @empty {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Aucun ingrédient trouvé.
+                        Vérifiez que votre API Backend est bien lancée sur le port 8080.
+                    </td>
+                </tr>
+                }
+
+
+                @if (ingredientSelectionne?.id === 0) {
+                <tr class="table-info">
+                    <td>...</td>
+                    <td><input [(ngModel)]="ingredientSelectionne!.nom" placeholder="Nom..." class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.sapo" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.ins" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.iode" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.lavant" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.douceur" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.durete" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.solubilite" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.sechage" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.volMousse" class="form-control form-control-sm"></td>
+                    <td><input type="number" [(ngModel)]="ingredientSelectionne!.tenueMousse" class="form-control form-control-sm"></td>
+                    <td class="text-center">
+                        <button (click)="saveIngredient()" class="btn btn-sm btn-success me-1">Créer</button>
+                        <button (click)="ingredientSelectionne = null" class="btn btn-sm btn-secondary">Annuler</button>
+                    </td>
+                </tr>
+                }
+                    
                 </tbody>
             </table>
         </div>
 
-        <div class="card-footer bg-success ">
-            <button class="btn btn-sm btn-light fw-bold">
-                <i class="bi bi-plus-circle"></i> Ingrédient
-                <!-- TODO 4: Ajouter un modale pour l'ajout d'un nouvel ingrédient OU insérer une ligne formulaire -->
+        <div class="card-footer"> 
+            <button class="btn btn-sm" (click)="creerNouvelIngredient()"> 
+                <i class="bi bi-plus-circle"></i> Ajouter un ingrédient 
             </button>
         </div>
 

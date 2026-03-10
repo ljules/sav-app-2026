@@ -1,0 +1,40 @@
+
+
+
+.card-header {
+    font-weight: bold;
+    background-color: var(--green-charter);
+}
+
+.card {
+    background-color: var(--brown-charter);
+    border-color: var(--green-charter);
+}
+
+.card-footer {
+    background-color: var(--green-charter);
+}
+
+table {
+    font-size: 0.75em;
+}
+
+.form-control {
+    font-size:1em;
+}
+
+
+.table .btn {
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-font-size: 0.6rem;
+}
+
+.card-footer .btn {
+    background-color: var(--purple-charter);
+    color: white;
+    font-weight: light;
+    --bs-btn-padding-y: .25rem;
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-font-size: 0.8rem;
+}
