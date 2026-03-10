@@ -23,7 +23,7 @@ Définition du fond :
 --------------------
 */
 body {
-    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('/backgrounds/fond.jpg');
+    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('../public/backgrounds/fond.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; /*contain*/ 
