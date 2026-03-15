@@ -1,0 +1,13 @@
+/* Assure que le graphique ne déborde pas de la carte */
+.chart-container { 
+    max-width: 100%; 
+    margin: 0 auto; 
+} 
+ 
+canvas { 
+    display: block; 
+    width: 100% !important; 
+    height: auto !important; 
+} 
+
+

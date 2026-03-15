@@ -1,1 +1,195 @@
-<p>recipe-calculator-page works!</p>
+<!-- TITRE & DESCRIPTION DE LA RECETTE  -->
+<div class="card my-4">
+    <div class="card-header">
+        <h5 class="card-title">Titre & Description de la recette</h5>
+    </div>
+
+    <div class="card-body">
+        <!-- Titre -->
+        <div class="mb-3">
+            <label for="titre" class="form-label">Titre :</label>
+            <input type="text" id="titre" class="form-control"
+                name="titre" [(ngModel)]="nouvelleRecetteDTO.titre">
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description :</label>
+            <textarea id="description" class="form-control"
+                    name="description" [(ngModel)]="nouvelleRecetteDTO.description"></textarea>
+        </div>
+    </div>
+</div>
+
+
+<!-- CHOIX & DOSAGE ALCALI -->
+<div class="card my-4">
+    <div class="card-header">
+        <h5 class="card-title">Choix & dosage de l'alcali</h5>
+    </div>
+
+    <div class="card-body">
+        <!-- Surgraissage -->
+        <div class="mb-3">
+            <label for="surgraissage" class="form-label">Surgraissage (%) :</label>
+            <input type="number" id="surgraissage" class="form-control"
+                name="surgraissage" [(ngModel)]="nouvelleRecetteDTO.surgraissage">
+        </div>
+        
+        <!-- Avec Soude -->
+        <div class="form-check mb-3">
+            <input type="checkbox" id="avecSoude" class="form-check-input"
+                name="avecSoude"
+                [(ngModel)]="nouvelleRecetteDTO.avecSoude"
+                (ngModelChange)="nouvelleRecetteDTO.avecSoude ? nouvelleRecetteDTO.concentrationAlcalin = 90 : nouvelleRecetteDTO.concentrationAlcalin = nouvelleRecetteDTO.concentrationAlcalin">
+            <label for="avecSoude" class="form-check-label">Avec Soude</label>
+        </div>
+        Etat soude : {{ nouvelleRecetteDTO.avecSoude }}
+
+        <!-- Concentration Alcalin -->
+        <div class="mb-3">
+            <label for="concentration" class="form-label">Concentration Alcalin (%) :</label>
+            <input type="number" id="concentration" class="form-control"
+                name="concentration" [(ngModel)]="nouvelleRecetteDTO.concentrationAlcalin">
+        </div>
+    </div>
+</div>
+
+
+
+<!-- CHOIX ET AJOUT DES INGREDIENTS DANS LA RECETTE -->
+<div class="card">
+    <!-- Titre : -->
+    <div class="card-header">
+        <h5 class="card-title">Choisir l'ingrédient</h5>        
+    </div>
+    
+    <!-- Liste de sélection de l'ingrédient : -->
+    <div class="card-body">
+        <select class="form-select" [(ngModel)]="choixIngredient">
+            <option [ngValue]="null">Choisir une huile...</option>
+            @for (ing of ingredientsDispo; track ing.id) {
+                <option [ngValue]="ing">{{ ing.nom }}</option>
+            }
+        </select>
+    </div>
+    
+    <!-- Footer - Boutons de validation : -->
+    <div class="card-footer">
+        <button class="btn btn-sm btn-warning"
+        (click)="ajouterIngredient()"
+        [disabled]="!choixIngredient">
+        Ajouter</button>
+    </div>
+</div>
+
+
+<!-- DOSAGE DES INGREDIENTS DE LA RECETTE -->
+<div class="card my-4">
+    <div class="card-header">
+        <h5 class=card-title>Dosage des ingrédients</h5>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Nom Ingrédient</th>
+                <th>Quantité Gramme</th>
+                <th>Pourcentage</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+                @for (ligne of selectionIngredients; track (ligne.ingredient?.id || $index); let i = $index) {
+                    <tr>
+                        <td>
+                            {{ ligne.ingredient.nom }}
+                            <div class="progress"
+                                role="progressbar"
+                                aria-label="Success example"
+                                [attr.aria-valuenow]="ligne.pourcentage"
+                                aria-valuemin="0"
+                                aria-valuemax="100">
+                                <div class="progress-bar bg-success"
+                                    [style.width.%]="ligne.pourcentage">
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <input type="number" class="form-control"
+                                name="quantite{{i}}" [(ngModel)]="ligne.quantite"
+                                (ngModelChange)="recalculerPourcentages()" min="0">
+                        </td>
+
+                        <td>
+                            <input type="number" class="form-control"
+                                name="pourcentage{{i}}" [(ngModel)]="ligne.pourcentage"
+                                readonly min="0" max="100">
+                        </td>
+                        
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    (click)="supprimerIngredient(i)">X</button>
+                        </td>
+                    </tr>
+                } @empty {
+                    <tr>
+                        <td colspan="4" class="text-center">Aucun ingrédient sélectionné.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card-footer">
+        <!-- Masse total des ingrédients -->
+        <b>Masse totale :</b> {{ masseTotale }} g
+    </div>
+ </div>
+
+
+ <!-- Bouton soumission de la nouvelle recette  -->
+<div class="container mt-4">
+    <button class="btn btn-primary" (click)="onSubmit()">
+        Envoyer
+    </button>
+</div>
+
+
+<!-- PRESENTATION RECETTE CALCULEE : -->
+@if (recetteAffichee) {
+<div class="card my-5 border-primary shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Analyse de la saponification</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @for (res of recetteAffichee.resultats; track recetteAffichee.id) {
+            <div class="col-md-6 mb-4">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="fw-bold">{{ res.caracteristique.nom }}</span>
+                    <span class="badge bg-dark">{{ res.score.toFixed(1) }}
+                    </span>
+                </div>
+
+                <div class="progress" style="height: 15px;">
+                    <div class="progress-bar"
+                         role="progressbar"
+                         [style.width.%]="res.score"
+                         [class.bg-success]="res.score >= 40 && res.score <=60"
+                         [class.bg-warning]="res.score < 40 || res.score > 60">
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-around bg-light">
+        <span>Eau : <b>{{ recetteAffichee.apportEnEau.toFixed(2) }} g</b></span>
+        <span>Alcalin : <b>{{ recetteAffichee.qteAlcalin.toFixed(2) }} g</b>
+        </span>
+    </div>
+</div>
+}
+

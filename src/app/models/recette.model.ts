@@ -28,8 +28,8 @@ export interface Recette {
   surgraissage: number; 
   apportEnEau: number; 
   avecSoude: boolean; 
-  concentrationAlcali: number; 
-  qteAlcali: number; 
+  concentrationAlcalin: number; 
+  qteAlcalin: number; 
   ligneIngredients: LigneIngredient[]; 
   resultats: Resultat[]; 
 } 

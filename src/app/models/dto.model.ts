@@ -10,7 +10,7 @@ export interface RecetteFormDTO {
   description: string; 
   surgraissage: number; 
   avecSoude: boolean; 
-  concentrationAlcali: number; 
+  concentrationAlcalin: number;            
   ligneIngredients: LigneIngredientDTO[]; 
 } 
  

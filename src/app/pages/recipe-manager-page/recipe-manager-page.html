@@ -1,1 +1,117 @@
-<p>recipe-manager-page works!</p>
+<div class="container">
+<div class="row"> 
+    @for (recette of recettes; track recette.id) { 
+    <div class="col-md-4 mb-4"> 
+        <div class="card h-100 shadow-sm"> 
+            <div class="card-body"> 
+                <h5 class="card-title text-primary">{{ recette.titre }}</h5> 
+                <p class="card-text text-truncate">{{ recette.description }}</p> 
+                 
+                <ul class="list-group list-group-flush mb-3"> 
+                    <li class="list-group-item d-flex justify-content-between"> 
+                        <span>Surgraissage :</span> 
+                        <span class="badge bg-info text-dark">
+                            {{ recette.surgraissage }}%
+                        </span> 
+                    </li> 
+                    <li class="list-group-item d-flex justify-content-between"> 
+                        <span>Alcalin :</span> 
+                        <span>
+                            {{ recette.avecSoude ? 'Soude (NaOH)' : 'Potasse (KOH)' }}
+                        </span> 
+                    </li> 
+                    <li class="list-group-item d-flex justify-content-between"> 
+                        <span>Eau :</span> 
+                        <span class="fw-bold">{{ recette.apportEnEau }} g</span> 
+                    </li> 
+                </ul> 
+
+                <!-- Affichage du graphe radar : -->
+                <div class="chart-container mb-3" style="position: relative; height:400px;"> 
+                    <canvas [id]="'chart-' + recette.id"></canvas>
+                </div> 
+            </div> 
+
+            <div class="card-footer">
+                <div class="mt-4 d-flex justify-content-between mt-auto">               
+                    <button class="btn btn-outline-primary btn-sm"  
+                            data-bs-toggle="modal"  
+                            data-bs-target="#modalDetails" 
+                            (click)="ouvrirModale(recette)"> 
+                        Détails 
+                    </button> 
+                    <button class="btn btn-outline-danger btn-sm" 
+                            (click)="supprimerRecette(recette.id)"> 
+                        Supprimer 
+                    </button> 
+                </div> 
+            </div>            
+        </div> 
+    </div> 
+    } 
+</div>
+
+
+<!-- Code du modal :  -->
+<div class="modal fade" id="modalDetails" tabindex="-1" aria-hidden="true"> 
+    <div class="modal-dialog modal-lg"> 
+        <div class="modal-content">
+        @if (recetteSelectionnee) { 
+            <div class="modal-header bg-light"> 
+                <h5 class="modal-title">{{ recetteSelectionnee.titre }}</h5> 
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal" 
+                        (click)="fermerModale()"></button> 
+            </div> 
+             
+            <div class="modal-body"> 
+                <h6>Composition de la recette</h6> 
+                <table class="table table-sm mb-4"> 
+                    <thead class="table-light"> 
+                        <tr> 
+                            <th>Ingrédient</th> 
+                            <th class="text-end">Quantité</th> 
+                            <th class="text-end">Pourcentage</th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        @for (ligne of recetteSelectionnee.ligneIngredients; track $index) { 
+                        <tr> 
+                            <td>{{ ligne.ingredient.nom }}</td> 
+                            <td class="text-end">{{ ligne.quantite }} g</td> 
+                            <td class="text-end">{{ ligne.pourcentage }} %</td> 
+                        </tr> 
+                        } 
+                    </tbody> 
+                </table> 
+ 
+                <div class="alert alert-secondary d-flex justify-content-around"> 
+                    <span><strong>Eau :</strong> {{ recetteSelectionnee.apportEnEau }} g</span> 
+                    <span><strong>{{ recetteSelectionnee.avecSoude ? 'Soude' : 'Potasse' }} :</strong>  
+                          {{ recetteSelectionnee.qteAlcalin }} g</span> 
+                </div> 
+ 
+                <h6>Scores de qualité</h6> 
+                <div class="row"> 
+
+
+                    @for (res of recetteSelectionnee?.resultats; track res.caracteristique.id) { 
+                    <div class="col-md-6 mb-2"> 
+                        <small>{{ res.caracteristique.nom }} : {{ res.score }}</small> 
+                        <div class="progress" style="height: 10px;"> 
+                            <div class="progress-bar bg-success" [style.width.%]="res.score"></div> 
+                        </div> 
+                    </div> 
+                    } 
+                </div> 
+            </div> 
+             
+            <div class="modal-footer"> 
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button> 
+            </div> 
+        } </div> 
+    </div>
+</div>
+
+</div>
