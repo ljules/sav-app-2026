@@ -1,1 +1,61 @@
-<p>subscribe-page works!</p>
+<div class="container">
+    <div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-success-subtle">
+                <h5 class="card-title">Inscription</h5>
+            </div>
+            <div class="card-body">
+                <!-- MESSAGE D'ERREUR -->
+                @if (errorMessage) { 
+                    <div class="alert alert-danger p-2 small"> 
+                        {{ errorMessage }} 
+                    </div> 
+                } 
+
+                <!-- FORMULAIRE D'INSCRIPTION  -->
+                <form (ngSubmit)="onSubmit()"> 
+                    <div class="mb-3"> 
+                        <label class="form-label">Login :</label> 
+                        <input type="text" name="login" class="form-control"  
+                                [(ngModel)]="userInfo.username" required> 
+                    </div> 
+                    <div class="mb-3"> 
+                        <label class="form-label">Adresse mail :</label> 
+                        <input type="email" name="e-mail" class="form-control"  
+                                [(ngModel)]="userInfo.email" required> 
+                    </div>
+                    <div class="mb-3"> 
+                        <label class="form-label">Mot de passe :</label> 
+                        <input type="password" name="password" class="form-control"  
+                                [(ngModel)]="userInfo.password" required> 
+                    </div>
+
+                    <div class="mb-3"> 
+                        @if (doubleInputPwd.length > 0 && doubleInputPwd !== userInfo.password) {
+                            <label class="form-label text-danger">Les deux saisies sont différentes !</label> 
+                        } @else if(doubleInputPwd.length > 0 && doubleInputPwd === userInfo.password){
+                            <label class="form-label text-success ">Mots de passe identiques</label> 
+                        } @else {
+                            <label class="form-label">Ressaisir le mot de passe</label>
+                        }
+                                        
+                        <input type="password" name="doubleInputPwd" class="form-control"  
+                                [(ngModel)]="doubleInputPwd" required> 
+                    </div>
+
+
+                    <button type="submit" class="btn btn-success w-100"
+                        [disabled]="userInfo.password.length === 0 || userInfo.password !== doubleInputPwd">
+                        Créer votre compte 
+                    </button> 
+                </form> 
+                
+            </div>
+            <div class="card-footer bg-success-subtle">
+
+            </div>
+        </div>
+    </div>
+    </div>
+</div>

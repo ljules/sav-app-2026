@@ -1,1 +1,41 @@
-<p>login-page works!</p>
+<div class="container mt-5"> 
+    <div class="row justify-content-center"> 
+        <div class="col-md-4"> 
+            <div class="card shadow"> 
+                <div class="card-header bg-success-subtle  text-center"> 
+                    <h4>Connexion SavApp</h4> 
+                </div> 
+                <div class="card-body"> 
+                     
+                    @if (errorMessage) { 
+                        <div class="alert alert-danger p-2 small"> 
+                            {{ errorMessage }} 
+                        </div> 
+                    } 
+ 
+                    <form (ngSubmit)="onSubmit()"> 
+                        <div class="mb-3"> 
+                            <label class="form-label">Identifiant (Email)</label> 
+                            <input type="text" name="username" class="form-control"  
+                                   [(ngModel)]="credentials.identifier" required> 
+                        </div> 
+                        <div class="mb-3"> 
+                            <label class="form-label">Mot de passe</label> 
+                            <input type="password" name="password" class="form-control"  
+                                   [(ngModel)]="credentials.password" required> 
+                        </div> 
+                        <button type="submit" class="btn btn-success w-100"> 
+                            Se connecter 
+                        </button> 
+                    </form> 
+ 
+                </div> 
+                <div class="card-footer bg-success-subtle text-center small"> 
+                    Pas encore de compte ? <a routerLink="/subscribe">S'inscrire</a> 
+                </div> 
+            </div> 
+        </div> 
+    </div>
+</div>
+
+>

@@ -42,6 +42,7 @@
                 </li>
 
                 <!-- Accès aux recettes de l'utilisateur -->
+                 @if (authService.getUserFullInfo()?.roles == "ROLE_UTILISATEUR" || authService.getUserFullInfo()?.roles == "ROLE_ADMIN" ) {
                 <li class="nav-item">
                     <a  class="nav-link"
                         routerLink="recipe-manager"
@@ -51,7 +52,8 @@
                             Mes recettes
                     </a>
                 </li>
-
+                }
+                 @if (authService.getUserFullInfo()?.roles == "ROLE_ADMIN" ) {
                 <!-- Accès gestion des utilisateurs pour l'administrateur  -->
                 <li class="nav-item admin-only">
                     <a  class="nav-link"
@@ -73,6 +75,7 @@
                             Ingrédients
                     </a>
                 </li>
+                }
             </ul>
         </div>
     </div>

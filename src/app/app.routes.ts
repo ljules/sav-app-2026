@@ -9,6 +9,7 @@ import { UsersManagerPage } from './pages/users-manager-page/users-manager-page'
 import { IngredientsManagerPage } from './pages/ingredients-manager-page/ingredients-manager-page';
 import { AboutPage } from './pages/about-page/about-page';
 import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
 
@@ -21,15 +22,15 @@ export const routes: Routes = [
     { path: 'subscribe', component: SubscribePage},
 
     // Compte utilisateur :
-    { path: 'account', component: AccountManagerPage },
+    { path: 'account',component: AccountManagerPage, canActivate: [authGuard] },
 
     // Recettes :
     { path: 'recipe-calculator', component: RecipeCalculatorPage },
-    { path: 'recipe-manager', component: RecipeManagerPage},
+    { path: 'recipe-manager', component: RecipeManagerPage, canActivate: [authGuard]},
 
     // Administration - Gestion :
-    { path: 'users-manager', component: UsersManagerPage },
-    { path: 'ingredients-manager', component: IngredientsManagerPage},
+    { path: 'users-manager', component: UsersManagerPage, canActivate: [authGuard] },
+    { path: 'ingredients-manager', component: IngredientsManagerPage, canActivate: [authGuard]},
 
     // A propos :
     { path: "about", component: AboutPage },

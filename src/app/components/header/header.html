@@ -15,7 +15,7 @@
             <div class="user-menu align-items-center me-3">
             
                 <span class="user-name text-dark bg-light rounded-1 ps-2">
-                    John DOE
+                    {{ authService.getUserIdentifier() }}
                 </span>
 
                 <!-- Bouton Dropdown Bootstrap -->
@@ -35,12 +35,12 @@
                     <li><a  class="dropdown-item"
                             routerLink="/subscribe">Créer un compte</a></li>
 
-                    <!-- <li><hr class="dropdown-divider"></li> -->
-                    <!-- <li><a  class="dropdown-item text-danger"
-                            routerLink="#" (click)="logout()">Déconnexion</a></li> -->
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a  class="dropdown-item text-danger"
+                            routerLink="#" (click)="authService.logout()">Déconnexion</a></li>
                 </ul>
 
-            </div>
+            </div>           
         </div>
     </div> 
 

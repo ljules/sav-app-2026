@@ -3,9 +3,11 @@
     @for (recette of recettes; track recette.id) { 
     <div class="col-md-4 mb-4"> 
         <div class="card h-100 shadow-sm"> 
+            <div class="bg-success-subtle p-2">
+                <h5 class="card-title">{{ recette.titre }}</h5>
+            </div>
             <div class="card-body"> 
-                <h5 class="card-title text-primary">{{ recette.titre }}</h5> 
-                <p class="card-text text-truncate">{{ recette.description }}</p> 
+                <p class="card-text text-truncate">Description : {{ recette.description }}</p> 
                  
                 <ul class="list-group list-group-flush mb-3"> 
                     <li class="list-group-item d-flex justify-content-between"> 
@@ -32,7 +34,7 @@
                 </div> 
             </div> 
 
-            <div class="card-footer">
+            <div class="card-footer bg-success-subtle">
                 <div class="mt-4 d-flex justify-content-between mt-auto">               
                     <button class="btn btn-outline-primary btn-sm"  
                             data-bs-toggle="modal"  
@@ -57,7 +59,7 @@
     <div class="modal-dialog modal-lg"> 
         <div class="modal-content">
         @if (recetteSelectionnee) { 
-            <div class="modal-header bg-light"> 
+            <div class="modal-header bg-success-subtle"> 
                 <h5 class="modal-title">{{ recetteSelectionnee.titre }}</h5> 
                 <button type="button"
                         class="btn-close"
@@ -96,7 +98,7 @@
                 <div class="row"> 
 
 
-                    @for (res of recetteSelectionnee?.resultats; track res.caracteristique.id) { 
+                    @for (res of recetteSelectionnee.resultats; track res.caracteristique.id) { 
                     <div class="col-md-6 mb-2"> 
                         <small>{{ res.caracteristique.nom }} : {{ res.score }}</small> 
                         <div class="progress" style="height: 10px;"> 
@@ -107,7 +109,7 @@
                 </div> 
             </div> 
              
-            <div class="modal-footer"> 
+            <div class="modal-footer bg-success-subtle"> 
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button> 
             </div> 
         } </div> 

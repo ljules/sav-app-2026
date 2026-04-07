@@ -1,6 +1,6 @@
 <!-- TITRE & DESCRIPTION DE LA RECETTE  -->
 <div class="card my-4">
-    <div class="card-header">
+    <div class="card-header bg-success-subtle">
         <h5 class="card-title">Titre & Description de la recette</h5>
     </div>
 
@@ -24,7 +24,7 @@
 
 <!-- CHOIX & DOSAGE ALCALI -->
 <div class="card my-4">
-    <div class="card-header">
+    <div class="card-header bg-success-subtle">
         <h5 class="card-title">Choix & dosage de l'alcali</h5>
     </div>
 
@@ -60,7 +60,7 @@
 <!-- CHOIX ET AJOUT DES INGREDIENTS DANS LA RECETTE -->
 <div class="card">
     <!-- Titre : -->
-    <div class="card-header">
+    <div class="card-header bg-success-subtle">
         <h5 class="card-title">Choisir l'ingrédient</h5>        
     </div>
     
@@ -75,7 +75,7 @@
     </div>
     
     <!-- Footer - Boutons de validation : -->
-    <div class="card-footer">
+    <div class="card-footer bg-success-subtle">
         <button class="btn btn-sm btn-warning"
         (click)="ajouterIngredient()"
         [disabled]="!choixIngredient">
@@ -86,7 +86,7 @@
 
 <!-- DOSAGE DES INGREDIENTS DE LA RECETTE -->
 <div class="card my-4">
-    <div class="card-header">
+    <div class="card-header bg-success-subtle">
         <h5 class=card-title>Dosage des ingrédients</h5>
     </div>
     <div class="card-body">
@@ -142,7 +142,7 @@
         </table>
     </div>
 
-    <div class="card-footer">
+    <div class="card-footer bg-success-subtle">
         <!-- Masse total des ingrédients -->
         <b>Masse totale :</b> {{ masseTotale }} g
     </div>
@@ -151,16 +151,16 @@
 
  <!-- Bouton soumission de la nouvelle recette  -->
 <div class="container mt-4">
-    <button class="btn btn-primary" (click)="onSubmit()">
-        Envoyer
+    <button class="btn btn-success" (click)="onSubmit()">
+        Soumettre la recette
     </button>
 </div>
 
 
 <!-- PRESENTATION RECETTE CALCULEE : -->
 @if (recetteAffichee) {
-<div class="card my-5 border-primary shadow-sm">
-    <div class="card-header bg-primary text-white">
+<div class="card my-5  shadow-sm">
+    <div class="card-header bg-success text-white">
         <h5 class="card-title mb-0">Analyse de la saponification</h5>
     </div>
     <div class="card-body">
@@ -185,7 +185,7 @@
             }
         </div>
     </div>
-    <div class="card-footer d-flex justify-content-around bg-light">
+    <div class="card-footer bg-success d-flex justify-content-around text-white">
         <span>Eau : <b>{{ recetteAffichee.apportEnEau.toFixed(2) }} g</b></span>
         <span>Alcalin : <b>{{ recetteAffichee.qteAlcalin.toFixed(2) }} g</b>
         </span>

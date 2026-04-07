@@ -1,1 +1,27 @@
-<p>account-manager-page works!</p>
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-success-subtle">
+            <h4 class="card-title">Mes informations</h4>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>Identifiant : </b>{{ authService.getUserFullInfo()?.username }}</li>
+                <li> <b>Rôle : </b>            
+                    @if (authService.getUserFullInfo()?.roles == "ROLE_UTILISATEUR") {
+                        <span class="badge rounded-pill text-bg-success">Utilisateur</span>
+                    }
+                    @if (authService.getUserFullInfo()?.roles == "ROLE_ADMIN") {
+                        <span class="badge rounded-pill text-bg-warning">Administrateur</span>
+                    }
+                </li>
+                <li>
+                    <b>Date d'expiration du token JWT : 
+                    </b>{{ authService.getUserFullInfo()?.expiration | date:'HH:mm:ss le dd/MM/yyyy'  }}
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer bg-success-subtle">
+
+        </div>
+    </div>
+</div>
