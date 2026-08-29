@@ -68,6 +68,29 @@ input[type='number']:invalid {
     box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
 }
 
+.modal-header,
+.modal-footer {
+    background-color: var(--green-charter);
+}
+
+.modal-header {
+    color: white;
+}
+
+.modal-body {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.characteristic-field {
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+}
+
+.is-modified {
+    border-color: var(--bs-warning);
+    box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.2);
+}
+
 .page-link {
     color: var(--purple-charter);
 }

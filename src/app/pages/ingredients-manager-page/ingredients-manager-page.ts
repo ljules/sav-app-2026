@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Ingredient } from '../../models/ingredient.model';
 import { IngredientService } from '../../services/ingredient.service';
 import { FormsModule } from '@angular/forms'
@@ -17,6 +17,8 @@ type DirectionTri = 'asc' | 'desc';
 })
 
 export class IngredientsManagerPage implements OnInit {
+    @ViewChild('fermetureModal') private boutonFermetureModal?: ElementRef<HTMLButtonElement>;
+
     // Déclaration du tableau de stockage des ingrédients
     public ingredients: Ingredient[] = [];
 
@@ -73,6 +75,8 @@ export class IngredientsManagerPage implements OnInit {
     };
 
     public erreurValidation = '';
+    public erreurEnregistrement = '';
+    public enregistrementEnCours = false;
 
     // Attributs pour l'import CSV :
     public fichierCsvSelectionne: File | null = null;
@@ -110,6 +114,7 @@ export class IngredientsManagerPage implements OnInit {
      */
     creerNouvelIngredient(): void {
         this.erreurValidation = '';
+        this.erreurEnregistrement = '';
         this.ingredientInitial = null; // Pas de comparaison en mode création
         this.ingredientSelectionne = {
             id: 0, nom: '',
@@ -132,6 +137,7 @@ export class IngredientsManagerPage implements OnInit {
      */
     editerIngredient(item: Ingredient): void {
         this.erreurValidation = '';
+        this.erreurEnregistrement = '';
         // copie de référence = état initial
         this.ingredientInitial = { ...item };
 
@@ -144,6 +150,8 @@ export class IngredientsManagerPage implements OnInit {
         this.ingredientSelectionne = null;
         this.ingredientInitial = null;
         this.erreurValidation = '';
+        this.erreurEnregistrement = '';
+        this.enregistrementEnCours = false;
     }
 
     estChampModifie(cle: keyof Ingredient): boolean {
@@ -166,6 +174,8 @@ export class IngredientsManagerPage implements OnInit {
             return;
         }
         this.erreurValidation = '';
+        this.erreurEnregistrement = '';
+        this.enregistrementEnCours = true;
         const action = this.ingredientSelectionne.id === 0
             // Cas où id = 0 -> On ajoute le nouvel ingredient
             ? this.ingredientService.addIngredient(this.ingredientSelectionne)
@@ -175,12 +185,19 @@ export class IngredientsManagerPage implements OnInit {
         // Rafraichissement de la présentation avec le nouvel état (ajout ou mise à jour):
         action.subscribe({
             next: () => {
+                this.enregistrementEnCours = false;
+                this.boutonFermetureModal?.nativeElement.click();
                 // On remet à null la sélection courante d'un ingrédient :
                 this.ingredientSelectionne = null;
                 // On remet à null la copie initial de l'ingrédient en modificaiton :
                 this.ingredientInitial = null;
                 // On récupère de nouveau la liste d'ingrédients pour la rafraîchir :
                 this.getIngredients();
+            },
+            error: (err) => {
+                console.error("Erreur lors de l'enregistrement de l'ingrédient : ", err);
+                this.enregistrementEnCours = false;
+                this.erreurEnregistrement = "L'enregistrement a échoué. Vérifiez les données et la disponibilité de l'API.";
             }
         });
     }
