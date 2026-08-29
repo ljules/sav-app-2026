@@ -1,3 +1,9 @@
+<!-- AFFICHAGE DU NOMBRE D'INGREDIENTS DISPONIBLES -->
+<div class="badge bg-success shadow">
+    <h5>{{ ingredientsDispo.length }} ingrédients disponibles</h5>
+</div>
+ 
+
 <!-- TITRE & DESCRIPTION DE LA RECETTE  -->
 <div class="card my-4">
     <div class="card-header bg-success-subtle">
@@ -68,7 +74,7 @@
     <div class="card-body">
         <select class="form-select" [(ngModel)]="choixIngredient">
             <option [ngValue]="null">Choisir une huile...</option>
-            @for (ing of ingredientsDispo; track ing.id) {
+            @for (ing of ingredientsDisponiblePourAjout; track ing.id) {
                 <option [ngValue]="ing">{{ ing.nom }}</option>
             }
         </select>
@@ -146,7 +152,7 @@
         <!-- Masse total des ingrédients -->
         <b>Masse totale :</b> {{ masseTotale }} g
     </div>
- </div>
+</div>
 
 
  <!-- Bouton soumission de la nouvelle recette  -->
@@ -158,8 +164,8 @@
 
 
 <!-- PRESENTATION RECETTE CALCULEE : -->
-@if (recetteAffichee) {
-<div class="card my-5  shadow-sm">
+@if(recetteAffichee) {
+<div class="card my-5 shadow-sm">
     <div class="card-header bg-success text-white">
         <h5 class="card-title mb-0">Analyse de la saponification</h5>
     </div>
@@ -185,11 +191,42 @@
             }
         </div>
     </div>
+
+    <!-- Multiple Bar de présentation des ingrédients  -->
+    <div class="m-3 mb-4 p-2 bg-body-tertiary border rounded-3">
+        <!-- Affichage de la multiple bar -->
+        <div class="mx-2 mt-3">
+            <div class="progress-stacked">
+                @for(ligneIngredient of recetteAffichee.ligneIngredients; track recetteAffichee.id) {
+                <div    
+                    class="progress"
+                    role="progressbar"
+                    aria-label="{{ ligneIngredient.ingredient.nom }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    [style.width]="ligneIngredient.pourcentage + '%'">
+                    <div class="progress-bar {{ couleurIngredient[$index] }}"></div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Légende de la multiple bar -->
+        <div class="mx-5 my-2">
+            @for(
+                ligneIngredient of recetteAffichee.ligneIngredients; track recetteAffichee.id){
+                <span class="badge text-{{ couleurIngredient[$index] }}">{{ ligneIngredient.pourcentage }} %</span> :                
+                {{ ligneIngredient.ingredient.nom }}
+            }
+        </div>
+    </div>
+
     <div class="card-footer bg-success d-flex justify-content-around text-white">
         <span>Eau : <b>{{ recetteAffichee.apportEnEau.toFixed(2) }} g</b></span>
         <span>Alcalin : <b>{{ recetteAffichee.qteAlcalin.toFixed(2) }} g</b>
         </span>
     </div>
+
 </div>
 }
 

@@ -1,0 +1,23 @@
+﻿ID,Nom,Indice Iode,Indice INS,Indice de Saponification,Volume de Mousse,Tenue de Mousse,Douceur,Pouvoir Lavant,Dureté,Solubilité,Séchage,Est Corps Gras
+14,Aloe Vera,0,0,0,2,2,9,6,3,2,4,False
+17,Argile Blanche,0,0,0,1,2,7,7,2,2,3,False
+16,Argile Verte,0,0,0,1,2,6,8,3,2,4,False
+9,Beurre de Cacao,50,95,200,3,5,9,5,8,5,6,True
+8,Beurre de Karité,55,95,180,2,3,10,4,9,6,5,True
+15,Charbon Actif,0,0,0,0,0,5,9,1,1,5,False
+1,Coco,9,248,257,13.326,9.56,7.746,14.462,9.39,11.204,11.88,True
+21,Extrait de Romarin,0,0,0,1,1,6,8,2,1,4,False
+11,Huile d'Argan,80,105,185,3,4,9,6,7,5,5,True
+3,Huile d'Olive,85,110,190,3,5,8,6,7,4,5,True
+4,Huile de Coco,10,258,250,9,10,5,8,7,3,6,True
+12,Huile de Jojoba,85,95,190,2,3,8,5,7,6,5,True
+6,Huile de Palme,50,145,200,4,6,6,7,8,5,6,True
+10,Huile de Pépins de Raisin,110,120,195,4,6,7,5,6,4,4,True
+5,Huile de Ricin,85,95,185,7,9,9,5,6,4,5,True
+7,Huile de Tournesol,125,130,190,3,4,8,6,5,4,5,True
+19,Lait d'Amande,0,0,0,2,3,8,6,4,3,5,False
+20,Lait de Chèvre,0,0,0,2,3,9,7,4,3,6,False
+13,Miel,0,0,0,1,1,10,7,2,3,5,False
+2,Olive,78,111,189,9.838,9.152,9.26,10.192,10.144,9.298,10.194,True
+18,Oxyde de Zinc,0,0,0,0,0,5,10,1,1,5,False
+22,Vitamine E,0,0,0,0,0,10,10,0,0,5,False

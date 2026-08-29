@@ -1,5 +1,26 @@
 <div class="home-page">
     <h2>Bienvenue sur notre application</h2>
+    <h3>Nous sommes le {{ dateJour | date:'d/MM/yyyy' }}</h3>
+
+    <div class="alert alert-success" role="alert">
+        <b>La recette du jour :</b> {{ titreRecetteDuJour }}, 
+        <i>{{ descriptionRecetteDuJour }}</i>
+    </div>
+
+
+    <div class="alert alert-success" role="alert">
+        A votre disposition : {{ ingredients.length }} ingrédients <br>
+        Vous avez : {{ recettes.length }} recettes
+    </div>
+
+    <div class="alert alert-success" role="alert">
+        Votre dernière création : {{ derniereRecetteSaisie?.titre }}
+        <br>
+        Description : <i>{{ derniereRecetteSaisie?.description }}</i>
+        <br>
+        Date de création : {{ derniereRecetteSaisie?.dateCreation| date:'le d/MM/yyyy à HH:mm' }}
+    </div>
+    
 
     <p>
         Avec notre application vous allez pouvoir formuler vos propres recettes de savon

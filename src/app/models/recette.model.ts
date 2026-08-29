@@ -31,5 +31,6 @@ export interface Recette {
   concentrationAlcalin: number; 
   qteAlcalin: number; 
   ligneIngredients: LigneIngredient[]; 
-  resultats: Resultat[]; 
+  resultats: Resultat[];
+  dateCreation: Date;
 } 

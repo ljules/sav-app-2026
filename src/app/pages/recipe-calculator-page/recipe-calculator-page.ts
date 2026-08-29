@@ -37,6 +37,16 @@ export class RecipeCalculatorPage implements OnInit {
     // Affichage de la recette après son calcul :
     public recetteAffichee: Recette | null = null;
 
+    // Couleurs Bootstrap pour représenter ingrédients de la recette :
+    public couleurIngredient = [
+        "bg-info",
+        "bg-success",
+        "bg-warning",
+        "bg-secondary",
+        "bg-primary",
+        "bg-danger"
+    ]
+
 
     // Injection des services par le constructeur :
     constructor(
@@ -68,6 +78,15 @@ export class RecipeCalculatorPage implements OnInit {
 
         // Optionnel : Réinitialiser le menu déroulant après l'ajout
         this.choixIngredient = null;
+    }
+
+
+    get ingredientsDisponiblePourAjout(): Ingredient[] {
+        return this.ingredientsDispo.filter(
+            ing => !this.selectionIngredients.some(
+                ligne => ligne.ingredient?.id === ing.id
+            )
+        );
     }
 
 

@@ -1,1 +1,66 @@
-<p>users-manager-page works!</p>
+<div class="container">
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-light">
+            <i class="bi bi-flask-fill"></i> Gestion des utilisateurs
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-striped table-hover m-0">
+                <thead class="table-success">
+                    <tr>
+                        <th title="Id. unique (clé primaire)">
+                            ID
+                        </th>
+                        <th title="Nom">
+                            Nom
+                        </th>
+                        <th title="Adresse e-mail de l'utilisateur">
+                            e-mail
+                        </th>
+                        <th title="Statut de banissement de l'utilisateur">
+                            Actif/banis
+                        </th>
+                        <th title="Role de l'utiliateur (admin ou utilisateur)">
+                            Role
+                        </th>
+                        <th title="Date de création du compte">
+                            Date création
+                        </th>                                           
+                    </tr>
+                </thead>
+
+                <tbody>
+                <!-- Affichage des utilisateurs : -->   
+                @for (item of utilisateurs; track item.id) {           
+                    <tr>      
+                        <td>{{ item.id }}</td>
+                        <td><strong>{{ item.username }}</strong></td>
+                        <td>{{ item.email }}</td>
+                        <td>{{ item.estBanned }}</td>
+                        <td>{{ item.role.nomLogic }}</td>
+                        <td>{{ item.dateCreation}}</td>                    
+                    </tr>                    
+                }
+
+                <!-- Message affiché si problème accès API -->
+                @empty {
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Aucun utilisateur trouvé.
+                        Vérifiez que votre API Backend est bien lancée sur le port 8080.
+                    </td>
+                </tr>
+                }
+                                
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer bg-success"> 
+
+        </div>
+
+    </div>
+</div>

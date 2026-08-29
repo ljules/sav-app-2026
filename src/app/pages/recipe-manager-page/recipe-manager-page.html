@@ -1,9 +1,33 @@
 <div class="container">
+
+    <div class="alert alert-success mb-4 shadow">
+    <h4 class="mb-2">Statistiques sur vos recettes :</h4>
+
+    <ul>
+    @if (recettes.length > 0) {
+        <li>
+            <b>Ingredient le plus utilisé : </b>
+            {{ ingredientLePlusUtilise }} (        
+            Présent dans {{ nbRecettesUtilisantIngredientLePlusUtilise }} recette(s))
+        </li>
+        <li>
+            <b>Nombre de recettes à la potasse : </b>
+            {{ nbRecettesPotasse }}
+        </li>
+    } @else {
+        <p class="mb-0">Aucune recette enregistrée.</p>
+    }
+    </ul>
+    </div>
+
 <div class="row"> 
     @for (recette of recettes; track recette.id) { 
     <div class="col-md-4 mb-4"> 
-        <div class="card h-100 shadow-sm"> 
-            <div class="bg-success-subtle p-2">
+        <div class="card h-100 shadow"> 
+            <div
+                class="card-header p-2"
+                [ngClass]="recette.surgraissage >= 5 ? 'bg-success-subtle' : 'bg-danger-subtle'">
+
                 <h5 class="card-title">{{ recette.titre }}</h5>
             </div>
             <div class="card-body"> 
@@ -34,7 +58,9 @@
                 </div> 
             </div> 
 
-            <div class="card-footer bg-success-subtle">
+            <div
+                class="card-footer"
+                [ngClass]="recette.surgraissage >= 5 ? 'bg-success-subtle' : 'bg-danger-subtle'">
                 <div class="mt-4 d-flex justify-content-between mt-auto">               
                     <button class="btn btn-outline-primary btn-sm"  
                             data-bs-toggle="modal"  

@@ -1,0 +1,81 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class caracteristique {
+   nom: varchar(255)
+   id: bigint(20)
+}
+class ingredient {
+   douceur: float
+   durete: float
+   est_corps_gras: bit(1)
+   ins: float
+   iode: float
+   lavant: float
+   sapo: float
+   sechage: float
+   solubilite: float
+   tenue_mousse: float
+   vol_mousse: float
+   date_creation: datetime(6)
+   nom: varchar(255)
+   id: bigint(20)
+}
+class ligne_ingredient {
+   pourcentage: float
+   quantite: float
+   ingredient_id: bigint(20)
+   recette_id: bigint(20)
+}
+class mention {
+   note_max: float
+   note_min: float
+   caracteristique_id: bigint(20)
+   label: varchar(255)
+   id: bigint(20)
+}
+class recette {
+   apport_en_eau: float
+   avec_soude: bit(1)
+   concentration_alcalin: float
+   qte_alcalin: float
+   surgraissage: float
+   date_creation: datetime(6)
+   utilisateur_id: bigint(20)
+   description: varchar(255)
+   titre: varchar(255)
+   id: bigint(20)
+}
+class resultat {
+   score: float
+   mention_id: bigint(20)
+   caracteristique_id: bigint(20)
+   recette_id: bigint(20)
+}
+class role {
+   nom: varchar(255)
+   nom_logic: varchar(255)
+   id: bigint(20)
+}
+class utilisateur {
+   est_banned: bit(1)
+   date_creation: datetime(6)
+   role_id: bigint(20)
+   email: varchar(255)
+   password: varchar(255)
+   username: varchar(255)
+   id: bigint(20)
+}
+
+ligne_ingredient  -[#595959,plain]-^  ingredient       : "ingredient_id:id"
+ligne_ingredient  -[#595959,plain]-^  recette          : "recette_id:id"
+mention           -[#595959,plain]-^  caracteristique  : "caracteristique_id:id"
+recette           -[#595959,plain]-^  utilisateur      : "utilisateur_id:id"
+resultat          -[#595959,plain]-^  caracteristique  : "caracteristique_id:id"
+resultat          -[#595959,plain]-^  mention          : "mention_id:id"
+resultat          -[#595959,plain]-^  recette          : "recette_id:id"
+utilisateur       -[#595959,plain]-^  role             : "role_id:id"
+@enduml

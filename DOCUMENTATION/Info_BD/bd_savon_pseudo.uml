@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>6d51a1db-10db-449e-aac4-92f0b65d2e80.SCHEMA:bd_savon_pseudo</OriginalElement>
+  <nodes>
+    <node x="315.4304913827656" y="21.561189579158338">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.mention</node>
+    <node x="556.5083190380761" y="233.61313346693385">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.caracteristique</node>
+    <node x="-322.2941498998" y="-160.35147414829657">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.utilisateur</node>
+    <node x="-83.31620521042078" y="-160.35147414829657">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.recette</node>
+    <node x="238.7197931863726" y="-160.35147414829657">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.ligne_ingredient</node>
+    <node x="556.5083190380761" y="-160.35147414829657">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.ingredient</node>
+    <node x="-532.4912609218436" y="-160.35147414829657">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.role</node>
+    <node x="105.50639679358721" y="283.2021290581162">6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.resultat</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.resultat" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.caracteristique" relationship="REFERENCES">
+      <point x="105.94076472945909" y="-23.043065330661364" />
+      <point x="319.4979078156315" y="382.40724649298596" />
+      <point x="638.5083190380761" y="382.40724649298596" />
+      <point x="0.0" y="44.0" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.utilisateur" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.role" relationship="REFERENCES">
+      <point x="0.0" y="-104.0" />
+      <point x="-225.2941498998" y="34.0" />
+      <point x="-443.4912609218436" y="34.0" />
+      <point x="0.0" y="56.0" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.resultat" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.mention" relationship="REFERENCES">
+      <point x="0.0" y="-68.0" />
+      <point x="213.5571430861724" y="113.64946853707414" />
+      <point x="316.9488657314631" y="113.64946853707414" />
+      <point x="-101.98162565130247" y="-13.915985571142357" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.recette" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.utilisateur" relationship="REFERENCES">
+      <point x="-102.90145571142261" y="101.49561202404806" />
+      <point x="-225.2941498998" y="81.14413787575148" />
+      <point x="0.0" y="104.0" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.ligne_ingredient" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.recette" relationship="REFERENCES">
+      <point x="-88.21872705410794" y="-2.033173547094222" />
+      <point x="239.50106613226467" y="-104.05339318637273" />
+      <point x="14.183794789579224" y="-104.05339318637273" />
+      <point x="0.0" y="140.0" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.resultat" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.recette" relationship="REFERENCES">
+      <point x="-105.90355861528657" y="17.28913186372739" />
+      <point x="107.65358447088583" y="335.9916633266533" />
+      <point x="14.183794789579224" y="335.9916633266533" />
+      <point x="0.0" y="140.0" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.ligne_ingredient" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.ingredient" relationship="REFERENCES">
+      <point x="91.21069819639297" y="3.1676793587174075" />
+      <point x="560.0887390781564" y="-89.18379478957917" />
+      <point x="-93.4195799599197" y="-109.03104128256516" />
+    </edge>
+    <edge source="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.mention" target="6d51a1db-10db-449e-aac4-92f0b65d2e80.TABLE:bd_savon_pseudo.caracteristique" relationship="REFERENCES">
+      <point x="0.0" y="-80.0" />
+      <point x="418.9304913827656" y="277.61313346693385" />
+      <point x="557.4883126252506" y="277.61313346693385" />
+      <point x="-81.02000641282552" y="-0.1367983967936084" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.9613807755287249" showDependencies="false" x="150.91693531062106" y="155.77637707414823" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+
