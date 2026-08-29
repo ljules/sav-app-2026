@@ -4,6 +4,11 @@ import { Ingredient } from '../../models/ingredient.model';
 import { IngredientService } from '../../services/ingredient.service';
 import { FormsModule } from '@angular/forms'
 
+type CleCaracteristique = 'sapo' | 'ins' | 'iode' | 'lavant' | 'douceur' |
+    'durete' | 'solubilite' | 'sechage' | 'volMousse' | 'tenueMousse';
+type CleTri = keyof Ingredient;
+type DirectionTri = 'asc' | 'desc';
+
 @Component({
   selector: 'app-ingredients-manager-page',
   imports: [CommonModule, FormsModule],
@@ -27,6 +32,33 @@ export class IngredientsManagerPage implements OnInit {
     // Sélecteur affichage adjuvants :
     public afficherAdjuvants = true;
 
+    // Recherche, filtre numérique, tri et pagination :
+    public rechercheNom = '';
+    public caracteristiqueFiltre: CleCaracteristique = 'sapo';
+    public valeurMin: number | null = null;
+    public valeurMax: number | null = null;
+    public filtreNumeriqueActif = false;
+    public colonneTri: CleTri | null = null;
+    public directionTri: DirectionTri | null = null;
+    public readonly taillePage = 10;
+    public pageCourante = 1;
+
+    public readonly caracteristiquesFiltrables: Array<{
+        cle: CleCaracteristique;
+        libelle: string;
+    }> = [
+        { cle: 'sapo', libelle: 'Indice de saponification (SAP)' },
+        { cle: 'ins', libelle: 'Indice INS' },
+        { cle: 'iode', libelle: "Indice d'iode" },
+        { cle: 'lavant', libelle: 'Pouvoir lavant' },
+        { cle: 'douceur', libelle: 'Douceur' },
+        { cle: 'durete', libelle: 'Dureté' },
+        { cle: 'solubilite', libelle: 'Solubilité' },
+        { cle: 'sechage', libelle: 'Séchage' },
+        { cle: 'volMousse', libelle: 'Volume de mousse' },
+        { cle: 'tenueMousse', libelle: 'Tenue de mousse' },
+    ];
+
     // Attributs pour l'import CSV :
     public fichierCsvSelectionne: File | null = null;
     public messageImport: string = '';
@@ -49,6 +81,7 @@ export class IngredientsManagerPage implements OnInit {
         this.ingredientService.getIngredients().subscribe({
             next: (data) =>{
                 this.ingredients = data;
+                this.corrigerPageCourante();
                 console.log("Ingrédients récupérés avec succès !")
             },
             error: (err) =>{
@@ -140,13 +173,99 @@ export class IngredientsManagerPage implements OnInit {
         }
     }
 
-    /**
-     * Méthode de tri des recettes par ordre croissant
-     */
-    sortByName(): void {
-        this.ingredients.sort(
-            (a, b) => a.nom.localeCompare(b.nom)
-        );
+    public get plageNumeriqueInvalide(): boolean {
+        return this.valeurMin !== null && this.valeurMax !== null &&
+            this.valeurMin > this.valeurMax;
+    }
+
+    public get ingredientsFiltresTries(): Ingredient[] {
+        const motif = this.rechercheNom.trim().toLocaleLowerCase('fr');
+
+        const ingredientsFiltres = this.ingredients.filter((ingredient) => {
+            const correspondAuNom = !motif ||
+                ingredient.nom.toLocaleLowerCase('fr').includes(motif);
+            const correspondAuType =
+                (ingredient.estCorpsGras && this.afficherCorpsGras) ||
+                (!ingredient.estCorpsGras && this.afficherAdjuvants);
+
+            if (!correspondAuNom || !correspondAuType) return false;
+            if (!this.filtreNumeriqueActif) return true;
+
+            // Le filtre par caractéristique concerne uniquement les corps gras.
+            if (!ingredient.estCorpsGras || this.plageNumeriqueInvalide) return false;
+
+            const valeur = ingredient[this.caracteristiqueFiltre];
+            const respecteMinimum = this.valeurMin === null || valeur >= this.valeurMin;
+            const respecteMaximum = this.valeurMax === null || valeur <= this.valeurMax;
+            return respecteMinimum && respecteMaximum;
+        });
+
+        if (!this.colonneTri || !this.directionTri) return ingredientsFiltres;
+
+        const facteur = this.directionTri === 'asc' ? 1 : -1;
+        const colonne = this.colonneTri;
+        return [...ingredientsFiltres].sort((a, b) => {
+            const valeurA = a[colonne];
+            const valeurB = b[colonne];
+
+            if (typeof valeurA === 'string' && typeof valeurB === 'string') {
+                return valeurA.localeCompare(valeurB, 'fr', { sensitivity: 'base' }) * facteur;
+            }
+            if (typeof valeurA === 'boolean' && typeof valeurB === 'boolean') {
+                return (Number(valeurA) - Number(valeurB)) * facteur;
+            }
+            return (Number(valeurA) - Number(valeurB)) * facteur;
+        });
+    }
+
+    public get nombrePages(): number {
+        return Math.max(1, Math.ceil(this.ingredientsFiltresTries.length / this.taillePage));
+    }
+
+    public get pagesDisponibles(): number[] {
+        return Array.from({ length: this.nombrePages }, (_, index) => index + 1);
+    }
+
+    public get ingredientsAffiches(): Ingredient[] {
+        const debut = (this.pageCourante - 1) * this.taillePage;
+        return this.ingredientsFiltresTries.slice(debut, debut + this.taillePage);
+    }
+
+    public changerTri(colonne: CleTri): void {
+        if (this.colonneTri === colonne) {
+            this.directionTri = this.directionTri === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.colonneTri = colonne;
+            this.directionTri = 'asc';
+        }
+        this.pageCourante = 1;
+    }
+
+    public estTriActif(colonne: CleTri): boolean {
+        return this.colonneTri === colonne;
+    }
+
+    public symboleTri(colonne: CleTri): string {
+        if (!this.estTriActif(colonne)) return '-';
+        return this.directionTri === 'asc' ? '↑' : '↓';
+    }
+
+    public reinitialiserPage(): void {
+        this.pageCourante = 1;
+    }
+
+    public basculerFiltreNumerique(): void {
+        if (!this.filtreNumeriqueActif && this.plageNumeriqueInvalide) return;
+        this.filtreNumeriqueActif = !this.filtreNumeriqueActif;
+        this.pageCourante = 1;
+    }
+
+    public allerPage(page: number): void {
+        if (page >= 1 && page <= this.nombrePages) this.pageCourante = page;
+    }
+
+    private corrigerPageCourante(): void {
+        this.pageCourante = Math.min(Math.max(1, this.pageCourante), this.nombrePages);
     }
 
 

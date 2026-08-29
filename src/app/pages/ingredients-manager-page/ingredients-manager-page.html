@@ -1,4 +1,49 @@
 <div class="container">
+    <!-- Import et export CSV -->
+    <div class="card shadow mb-3">
+        <div class="card-header text-light">
+            <i class="bi bi-database-fill-gear"></i> Import / Export des ingrédients
+        </div>
+        <div class="card-body text-light">
+            <div class="row g-4 align-items-end">
+                <div class="col-lg-6 csv-zone">
+                    <h6><i class="bi bi-database-fill-up"></i> Import CSV</h6>
+                    <input
+                        type="file"
+                        class="form-control form-control-sm"
+                        accept=".csv"
+                        (change)="onCsvFileSelected($event)">
+                    <button
+                        class="btn btn-sm btn-warning fw-bold text-black mt-2"
+                        (click)="importerIngredientsDepuisCsv()"
+                        [disabled]="!fichierCsvSelectionne || importEnCours">
+                        <i class="bi bi-upload"></i>
+                        {{ importEnCours ? 'Import en cours...' : 'Importer CSV' }}
+                    </button>
+                </div>
+                <div class="col-lg-6 csv-zone">
+                    <h6><i class="bi bi-database-fill-down"></i> Export CSV</h6>
+                    <p class="small mb-2">
+                        Exporte la liste complète des ingrédients au format utilisé pour l'import.
+                    </p>
+                    <button
+                        class="btn btn-sm btn-success fw-bold"
+                        (click)="exporterIngredientsVersCsv()"
+                        [disabled]="ingredients.length === 0">
+                        <i class="bi bi-download"></i> Exporter CSV
+                    </button>
+                </div>
+            </div>
+
+            @if (messageImport) {
+                <div class="alert alert-success mt-3 mb-0">{{ messageImport }}</div>
+            }
+            @if (erreurImport) {
+                <div class="alert alert-danger mt-3 mb-0">{{ erreurImport }}</div>
+            }
+        </div>
+    </div>
+
     <div class="card shadow">
 
         <div class="card-header text-light">
@@ -6,92 +51,188 @@
         </div>
 
         <div class="card-body p-0">
-            <div class="text-light my-2 mx-3">
-                <h6 class="fw-bold">Filtres : </h6>  
-                <div class="form-check form-switch">
-                    <input  class="form-check-input "
-                            type="checkbox"
-                            role="switch"
-                            [(ngModel)]="afficherCorpsGras"
-                            id="switchFatFilter"
-                        >
-                    <label  class="form-check-label"
-                            for="switchFatFilter"
-                            [class.fw-bold]="afficherCorpsGras"
-                            >Afficher les corps gras
-                    </label>
-                </div>
-                <div class="form-check form-switch">
-                    <input  class="form-check-input "
-                            type="checkbox"
-                            role="switch"
-                            [(ngModel)]="afficherAdjuvants"
-                            id="switchFatFilter"
-                        >
-                    <label  class="form-check-label"
-                            for="switchFatFilter"
-                            [class.fw-bold]="afficherAdjuvants"
-                            >Afficher adjuvant
-                    </label>
+            <div class="ingredient-tools text-light p-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label for="ingredientSearch" class="form-label fw-bold">Rechercher par nom</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input
+                                id="ingredientSearch"
+                                type="search"
+                                class="form-control"
+                                placeholder="Nom de l'ingrédient..."
+                                [(ngModel)]="rechercheNom"
+                                (ngModelChange)="reinitialiserPage()">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-label fw-bold">Types affichés</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input
+                                type="checkbox"
+                                class="btn-check"
+                                id="toggleCorpsGras"
+                                autocomplete="off"
+                                [(ngModel)]="afficherCorpsGras"
+                                (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-success" for="toggleCorpsGras">
+                                Corps gras
+                            </label>
+
+                            <input
+                                type="checkbox"
+                                class="btn-check"
+                                id="toggleAdjuvants"
+                                autocomplete="off"
+                                [(ngModel)]="afficherAdjuvants"
+                                (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-warning" for="toggleAdjuvants">
+                                Adjuvants
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="form-label fw-bold">Filtrer les corps gras par caractéristique</div>
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <select
+                                    class="form-select form-select-sm"
+                                    [(ngModel)]="caracteristiqueFiltre"
+                                    (ngModelChange)="reinitialiserPage()">
+                                    @for (caracteristique of caracteristiquesFiltrables; track caracteristique.cle) {
+                                        <option [ngValue]="caracteristique.cle">
+                                            {{ caracteristique.libelle }}
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col">
+                                <input
+                                    type="number"
+                                    class="form-control form-control-sm"
+                                    placeholder="Min"
+                                    aria-label="Valeur minimale"
+                                    [(ngModel)]="valeurMin"
+                                    (ngModelChange)="reinitialiserPage()">
+                            </div>
+                            <div class="col">
+                                <input
+                                    type="number"
+                                    class="form-control form-control-sm"
+                                    placeholder="Max"
+                                    aria-label="Valeur maximale"
+                                    [(ngModel)]="valeurMax"
+                                    (ngModelChange)="reinitialiserPage()">
+                            </div>
+                            <div class="col-auto">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm"
+                                    [class.btn-success]="filtreNumeriqueActif"
+                                    [class.btn-outline-light]="!filtreNumeriqueActif"
+                                    [disabled]="!filtreNumeriqueActif && plageNumeriqueInvalide"
+                                    (click)="basculerFiltreNumerique()">
+                                    {{ filtreNumeriqueActif ? 'Désactiver' : 'Activer' }}
+                                </button>
+                            </div>
+                        </div>
+                        @if (plageNumeriqueInvalide) {
+                            <small class="text-warning">La valeur minimale doit être inférieure ou égale à la valeur maximale.</small>
+                        }
+                    </div>
                 </div>
             </div>
+            <div class="table-responsive">
             <table class="table table-striped table-hover m-0">
                 <thead class="table-success">
                     <tr>
                         <th title="Identifiant unique (clé primaire)">
-                            ID
+                            <div>ID</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('id')" [class.btn-secondary]="!estTriActif('id')"
+                                (click)="changerTri('id')">{{ symboleTri('id') }}</button>
                         </th>
                         <th title="Nom de l'ingrédient">
                             <div>Nom</div>
-                            <button
-                                type="button"
-                                class="btn btn-success btn-sm"
-                                title="Trié dans l'ordre croissant"
-                                style="--bs-btn-padding-y: 0; --bs-btn-padding-x: 0.15rem;"
-                                (click)="sortByName()">
-                                <i class="bi bi-arrow-bar-up"></i>
-                            </button>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('nom')" [class.btn-secondary]="!estTriActif('nom')"
+                                (click)="changerTri('nom')">{{ symboleTri('nom') }}</button>
                         </th>
                         <th title="Corps gras ou adjuvant">
-                            Corps Gras
+                            <div>Corps Gras</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('estCorpsGras')" [class.btn-secondary]="!estTriActif('estCorpsGras')"
+                                (click)="changerTri('estCorpsGras')">{{ symboleTri('estCorpsGras') }}</button>
                         </th>
                         <th title="Indice ce saponification : Quantité de potasse pour 1 g de graisse">
-                            SAP
+                            <div>SAP</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('sapo')" [class.btn-secondary]="!estTriActif('sapo')"
+                                (click)="changerTri('sapo')">{{ symboleTri('sapo') }}</button>
                         </th>
                         <th title="Ionide Number Saponification : Note globale de qualité">
-                            INS
+                            <div>INS</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('ins')" [class.btn-secondary]="!estTriActif('ins')"
+                                (click)="changerTri('ins')">{{ symboleTri('ins') }}</button>
                         </th>
                         <th title="Indice d'Iode : Mesure du potentiel oxydatif">
-                            Iode
+                            <div>Iode</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('iode')" [class.btn-secondary]="!estTriActif('iode')"
+                                (click)="changerTri('iode')">{{ symboleTri('iode') }}</button>
                         </th>
                         <th title="Pouvoir Lavant : Efficacité du savon à déloger les impurtés">
-                            Lavant
+                            <div>Lavant</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('lavant')" [class.btn-secondary]="!estTriActif('lavant')"
+                                (click)="changerTri('lavant')">{{ symboleTri('lavant') }}</button>
                         </th>
                         <th title="Douceur : Pouvoir émollient du savon">
-                            Douc.
+                            <div>Douc.</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('douceur')" [class.btn-secondary]="!estTriActif('douceur')"
+                                (click)="changerTri('douceur')">{{ symboleTri('douceur') }}</button>
                         </th>
                         <th title="Dureté : Solidité physique du savon">
-                            Dur.
+                            <div>Dur.</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('durete')" [class.btn-secondary]="!estTriActif('durete')"
+                                (click)="changerTri('durete')">{{ symboleTri('durete') }}</button>
                         </th>
                         <th title="Solubilité : Facilité du savon à de dissoudre dans l'eau">
-                            Sol.
+                            <div>Sol.</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('solubilite')" [class.btn-secondary]="!estTriActif('solubilite')"
+                                (click)="changerTri('solubilite')">{{ symboleTri('solubilite') }}</button>
                         </th>
                         <th title="Séchage : Capacité du savon à perdre son humidité">
-                            Séch.
+                            <div>Séch.</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('sechage')" [class.btn-secondary]="!estTriActif('sechage')"
+                                (click)="changerTri('sechage')">{{ symboleTri('sechage') }}</button>
                         </th>
                         <th title="Volume de mousse : Capacité du savon à produire des bulles">
-                            Vol.
+                            <div>Vol.</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('volMousse')" [class.btn-secondary]="!estTriActif('volMousse')"
+                                (click)="changerTri('volMousse')">{{ symboleTri('volMousse') }}</button>
                         </th>
                         <th title="Tenue de mousse : Mesure la consistance crémeuse de la mousse">
-                            Tenue
+                            <div>Tenue</div>
+                            <button type="button" class="btn btn-sm sort-btn"
+                                [class.btn-success]="estTriActif('tenueMousse')" [class.btn-secondary]="!estTriActif('tenueMousse')"
+                                (click)="changerTri('tenueMousse')">{{ symboleTri('tenueMousse') }}</button>
                         </th>                        
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                @for (item of ingredients; track item.id) {
-                    @if(item.estCorpsGras && afficherCorpsGras || !item.estCorpsGras && afficherAdjuvants){
+                @for (item of ingredientsAffiches; track item.id) {
                     <tr>
                         <!-- Formulaire de modification d'un ingrédient : -->
                         @if (ingredientSelectionne?.id === item.id) {
@@ -256,16 +397,14 @@
                         </td>
                         }
                     </tr>
-                    }
                 }
 
                 <!-- Message affiché si problème accès API -->
                 @empty {
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
+                    <td colspan="14" class="text-center text-muted py-4">
                         <i class="bi bi-exclamation-triangle"></i>
                         Aucun ingrédient trouvé.
-                        Vérifiez que votre API Backend est bien lancée sur le port 8080.
                     </td>
                 </tr>
                 }
@@ -374,82 +513,36 @@
                     
                 </tbody>
             </table>
+            </div>
         </div>
 
-        <div class="card-footer"> 
+        <div class="card-footer d-flex flex-wrap gap-3 justify-content-between align-items-center">
             <button class="btn btn-sm" (click)="creerNouvelIngredient()"> 
                 <i class="bi bi-plus-circle"></i> Ajouter un ingrédient 
             </button>
-        </div>
-    </div>
 
-    <!-- Import des fichiers par CSV -->
-    <div class="card shadow mt-3">
-  
-        <div class="card-header text-light">
-            <i class="bi bi-database-fill-up"></i> Import des ingrédients par CSV
-        </div>
-
- 
-        <div class="card-body">
-            <!-- Champ de sélection du fichier -->
-            <input
-                type="file"
-                class="form-control form-control-sm"
-                accept=".csv"
-                (change)="onCsvFileSelected($event)"
-
-            >
-
-            <div class="m-2">
-            <!-- Bouton d'import -->
-            <button
-                class="btn btn-sm btn-warning fw-bold text-black"
-                (click)="importerIngredientsDepuisCsv()"
-                [disabled]="!fichierCsvSelectionne || importEnCours"
-            >
-                <i class="bi bi-upload"></i>
-                {{ importEnCours ? 'Import en cours...' : 'Importer CSV' }}
-            </button> 
+            <div class="text-light small">
+                {{ ingredientsFiltresTries.length }} ingrédient(s) — page {{ pageCourante }} / {{ nombrePages }}
             </div>
-        </div>   
 
-    </div>
-
-
-    <!-- Export des ingrédients par CSV -->
-    <div class="card shadow mt-3">
-        <div class="card-header text-light">
-            <i class="bi bi-database-fill-down"></i> Export des ingrédients en CSV
+            <nav aria-label="Pagination des ingrédients">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" [class.disabled]="pageCourante === 1">
+                        <button class="page-link" type="button" aria-label="Page précédente"
+                            (click)="allerPage(pageCourante - 1)">«</button>
+                    </li>
+                    @for (page of pagesDisponibles; track page) {
+                        <li class="page-item" [class.active]="page === pageCourante">
+                            <button class="page-link" type="button" (click)="allerPage(page)">{{ page }}</button>
+                        </li>
+                    }
+                    <li class="page-item" [class.disabled]="pageCourante === nombrePages">
+                        <button class="page-link" type="button" aria-label="Page suivante"
+                            (click)="allerPage(pageCourante + 1)">»</button>
+                    </li>
+                </ul>
+            </nav>
         </div>
-
-        <div class="card-body">
-            <p class="mb-2 text-light">
-                Exporte la liste complète des ingrédients dans le même format que celui utilisé pour l'import CSV.
-            </p>
-
-            <button
-                class="btn btn-sm btn-success fw-bold"
-                (click)="exporterIngredientsVersCsv()"
-                [disabled]="ingredients.length === 0"
-            >
-                <i class="bi bi-download"></i>
-                Exporter CSV
-            </button>
-        </div>   
     </div>
-
-
-    @if (messageImport) {
-    <div class="alert alert-success m-3 mb-0">
-        {{ messageImport }}
-    </div>
-    }
-
-    @if (erreurImport) {
-    <div class="alert alert-danger m-3 mb-0">
-        {{ erreurImport }}
-    </div>
-    }
 
 </div>

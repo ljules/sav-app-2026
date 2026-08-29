@@ -38,3 +38,38 @@ table {
     --bs-btn-padding-x: .5rem;
     --bs-btn-font-size: 0.8rem;
 }
+
+.ingredient-tools {
+    border-bottom: 1px solid var(--green-charter);
+}
+
+.csv-zone + .csv-zone {
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.sort-btn {
+    min-width: 1.5rem;
+    line-height: 1;
+}
+
+th {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.page-link {
+    color: var(--purple-charter);
+}
+
+.page-item.active .page-link {
+    background-color: var(--purple-charter);
+    border-color: var(--purple-charter);
+}
+
+@media (max-width: 991.98px) {
+    .csv-zone + .csv-zone {
+        border-left: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.25);
+        padding-top: 1rem;
+    }
+}
