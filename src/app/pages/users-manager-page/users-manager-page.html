@@ -1,66 +1,269 @@
 <div class="container">
-    <div class="card shadow">
+    @if (messageSucces) {
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ messageSucces }}
+            <button type="button" class="btn-close" aria-label="Fermer" (click)="messageSucces = ''"></button>
+        </div>
+    }
+    @if (erreurChargement) {
+        <div class="alert alert-danger alert-dismissible fade show">
+            {{ erreurChargement }}
+            <button type="button" class="btn-close" aria-label="Fermer" (click)="erreurChargement = ''"></button>
+        </div>
+    }
 
-        <div class="card-header bg-success text-light">
-            <i class="bi bi-flask-fill"></i> Gestion des utilisateurs
+    <div class="card shadow">
+        <div class="card-header text-light">
+            <i class="bi bi-people-fill"></i> Gestion des utilisateurs
         </div>
 
         <div class="card-body p-0">
-            <table class="table table-striped table-hover m-0">
-                <thead class="table-success">
-                    <tr>
-                        <th title="Id. unique (clé primaire)">
-                            ID
-                        </th>
-                        <th title="Nom">
-                            Nom
-                        </th>
-                        <th title="Adresse e-mail de l'utilisateur">
-                            e-mail
-                        </th>
-                        <th title="Statut de banissement de l'utilisateur">
-                            Actif/banis
-                        </th>
-                        <th title="Role de l'utiliateur (admin ou utilisateur)">
-                            Role
-                        </th>
-                        <th title="Date de création du compte">
-                            Date création
-                        </th>                                           
-                    </tr>
-                </thead>
+            <div class="user-tools text-light p-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-5">
+                        <label for="userSearch" class="form-label fw-bold">Rechercher un utilisateur</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input id="userSearch" type="search" class="form-control"
+                                placeholder="Nom ou adresse e-mail..."
+                                [(ngModel)]="rechercheUtilisateur"
+                                (ngModelChange)="reinitialiserPage()">
+                        </div>
+                    </div>
 
-                <tbody>
-                <!-- Affichage des utilisateurs : -->   
-                @for (item of utilisateurs; track item.id) {           
-                    <tr>      
-                        <td>{{ item.id }}</td>
-                        <td><strong>{{ item.username }}</strong></td>
-                        <td>{{ item.email }}</td>
-                        <td>{{ item.estBanned }}</td>
-                        <td>{{ item.role.nomLogic }}</td>
-                        <td>{{ item.dateCreation}}</td>                    
-                    </tr>                    
-                }
+                    <div class="col-lg-4 col-md-7">
+                        <div class="form-label fw-bold">Rôles affichés</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input type="checkbox" class="btn-check" id="toggleAdmins" autocomplete="off"
+                                [(ngModel)]="afficherAdministrateurs" (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-warning" for="toggleAdmins">Administrateurs</label>
+                            <input type="checkbox" class="btn-check" id="toggleUsers" autocomplete="off"
+                                [(ngModel)]="afficherUtilisateurs" (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-success" for="toggleUsers">Utilisateurs</label>
+                        </div>
+                    </div>
 
-                <!-- Message affiché si problème accès API -->
-                @empty {
-                <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        Aucun utilisateur trouvé.
-                        Vérifiez que votre API Backend est bien lancée sur le port 8080.
-                    </td>
-                </tr>
-                }
-                                
-                </tbody>
-            </table>
+                    <div class="col-lg-3 col-md-5">
+                        <div class="form-label fw-bold">Statuts affichés</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <input type="checkbox" class="btn-check" id="toggleActive" autocomplete="off"
+                                [(ngModel)]="afficherActifs" (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-success" for="toggleActive">Actifs</label>
+                            <input type="checkbox" class="btn-check" id="toggleInactive" autocomplete="off"
+                                [(ngModel)]="afficherInactifs" (ngModelChange)="reinitialiserPage()">
+                            <label class="btn btn-sm btn-outline-danger" for="toggleInactive">Inactifs</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle m-0">
+                    <thead class="table-success">
+                        <tr>
+                            <th class="d-none d-md-table-cell" title="Identifiant unique">
+                                <div>ID</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('id')" [class.btn-secondary]="!estTriActif('id')"
+                                    (click)="changerTri('id')">{{ symboleTri('id') }}</button>
+                            </th>
+                            <th title="Nom de l'utilisateur">
+                                <div>Nom</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('username')" [class.btn-secondary]="!estTriActif('username')"
+                                    (click)="changerTri('username')">{{ symboleTri('username') }}</button>
+                            </th>
+                            <th class="d-none d-lg-table-cell" title="Adresse e-mail">
+                                <div>E-mail</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('email')" [class.btn-secondary]="!estTriActif('email')"
+                                    (click)="changerTri('email')">{{ symboleTri('email') }}</button>
+                            </th>
+                            <th title="Statut du compte">
+                                <div>Statut</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('estBanned')" [class.btn-secondary]="!estTriActif('estBanned')"
+                                    (click)="changerTri('estBanned')">{{ symboleTri('estBanned') }}</button>
+                            </th>
+                            <th title="Rôle de l'utilisateur">
+                                <div>Rôle</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('role')" [class.btn-secondary]="!estTriActif('role')"
+                                    (click)="changerTri('role')">{{ symboleTri('role') }}</button>
+                            </th>
+                            <th class="d-none d-xl-table-cell" title="Date de création du compte">
+                                <div>Date de création</div>
+                                <button type="button" class="btn btn-sm sort-btn"
+                                    [class.btn-success]="estTriActif('dateCreation')" [class.btn-secondary]="!estTriActif('dateCreation')"
+                                    (click)="changerTri('dateCreation')">{{ symboleTri('dateCreation') }}</button>
+                            </th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (item of utilisateursAffiches; track item.id) {
+                            <tr>
+                                <td class="d-none d-md-table-cell">{{ item.id }}</td>
+                                <td><strong>{{ item.username }}</strong></td>
+                                <td class="d-none d-lg-table-cell">{{ item.email }}</td>
+                                <td>
+                                    <span class="badge" [class.text-bg-success]="!item.estBanned"
+                                        [class.text-bg-danger]="item.estBanned">
+                                        {{ item.estBanned ? 'Inactif' : 'Actif' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge"
+                                        [class.text-bg-warning]="item.role.nomLogic === 'ROLE_ADMIN'"
+                                        [class.text-bg-info]="item.role.nomLogic !== 'ROLE_ADMIN'">
+                                        {{ item.role.nomLogic === 'ROLE_ADMIN' ? 'Administrateur' : 'Utilisateur' }}
+                                    </span>
+                                </td>
+                                <td class="d-none d-xl-table-cell">
+                                    {{ item.dateCreation | date:'dd/MM/yyyy HH:mm' }}
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-1">
+                                        <button type="button" class="btn btn-sm btn-outline-warning action-button"
+                                            title="Modifier l'utilisateur" data-bs-toggle="modal"
+                                            data-bs-target="#utilisateurModal" (click)="editerUtilisateur(item)">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger action-button"
+                                            title="Supprimer l'utilisateur" (click)="supprimerUtilisateur(item)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        } @empty {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    @if (chargementEnCours) {
+                                        <span class="spinner-border spinner-border-sm me-2"></span>Chargement...
+                                    } @else {
+                                        <i class="bi bi-exclamation-triangle"></i> Aucun utilisateur trouvé.
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="card-footer bg-success"> 
-
+        <div class="card-footer d-flex flex-wrap gap-3 justify-content-between align-items-center">
+            <button type="button" class="btn btn-sm" data-bs-toggle="modal"
+                data-bs-target="#utilisateurModal" (click)="creerNouvelUtilisateur()"
+                [disabled]="roles.length === 0">
+                <i class="bi bi-person-plus-fill"></i> Ajouter un utilisateur
+            </button>
+            <div class="text-light small">
+                {{ utilisateursFiltresTries.length }} utilisateur(s) — page {{ pageCourante }} / {{ nombrePages }}
+            </div>
+            <nav aria-label="Pagination des utilisateurs">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item" [class.disabled]="pageCourante === 1">
+                        <button class="page-link" type="button" aria-label="Page précédente"
+                            (click)="allerPage(pageCourante - 1)">«</button>
+                    </li>
+                    @for (page of pagesDisponibles; track page) {
+                        <li class="page-item" [class.active]="page === pageCourante">
+                            <button class="page-link" type="button" (click)="allerPage(page)">{{ page }}</button>
+                        </li>
+                    }
+                    <li class="page-item" [class.disabled]="pageCourante === nombrePages">
+                        <button class="page-link" type="button" aria-label="Page suivante"
+                            (click)="allerPage(pageCourante + 1)">»</button>
+                    </li>
+                </ul>
+            </nav>
         </div>
+    </div>
 
+    <div class="modal fade" id="utilisateurModal" tabindex="-1"
+        aria-labelledby="utilisateurModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                @if (utilisateurSelectionne) {
+                    <form (ngSubmit)="saveUtilisateur()">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="utilisateurModalLabel">
+                                {{ utilisateurSelectionne.id === null ? 'Ajouter un utilisateur' : "Modifier l'utilisateur" }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fermer" (click)="annulerEdition()"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="modalUsername" class="form-label">Nom d'utilisateur</label>
+                                    <input id="modalUsername" name="modalUsername" type="text"
+                                        class="form-control" required [(ngModel)]="utilisateurSelectionne.username">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="modalEmail" class="form-label">Adresse e-mail</label>
+                                    <input id="modalEmail" name="modalEmail" type="email"
+                                        class="form-control" required [(ngModel)]="utilisateurSelectionne.email">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="modalRole" class="form-label">Rôle</label>
+                                    <select id="modalRole" name="modalRole" class="form-select" required
+                                        [(ngModel)]="utilisateurSelectionne.role">
+                                        @for (role of roles; track role.id) {
+                                            <option [ngValue]="role">{{ role.nom }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <div class="form-check form-switch mb-2">
+                                        <input id="modalEstBanned" name="modalEstBanned" type="checkbox"
+                                            class="form-check-input" [(ngModel)]="utilisateurSelectionne.estBanned">
+                                        <label for="modalEstBanned" class="form-check-label">Compte inactif/banni</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="modalPassword" class="form-label">
+                                        {{ utilisateurSelectionne.id === null ? 'Mot de passe' : 'Nouveau mot de passe (facultatif)' }}
+                                    </label>
+                                    <input id="modalPassword" name="modalPassword" type="password"
+                                        class="form-control" autocomplete="new-password"
+                                        [(ngModel)]="utilisateurSelectionne.nouveauMotDePasse">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="modalPasswordConfirm" class="form-label">Confirmer le mot de passe</label>
+                                    <input id="modalPasswordConfirm" name="modalPasswordConfirm" type="password"
+                                        class="form-control" autocomplete="new-password"
+                                        [(ngModel)]="confirmationMotDePasse">
+                                </div>
+                            </div>
+
+                            @if ((utilisateurSelectionne.nouveauMotDePasse ?? '') !== confirmationMotDePasse) {
+                                <div class="alert alert-warning mt-3 mb-0">Les mots de passe sont différents.</div>
+                            }
+                            @if (utilisateurSelectionne.id === null && !(utilisateurSelectionne.nouveauMotDePasse ?? '').length) {
+                                <div class="alert alert-warning mt-3 mb-0">Le mot de passe est obligatoire à la création.</div>
+                            }
+                            @if (erreurEnregistrement) {
+                                <div class="alert alert-danger mt-3 mb-0">{{ erreurEnregistrement }}</div>
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button #fermetureModal type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal" (click)="annulerEdition()">Annuler</button>
+                            <button type="submit" class="btn btn-success"
+                                [disabled]="enregistrementEnCours || !formulaireUtilisateurValide">
+                                @if (enregistrementEnCours) {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>Enregistrement...
+                                } @else {
+                                    {{ utilisateurSelectionne.id === null ? 'Créer' : 'Enregistrer' }}
+                                }
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
     </div>
 </div>

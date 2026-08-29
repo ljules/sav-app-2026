@@ -3,17 +3,27 @@ import { Recette } from "./recette.model";
 export interface Role {
     id: number;
     nom: string;
-    nomLogic: String;
-    utilisateurs: Utilisateur[]
+    nomLogic: string;
+    utilisateurs?: Utilisateur[];
 }
 
 export interface Utilisateur {
     id: number;
     username: string;
     email: string;
-    password: string;
+    nouveauMotDePasse: string | null;
     estBanned: boolean;
     role: Role;
-    recettes: Recette[];
-    dateCreation: Date;
+    recettes: Recette[] | null;
+    dateCreation?: string;
+}
+
+export interface UtilisateurFormDTO {
+    id: number | null;
+    username: string;
+    email: string;
+    nouveauMotDePasse: string | null;
+    estBanned: boolean;
+    role: Role;
+    recettes: Recette[] | null;
 }

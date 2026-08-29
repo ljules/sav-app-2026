@@ -1,0 +1,66 @@
+.card-header {
+    font-weight: bold;
+    background-color: var(--green-charter);
+}
+
+.card {
+    background-color: var(--brown-charter);
+    border-color: var(--green-charter);
+}
+
+.card-footer,
+.modal-header,
+.modal-footer {
+    background-color: var(--green-charter);
+}
+
+.card-footer .btn {
+    color: white;
+    background-color: var(--purple-charter);
+    font-weight: 400;
+}
+
+.user-tools {
+    border-bottom: 1px solid var(--green-charter);
+}
+
+table {
+    font-size: 0.8em;
+}
+
+th {
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.table .btn {
+    --bs-btn-padding-y: 0.25rem;
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-font-size: 0.65rem;
+}
+
+.sort-btn {
+    min-width: 1.5rem;
+    line-height: 1;
+}
+
+.action-button {
+    width: 2rem;
+}
+
+.page-link {
+    color: var(--purple-charter);
+}
+
+.page-item.active .page-link {
+    background-color: var(--purple-charter);
+    border-color: var(--purple-charter);
+}
+
+.modal-header {
+    color: white;
+}
+
+.modal-body {
+    background-color: var(--bs-tertiary-bg);
+}
