@@ -179,49 +179,49 @@
                                 [class.btn-success]="estTriActif('ins')" [class.btn-secondary]="!estTriActif('ins')"
                                 (click)="changerTri('ins')">{{ symboleTri('ins') }}</button>
                         </th>
-                        <th title="Indice d'Iode : Mesure du potentiel oxydatif">
+                        <th class="d-none d-xl-table-cell" title="Indice d'Iode : Mesure du potentiel oxydatif">
                             <div>Iode</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('iode')" [class.btn-secondary]="!estTriActif('iode')"
                                 (click)="changerTri('iode')">{{ symboleTri('iode') }}</button>
                         </th>
-                        <th title="Pouvoir Lavant : Efficacité du savon à déloger les impurtés">
+                        <th class="d-none d-xl-table-cell" title="Pouvoir Lavant : Efficacité du savon à déloger les impurtés">
                             <div>Lavant</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('lavant')" [class.btn-secondary]="!estTriActif('lavant')"
                                 (click)="changerTri('lavant')">{{ symboleTri('lavant') }}</button>
                         </th>
-                        <th title="Douceur : Pouvoir émollient du savon">
+                        <th class="d-none d-xl-table-cell" title="Douceur : Pouvoir émollient du savon">
                             <div>Douc.</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('douceur')" [class.btn-secondary]="!estTriActif('douceur')"
                                 (click)="changerTri('douceur')">{{ symboleTri('douceur') }}</button>
                         </th>
-                        <th title="Dureté : Solidité physique du savon">
+                        <th class="d-none d-xl-table-cell" title="Dureté : Solidité physique du savon">
                             <div>Dur.</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('durete')" [class.btn-secondary]="!estTriActif('durete')"
                                 (click)="changerTri('durete')">{{ symboleTri('durete') }}</button>
                         </th>
-                        <th title="Solubilité : Facilité du savon à de dissoudre dans l'eau">
+                        <th class="d-none d-xl-table-cell" title="Solubilité : Facilité du savon à de dissoudre dans l'eau">
                             <div>Sol.</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('solubilite')" [class.btn-secondary]="!estTriActif('solubilite')"
                                 (click)="changerTri('solubilite')">{{ symboleTri('solubilite') }}</button>
                         </th>
-                        <th title="Séchage : Capacité du savon à perdre son humidité">
+                        <th class="d-none d-xl-table-cell" title="Séchage : Capacité du savon à perdre son humidité">
                             <div>Séch.</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('sechage')" [class.btn-secondary]="!estTriActif('sechage')"
                                 (click)="changerTri('sechage')">{{ symboleTri('sechage') }}</button>
                         </th>
-                        <th title="Volume de mousse : Capacité du savon à produire des bulles">
+                        <th class="d-none d-xl-table-cell" title="Volume de mousse : Capacité du savon à produire des bulles">
                             <div>Vol.</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('volMousse')" [class.btn-secondary]="!estTriActif('volMousse')"
                                 (click)="changerTri('volMousse')">{{ symboleTri('volMousse') }}</button>
                         </th>
-                        <th title="Tenue de mousse : Mesure la consistance crémeuse de la mousse">
+                        <th class="d-none d-xl-table-cell" title="Tenue de mousse : Mesure la consistance crémeuse de la mousse">
                             <div>Tenue</div>
                             <button type="button" class="btn btn-sm sort-btn"
                                 [class.btn-success]="estTriActif('tenueMousse')" [class.btn-secondary]="!estTriActif('tenueMousse')"
@@ -259,68 +259,70 @@
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'ins', valeur: item.ins }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.iode }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'iode', valeur: item.iode }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.lavant}}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'lavant', valeur: item.lavant }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.douceur }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'douceur', valeur: item.douceur }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.durete }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'durete', valeur: item.durete }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.solubilite }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'solubilite', valeur: item.solubilite }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.sechage }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'sechage', valeur: item.sechage }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.volMousse }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'volMousse', valeur: item.volMousse }" />
                         </td>
-                        <td
+                        <td class="d-none d-xl-table-cell"
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.tenueMousse }}
                             <ng-container [ngTemplateOutlet]="barreCaracteristique"
                                 [ngTemplateOutletContext]="{ cle: 'tenueMousse', valeur: item.tenueMousse }" />
                         </td>
 
-                        <td class="text-center">
-                            <button (click)="editerIngredient(item)"
-                                class="btn btn-sm btn-outline-warning me-2"                            
-                                data-bs-toggle="modal"
-                                data-bs-target="#ingredientModal"
-                                title="Modifier l'ingrédient">
-                                <i class="bi bi-pencil-fill"></i>
-                            </button>
-                            <button (click)="deleteIngredient(item.id)"
-                                class="btn btn-sm btn-outline-danger"
-                                title="Supprimer l'ingrédient">
-                                <i class="bi bi-trash-fill"></i>
-                            </button>
+                        <td class="text-center align-middle">
+                            <div class="d-flex flex-column flex-xl-row align-items-center justify-content-center gap-1">
+                                <button (click)="editerIngredient(item)"
+                                    class="btn btn-sm btn-outline-warning action-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#ingredientModal"
+                                    title="Modifier l'ingrédient">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button (click)="deleteIngredient(item.id)"
+                                    class="btn btn-sm btn-outline-danger action-button"
+                                    title="Supprimer l'ingrédient">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 }
