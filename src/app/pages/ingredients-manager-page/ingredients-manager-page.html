@@ -145,6 +145,11 @@
                     </div>
                 </div>
             </div>
+            @if (ingredientSelectionne && !caracteristiquesSontValides(ingredientSelectionne)) {
+                <div class="alert alert-danger rounded-0 mb-0 py-2">
+                    Toutes les caractéristiques doivent être comprises entre 0 et 500.
+                </div>
+            }
             <div class="table-responsive">
             <table class="table table-striped table-hover m-0">
                 <thead class="table-success">
@@ -250,75 +255,96 @@
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.sapo"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('sapo')">
-                            <div
-                                class="progress  mt-2 mx-1"
-                                role="progressbar"
-                                style="height: 15px">
-                                <div
-                                    class="progress-bar bg-success"
-                                    [style.width.%]="(ingredientSelectionne!.sapo - 100) * 100 /200 ">
-                                </div>
-                            </div>
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'sapo', valeur: ingredientSelectionne!.sapo }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.ins"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('ins')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'ins', valeur: ingredientSelectionne!.ins }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.iode"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('iode')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'iode', valeur: ingredientSelectionne!.iode }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.lavant"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('lavant')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'lavant', valeur: ingredientSelectionne!.lavant }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.douceur"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('douceur')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'douceur', valeur: ingredientSelectionne!.douceur }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.durete"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('durete')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'durete', valeur: ingredientSelectionne!.durete }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.solubilite"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('solubilite')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'solubilite', valeur: ingredientSelectionne!.solubilite }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.sechage"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('sechage')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'sechage', valeur: ingredientSelectionne!.sechage }" />
                         </td>
                         <td><input
                             type="number"
+                            min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.volMousse"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('volMousse')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'volMousse', valeur: ingredientSelectionne!.volMousse }" />
                         </td>
-                        <td><input type="number"
+                        <td><input type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.tenueMousse"
                             class="form-control form-control-sm"
                             [class.text-danger]="estChampModifie('tenueMousse')">
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'tenueMousse', valeur: ingredientSelectionne!.tenueMousse }" />
                         </td>
                         <td class="text-center">
                             <button
                                 (click)="saveIngredient()"
+                                [disabled]="!caracteristiquesSontValides(ingredientSelectionne)"
                                 class="btn btn-sm btn-success me-1">
                                 <i class="bi bi-check-lg"></i>
                             </button>
@@ -346,41 +372,62 @@
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.sapo }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'sapo', valeur: item.sapo }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.ins }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'ins', valeur: item.ins }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.iode }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'iode', valeur: item.iode }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.lavant}}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'lavant', valeur: item.lavant }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.douceur }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'douceur', valeur: item.douceur }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
-                            {{ item.durete }}</td>
+                            {{ item.durete }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'durete', valeur: item.durete }" />
+                        </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.solubilite }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'solubilite', valeur: item.solubilite }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.sechage }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'sechage', valeur: item.sechage }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.volMousse }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'volMousse', valeur: item.volMousse }" />
                         </td>
                         <td
                             [style.color]="item.estCorpsGras == true ? 'green' : 'purple'">
                             {{ item.tenueMousse }}
+                            <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                                [ngTemplateOutletContext]="{ cle: 'tenueMousse', valeur: item.tenueMousse }" />
                         </td>
 
                         <td class="text-center">
@@ -428,82 +475,93 @@
                     </td>
                     <td>
                         <input
-                             type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.sapo"
                             class="form-control form-control-sm">
-
-                            <div
-                                class="progress  mt-2 mx-1"
-                                role="progressbar"
-                                style="height: 15px">
-                                <div
-                                    class="progress-bar bg-success"
-                                    [style.width.%]="(ingredientSelectionne!.sapo - 100) * 100 /200 ">
-                                </div>
-                            </div>
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'sapo', valeur: ingredientSelectionne!.sapo }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.ins"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'ins', valeur: ingredientSelectionne!.ins }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.iode"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'iode', valeur: ingredientSelectionne!.iode }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.lavant"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'lavant', valeur: ingredientSelectionne!.lavant }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.douceur"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'douceur', valeur: ingredientSelectionne!.douceur }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.durete"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'durete', valeur: ingredientSelectionne!.durete }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.solubilite"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'solubilite', valeur: ingredientSelectionne!.solubilite }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.sechage"
                             class="form-control form-control-sm">
-                        </td>
-                    <td>
-                        <input
-                            type="number"
-                            [(ngModel)]="ingredientSelectionne!.volMousse"
-                            class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'sechage', valeur: ingredientSelectionne!.sechage }" />
                     </td>
                     <td>
                         <input
-                            type="number"
+                            type="number" min="0" max="500"
+                            [(ngModel)]="ingredientSelectionne!.volMousse"
+                            class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'volMousse', valeur: ingredientSelectionne!.volMousse }" />
+                    </td>
+                    <td>
+                        <input
+                            type="number" min="0" max="500"
                             [(ngModel)]="ingredientSelectionne!.tenueMousse"
                             class="form-control form-control-sm">
+                        <ng-container [ngTemplateOutlet]="barreCaracteristique"
+                            [ngTemplateOutletContext]="{ cle: 'tenueMousse', valeur: ingredientSelectionne!.tenueMousse }" />
                     </td>
                     <td class="text-center">
                         <button
                             (click)="saveIngredient()"
+                            [disabled]="!caracteristiquesSontValides(ingredientSelectionne)"
                             class="btn btn-sm btn-success me-1">
                             Créer
                         </button>
                         <button
-                            (click)="ingredientSelectionne = null"
+                            (click)="annulerEdition()"
                             class="btn btn-sm btn-secondary">
                             Annuler
                         </button>
@@ -546,3 +604,19 @@
     </div>
 
 </div>
+
+<ng-template #barreCaracteristique let-cle="cle" let-valeur="valeur">
+    <div
+        class="progress characteristic-progress mt-1"
+        role="progressbar"
+        [attr.aria-label]="'Position dans la plage usuelle'"
+        [attr.aria-valuenow]="valeur"
+        [attr.aria-valuemin]="minimumUsuel($any(cle))"
+        [attr.aria-valuemax]="maximumUsuel($any(cle))"
+        [title]="'Plage usuelle : ' + minimumUsuel($any(cle)) + ' à ' + maximumUsuel($any(cle))">
+        <div
+            class="progress-bar bg-success"
+            [style.width.%]="calculerProgression($any(cle), valeur)">
+        </div>
+    </div>
+</ng-template>

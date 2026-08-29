@@ -59,6 +59,21 @@ export class IngredientsManagerPage implements OnInit {
         { cle: 'tenueMousse', libelle: 'Tenue de mousse' },
     ];
 
+    public readonly plagesUsuelles: Record<CleCaracteristique, { min: number; max: number }> = {
+        sapo: { min: 120, max: 280 },
+        ins: { min: 80, max: 260 },
+        iode: { min: 0, max: 200 },
+        lavant: { min: 0, max: 100 },
+        douceur: { min: 0, max: 100 },
+        durete: { min: 0, max: 100 },
+        solubilite: { min: 0, max: 100 },
+        sechage: { min: 0, max: 100 },
+        volMousse: { min: 0, max: 100 },
+        tenueMousse: { min: 0, max: 100 },
+    };
+
+    public erreurValidation = '';
+
     // Attributs pour l'import CSV :
     public fichierCsvSelectionne: File | null = null;
     public messageImport: string = '';
@@ -94,6 +109,7 @@ export class IngredientsManagerPage implements OnInit {
      * Prépare l'ajout d'un nouvel ingredient (ligne vide)
      */
     creerNouvelIngredient(): void {
+        this.erreurValidation = '';
         this.ingredientInitial = null; // Pas de comparaison en mode création
         this.ingredientSelectionne = {
             id: 0, nom: '',
@@ -115,6 +131,7 @@ export class IngredientsManagerPage implements OnInit {
      * Lance l'édition d'une ligne existante
      */
     editerIngredient(item: Ingredient): void {
+        this.erreurValidation = '';
         // copie de référence = état initial
         this.ingredientInitial = { ...item };
 
@@ -126,6 +143,7 @@ export class IngredientsManagerPage implements OnInit {
     annulerEdition(): void {
         this.ingredientSelectionne = null;
         this.ingredientInitial = null;
+        this.erreurValidation = '';
     }
 
     estChampModifie(cle: keyof Ingredient): boolean {
@@ -143,6 +161,11 @@ export class IngredientsManagerPage implements OnInit {
      */
     saveIngredient(): void {
         if (!this.ingredientSelectionne) return; // Ne rien faire si pas d'ingrédient sélectionné
+        if (!this.caracteristiquesSontValides(this.ingredientSelectionne)) {
+            this.erreurValidation = 'Toutes les caractéristiques doivent être comprises entre 0 et 500.';
+            return;
+        }
+        this.erreurValidation = '';
         const action = this.ingredientSelectionne.id === 0
             // Cas où id = 0 -> On ajoute le nouvel ingredient
             ? this.ingredientService.addIngredient(this.ingredientSelectionne)
@@ -176,6 +199,28 @@ export class IngredientsManagerPage implements OnInit {
     public get plageNumeriqueInvalide(): boolean {
         return this.valeurMin !== null && this.valeurMax !== null &&
             this.valeurMin > this.valeurMax;
+    }
+
+    public calculerProgression(cle: CleCaracteristique, valeur: number): number {
+        const plage = this.plagesUsuelles[cle];
+        const progression = ((valeur - plage.min) / (plage.max - plage.min)) * 100;
+        return Math.min(100, Math.max(0, progression));
+    }
+
+    public minimumUsuel(cle: CleCaracteristique): number {
+        return this.plagesUsuelles[cle].min;
+    }
+
+    public maximumUsuel(cle: CleCaracteristique): number {
+        return this.plagesUsuelles[cle].max;
+    }
+
+    public caracteristiquesSontValides(ingredient: Ingredient | null): boolean {
+        if (!ingredient) return false;
+        return this.caracteristiquesFiltrables.every(({ cle }) => {
+            const valeur = ingredient[cle];
+            return Number.isFinite(valeur) && valeur >= 0 && valeur <= 500;
+        });
     }
 
     public get ingredientsFiltresTries(): Ingredient[] {

@@ -57,6 +57,17 @@ th {
     white-space: nowrap;
 }
 
+.characteristic-progress {
+    min-width: 3.5rem;
+    height: 0.4rem;
+    background-color: #d8d8d8;
+}
+
+input[type='number']:invalid {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
+}
+
 .page-link {
     color: var(--purple-charter);
 }
