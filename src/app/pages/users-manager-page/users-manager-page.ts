@@ -15,10 +15,13 @@ type DirectionTri = 'asc' | 'desc';
 })
 export class UsersManagerPage implements OnInit {
     @ViewChild('fermetureModal') private boutonFermetureModal?: ElementRef<HTMLButtonElement>;
+    @ViewChild('fermetureModalSuppression')
+    private boutonFermetureModalSuppression?: ElementRef<HTMLButtonElement>;
 
     public utilisateurs: Utilisateur[] = [];
     public roles: Role[] = [];
     public utilisateurSelectionne: UtilisateurFormDTO | null = null;
+    public utilisateurASupprimer: Utilisateur | null = null;
     public confirmationMotDePasse = '';
     public rechercheUtilisateur = '';
     public afficherAdministrateurs = true;
@@ -34,6 +37,8 @@ export class UsersManagerPage implements OnInit {
     public messageSucces = '';
     public erreurChargement = '';
     public erreurEnregistrement = '';
+    public erreurSuppression = '';
+    public suppressionEnCours = false;
 
     constructor(private utilisateurService: UtilisateurService) {}
 
@@ -234,17 +239,36 @@ export class UsersManagerPage implements OnInit {
         });
     }
 
-    public supprimerUtilisateur(utilisateur: Utilisateur): void {
-        if (!confirm(`Supprimer l'utilisateur « ${utilisateur.username} » ?`)) return;
+    public preparerSuppression(utilisateur: Utilisateur): void {
+        this.utilisateurASupprimer = utilisateur;
+        this.erreurSuppression = '';
+        this.suppressionEnCours = false;
+    }
+
+    public annulerSuppression(): void {
+        this.utilisateurASupprimer = null;
+        this.erreurSuppression = '';
+        this.suppressionEnCours = false;
+    }
+
+    public confirmerSuppression(): void {
+        if (!this.utilisateurASupprimer || this.suppressionEnCours) return;
+        const utilisateur = this.utilisateurASupprimer;
         this.messageSucces = '';
+        this.erreurSuppression = '';
+        this.suppressionEnCours = true;
         this.utilisateurService.deleteUtilisateur(utilisateur.id).subscribe({
             next: () => {
+                this.suppressionEnCours = false;
+                this.boutonFermetureModalSuppression?.nativeElement.click();
+                this.utilisateurASupprimer = null;
                 this.messageSucces = 'Utilisateur supprimé avec succès.';
                 this.chargerUtilisateurs();
             },
             error: (err) => {
                 console.error("Erreur lors de la suppression de l'utilisateur :", err);
-                this.erreurChargement = "La suppression de l'utilisateur a échoué.";
+                this.suppressionEnCours = false;
+                this.erreurSuppression = "La suppression de l'utilisateur a échoué.";
             },
         });
     }
