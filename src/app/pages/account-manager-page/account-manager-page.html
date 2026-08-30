@@ -1,27 +1,133 @@
 <div class="container">
-    <div class="card">
-        <div class="card-header bg-success-subtle">
-            <h4 class="card-title">Mes informations</h4>
+    @if (erreurChargement) {
+        <div class="alert alert-danger">
+            {{ erreurChargement }}
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" (click)="chargerProfil()">
+                Réessayer
+            </button>
         </div>
-        <div class="card-body">
-            <ul>
-                <li><b>Identifiant : </b>{{ authService.getUserFullInfo()?.username }}</li>
-                <li> <b>Rôle : </b>            
-                    @if (authService.getUserFullInfo()?.roles == "ROLE_UTILISATEUR") {
-                        <span class="badge rounded-pill text-bg-success">Utilisateur</span>
-                    }
-                    @if (authService.getUserFullInfo()?.roles == "ROLE_ADMIN") {
-                        <span class="badge rounded-pill text-bg-warning">Administrateur</span>
-                    }
-                </li>
-                <li>
-                    <b>Date d'expiration du token JWT : 
-                    </b>{{ authService.getUserFullInfo()?.expiration | date:'HH:mm:ss le dd/MM/yyyy'  }}
-                </li>
-            </ul>
-        </div>
-        <div class="card-footer bg-success-subtle">
+    }
 
+    <div class="card shadow">
+        <div class="card-header text-light">
+            <i class="bi bi-person-circle me-2"></i>Mon compte
+        </div>
+
+        <div class="card-body">
+            @if (chargementEnCours) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-success" role="status"></div>
+                    <p class="mt-2 mb-0">Chargement de vos informations...</p>
+                </div>
+            } @else if (profil) {
+                <div class="row g-4 account-information">
+                    <div class="col-md-6">
+                        <div class="information-label"><i class="bi bi-person-fill me-2"></i>Identifiant</div>
+                        <div class="information-value">{{ profil.username }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="information-label"><i class="bi bi-envelope-fill me-2"></i>Adresse e-mail</div>
+                        <div class="information-value">{{ profil.email }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="information-label"><i class="bi bi-shield-lock-fill me-2"></i>Rôle</div>
+                        <div class="information-value">
+                            @if (profil.role.nomLogic === 'ROLE_ADMIN') {
+                                <span class="badge rounded-pill text-bg-warning">Administrateur</span>
+                            } @else {
+                                <span class="badge rounded-pill text-bg-success">Utilisateur</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="information-label"><i class="bi bi-clock-fill me-2"></i>Expiration de la session</div>
+                        <div class="information-value">
+                            {{ authService.getUserFullInfo()?.expiration | date:'dd/MM/yyyy à HH:mm:ss' }}
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <button type="button" class="btn btn-sm" data-bs-toggle="modal"
+                data-bs-target="#profilModal" [disabled]="!profil"
+                (click)="ouvrirModification()">
+                <i class="bi bi-pencil-fill me-1"></i>Modifier mes informations
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="profilModal" tabindex="-1"
+        aria-labelledby="profilModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                @if (profilEnEdition) {
+                    <form (ngSubmit)="enregistrerProfil()">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profilModalLabel">Modifier mes informations</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fermer" (click)="annulerModification()"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="alert alert-info small">
+                                Après l’enregistrement, vous devrez vous reconnecter afin de renouveler votre session.
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="profilUsername" class="form-label">Identifiant</label>
+                                    <input id="profilUsername" name="profilUsername" type="text"
+                                        class="form-control" required
+                                        [(ngModel)]="profilEnEdition.username">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profilEmail" class="form-label">Adresse e-mail</label>
+                                    <input id="profilEmail" name="profilEmail" type="email"
+                                        class="form-control" required
+                                        [(ngModel)]="profilEnEdition.email">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profilPassword" class="form-label">Nouveau mot de passe</label>
+                                    <input id="profilPassword" name="profilPassword" type="password"
+                                        class="form-control" autocomplete="new-password"
+                                        placeholder="Laisser vide pour le conserver"
+                                        [(ngModel)]="profilEnEdition.nouveauMotDePasse">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="profilPasswordConfirm" class="form-label">Confirmer le mot de passe</label>
+                                    <input id="profilPasswordConfirm" name="profilPasswordConfirm" type="password"
+                                        class="form-control" autocomplete="new-password"
+                                        [(ngModel)]="confirmationMotDePasse">
+                                </div>
+                            </div>
+
+                            @if ((profilEnEdition.nouveauMotDePasse ?? '') !== confirmationMotDePasse) {
+                                <div class="alert alert-warning mt-3 mb-0">
+                                    Les mots de passe sont différents.
+                                </div>
+                            }
+                            @if (erreurEnregistrement) {
+                                <div class="alert alert-danger mt-3 mb-0">{{ erreurEnregistrement }}</div>
+                            }
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                (click)="annulerModification()">Annuler</button>
+                            <button type="submit" class="btn btn-success"
+                                [disabled]="enregistrementEnCours || !formulaireValide">
+                                @if (enregistrementEnCours) {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>Enregistrement...
+                                } @else {
+                                    Enregistrer les modifications
+                                }
+                            </button>
+                        </div>
+                    </form>
+                }
+            </div>
         </div>
     </div>
 </div>

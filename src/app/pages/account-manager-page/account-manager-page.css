@@ -1,0 +1,48 @@
+.card {
+    border-color: var(--green-charter);
+}
+
+.card-header,
+.card-footer,
+.modal-header,
+.modal-footer {
+    background-color: var(--green-charter);
+}
+
+.card-header {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.card-footer .btn {
+    color: white;
+    background-color: var(--purple-charter);
+}
+
+.account-information {
+    padding: 0.75rem;
+}
+
+.information-label {
+    color: var(--brown-charter);
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.information-value {
+    min-height: 2.5rem;
+    padding: 0.6rem 0.75rem;
+    border-left: 4px solid var(--green-charter);
+    border-radius: 0.25rem;
+    background-color: var(--bs-tertiary-bg);
+    overflow-wrap: anywhere;
+}
+
+.modal-header {
+    color: white;
+}
+
+.modal-body {
+    background-color: var(--bs-tertiary-bg);
+}

@@ -12,6 +12,11 @@
                             {{ errorMessage }} 
                         </div> 
                     } 
+                    @if (infoMessage) {
+                        <div class="alert alert-success p-2 small">
+                            {{ infoMessage }}
+                        </div>
+                    }
  
                     <form (ngSubmit)="onSubmit()"> 
                         <div class="mb-3"> 

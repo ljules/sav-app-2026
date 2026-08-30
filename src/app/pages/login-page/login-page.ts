@@ -16,11 +16,14 @@ export class LoginPage {
 
     // Gestion de l'affichage de l'erreur :
     public errorMessage: string | null = null;
+    public infoMessage: string | null = null;
 
     constructor(
         private authService: AuthService,
         private router: Router
-    ) {}
+    ) {
+        this.infoMessage = this.authService.consumeAuthMessage();
+    }
 
     onSubmit(): void {
         

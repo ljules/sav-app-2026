@@ -25,10 +25,19 @@ export class AuthService {
             })
         )
     }
-    logout(): void {
+    logout(message?: string): void {
         localStorage.removeItem(this.TOKEN_KEY);
+        if (message) {
+            sessionStorage.setItem('savapp_auth_message', message);
+        }
         //this.isAuthenticated.set(false); A COMMENTER
         this.router.navigate(['/login']); // AJOUTER LE REDIRECTION
+    }
+
+    consumeAuthMessage(): string | null {
+        const message = sessionStorage.getItem('savapp_auth_message');
+        sessionStorage.removeItem('savapp_auth_message');
+        return message;
     }
     getToken(): string | null {
         return localStorage.getItem(this.TOKEN_KEY);
