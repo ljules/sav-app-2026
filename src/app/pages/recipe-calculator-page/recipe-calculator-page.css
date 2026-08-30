@@ -12,6 +12,28 @@
     margin-bottom: 0;
 }
 
+.step-number {
+    display: inline-flex;
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    background-color: var(--purple-charter);
+    font-weight: bold;
+    line-height: 1;
+}
+
+.ingredient-count-badge {
+    color: white;
+    background-color: var(--purple-charter);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
 .card-footer {
     border-top-color: var(--green-charter);
 }
