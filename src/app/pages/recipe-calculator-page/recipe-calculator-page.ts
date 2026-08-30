@@ -6,6 +6,7 @@ import { LigneIngredient, Recette } from '../../models/recette.model';
 import { LigneIngredientDTO, RecetteFormDTO } from '../../models/dto.model';
 import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-recipe-calculator-page',
@@ -51,12 +52,28 @@ export class RecipeCalculatorPage implements OnInit {
     // Injection des services par le constructeur :
     constructor(
         private ingredientService: IngredientService,
-        private recetteService: RecetteService
+        private recetteService: RecetteService,
+        public authService: AuthService,
     ) {}
 
     // Initialisation : Récupération de la liste des ingrédients via l'API :
     ngOnInit(): void {
         this.ingredientService.getIngredients().subscribe( data => this.ingredientsDispo = data);
+    }
+
+    public mettreAJourSurgraissage(valeur: number | null): void {
+        this.nouvelleRecetteDTO.surgraissage = Math.max(0, Number(valeur) || 0);
+    }
+
+    public mettreAJourConcentration(valeur: number | null): void {
+        this.nouvelleRecetteDTO.concentrationAlcalin = Math.max(0, Number(valeur) || 0);
+    }
+
+    public choisirAlcalin(avecSoude: boolean): void {
+        this.nouvelleRecetteDTO.avecSoude = avecSoude;
+        if (avecSoude) {
+            this.nouvelleRecetteDTO.concentrationAlcalin = 90;
+        }
     }
 
 

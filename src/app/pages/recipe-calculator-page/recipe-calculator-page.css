@@ -1,0 +1,33 @@
+.card {
+    border-color: var(--green-charter);
+}
+
+.card-header {
+    color: white;
+    background-color: var(--green-charter);
+    font-weight: bold;
+}
+
+.card-title {
+    margin-bottom: 0;
+}
+
+.card-footer {
+    border-top-color: var(--green-charter);
+}
+
+.form-label[title],
+.form-label[title] .bi-info-circle {
+    cursor: help;
+}
+
+#surgraissage.is-invalid {
+    color: var(--bs-danger-text-emphasis);
+    background-color: var(--bs-danger-bg-subtle);
+}
+
+@media (max-width: 991.98px) {
+    .btn-group[aria-label="Choix de l'alcali"] {
+        max-width: 30rem;
+    }
+}

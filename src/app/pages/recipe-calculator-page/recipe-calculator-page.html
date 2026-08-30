@@ -5,58 +5,84 @@
  
 
 <!-- TITRE & DESCRIPTION DE LA RECETTE  -->
+@if (authService.isAuthenticated()) {
 <div class="card my-4">
-    <div class="card-header bg-success-subtle">
+    <div class="card-header">
         <h5 class="card-title">Titre & Description de la recette</h5>
     </div>
 
     <div class="card-body">
-        <!-- Titre -->
-        <div class="mb-3">
-            <label for="titre" class="form-label">Titre :</label>
-            <input type="text" id="titre" class="form-control"
-                name="titre" [(ngModel)]="nouvelleRecetteDTO.titre">
-        </div>
-        
-        <!-- Description -->
-        <div class="mb-3">
-            <label for="description" class="form-label">Description :</label>
-            <textarea id="description" class="form-control"
-                    name="description" [(ngModel)]="nouvelleRecetteDTO.description"></textarea>
+        <div class="row g-3 align-items-start">
+            <div class="col-md-5">
+                <label for="titre" class="form-label">Titre :</label>
+                <input type="text" id="titre" class="form-control"
+                    name="titre" [(ngModel)]="nouvelleRecetteDTO.titre">
+            </div>
+            <div class="col-md-7">
+                <label for="description" class="form-label">Description :</label>
+                <textarea id="description" class="form-control"
+                    name="description" rows="2"
+                    [(ngModel)]="nouvelleRecetteDTO.description"></textarea>
+            </div>
         </div>
     </div>
 </div>
+}
 
 
 <!-- CHOIX & DOSAGE ALCALI -->
 <div class="card my-4">
-    <div class="card-header bg-success-subtle">
+    <div class="card-header">
         <h5 class="card-title">Choix & dosage de l'alcali</h5>
     </div>
 
     <div class="card-body">
-        <!-- Surgraissage -->
-        <div class="mb-3">
-            <label for="surgraissage" class="form-label">Surgraissage (%) :</label>
-            <input type="number" id="surgraissage" class="form-control"
-                name="surgraissage" [(ngModel)]="nouvelleRecetteDTO.surgraissage">
-        </div>
-        
-        <!-- Avec Soude -->
-        <div class="form-check mb-3">
-            <input type="checkbox" id="avecSoude" class="form-check-input"
-                name="avecSoude"
-                [(ngModel)]="nouvelleRecetteDTO.avecSoude"
-                (ngModelChange)="nouvelleRecetteDTO.avecSoude ? nouvelleRecetteDTO.concentrationAlcalin = 90 : nouvelleRecetteDTO.concentrationAlcalin = nouvelleRecetteDTO.concentrationAlcalin">
-            <label for="avecSoude" class="form-check-label">Avec Soude</label>
-        </div>
-        Etat soude : {{ nouvelleRecetteDTO.avecSoude }}
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-4">
+                <label for="surgraissage" class="form-label fw-bold"
+                    title="Un surgraissage minimal de 5 % est recommandé pour limiter le risque d'un savon trop caustique.">
+                    Surgraissage (%)
+                    <i class="bi bi-info-circle ms-1" aria-hidden="true"></i>
+                </label>
+                <input type="number" id="surgraissage" class="form-control"
+                    name="surgraissage" min="0"
+                    [class.is-invalid]="nouvelleRecetteDTO.surgraissage < 5"
+                    [ngModel]="nouvelleRecetteDTO.surgraissage"
+                    (ngModelChange)="mettreAJourSurgraissage($event)"
+                    title="Valeur recommandée : 5 % minimum">
+                @if (nouvelleRecetteDTO.surgraissage < 5) {
+                    <div class="alert alert-warning py-2 px-3 mt-2 mb-0 small">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        Un surgraissage inférieur à 5 % augmente le risque d'obtenir un savon trop caustique et irritant.
+                    </div>
+                }
+            </div>
 
-        <!-- Concentration Alcalin -->
-        <div class="mb-3">
-            <label for="concentration" class="form-label">Concentration Alcalin (%) :</label>
-            <input type="number" id="concentration" class="form-control"
-                name="concentration" [(ngModel)]="nouvelleRecetteDTO.concentrationAlcalin">
+            <div class="col-lg-4">
+                <div class="form-label fw-bold">Type d'alcali</div>
+                <div class="btn-group w-100" role="group" aria-label="Choix de l'alcali">
+                    <input type="radio" class="btn-check" name="typeAlcali" id="alcaliSoude"
+                        [checked]="nouvelleRecetteDTO.avecSoude"
+                        (change)="choisirAlcalin(true)">
+                    <label class="btn btn-outline-success" for="alcaliSoude">Soude (NaOH)</label>
+
+                    <input type="radio" class="btn-check" name="typeAlcali" id="alcaliPotasse"
+                        [checked]="!nouvelleRecetteDTO.avecSoude"
+                        (change)="choisirAlcalin(false)">
+                    <label class="btn btn-outline-success" for="alcaliPotasse">Potasse (KOH)</label>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <label for="concentration" class="form-label fw-bold">Concentration de l'alcali (%)</label>
+                <input type="number" id="concentration" class="form-control"
+                    name="concentration" min="0"
+                    [ngModel]="nouvelleRecetteDTO.concentrationAlcalin"
+                    (ngModelChange)="mettreAJourConcentration($event)">
+                @if (nouvelleRecetteDTO.avecSoude) {
+                    <div class="form-text">La sélection de la soude initialise la concentration à 90 %.</div>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -66,7 +92,7 @@
 <!-- CHOIX ET AJOUT DES INGREDIENTS DANS LA RECETTE -->
 <div class="card">
     <!-- Titre : -->
-    <div class="card-header bg-success-subtle">
+    <div class="card-header">
         <h5 class="card-title">Choisir l'ingrédient</h5>        
     </div>
     
@@ -92,7 +118,7 @@
 
 <!-- DOSAGE DES INGREDIENTS DE LA RECETTE -->
 <div class="card my-4">
-    <div class="card-header bg-success-subtle">
+    <div class="card-header">
         <h5 class=card-title>Dosage des ingrédients</h5>
     </div>
     <div class="card-body">
@@ -166,7 +192,7 @@
 <!-- PRESENTATION RECETTE CALCULEE : -->
 @if(recetteAffichee) {
 <div class="card my-5 shadow-sm">
-    <div class="card-header bg-success text-white">
+    <div class="card-header">
         <h5 class="card-title mb-0">Analyse de la saponification</h5>
     </div>
     <div class="card-body">
