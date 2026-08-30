@@ -28,16 +28,15 @@
 
                 <!-- Contenu du menu dropdown -->
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a  class="dropdown-item"
-                            routerLink="/login">Se connecter</a></li>
-                    <li><a  class="dropdown-item"
-                            routerLink="/account">Mon compte</a></li>
-                    <li><a  class="dropdown-item"
-                            routerLink="/subscribe">Créer un compte</a></li>
-
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a  class="dropdown-item text-danger"
-                            routerLink="#" (click)="authService.logout()">Déconnexion</a></li>
+                    @if (authService.isAuthenticated()) {
+                        <li><a class="dropdown-item" routerLink="/account">Mon compte</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger"
+                                routerLink="#" (click)="authService.logout()">Déconnexion</a></li>
+                    } @else {
+                        <li><a class="dropdown-item" routerLink="/login">Se connecter</a></li>
+                        <li><a class="dropdown-item" routerLink="/subscribe">Créer un compte</a></li>
+                    }
                 </ul>
 
             </div>           
