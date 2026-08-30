@@ -34,6 +34,19 @@
     font-weight: 600;
 }
 
+.dosage-mode .btn {
+    min-width: 7rem;
+}
+
+.total-mass-input {
+    width: 11rem;
+}
+
+input[readonly] {
+    cursor: not-allowed;
+    background-color: var(--bs-secondary-bg);
+}
+
 .card-footer {
     border-top-color: var(--green-charter);
 }

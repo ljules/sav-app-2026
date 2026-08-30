@@ -57,4 +57,35 @@ describe('RecipeCalculatorPage', () => {
         expect(fixture.nativeElement.querySelector('#titre')).toBeNull();
         expect(fixture.nativeElement.querySelector('#description')).toBeNull();
     });
+
+    it('calcule les pourcentages en mode masse', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 0, ins: 0, sapo: 0, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        component.selectionIngredients = [
+            { ingredient, quantite: 300, pourcentage: 0 },
+            { ingredient: { ...ingredient, id: 2 }, quantite: 100, pourcentage: 0 },
+        ];
+        component.recalculerPourcentages();
+        expect(component.masseTotale).toBe(400);
+        expect(component.selectionIngredients.map((ligne) => ligne.pourcentage)).toEqual([75, 25]);
+    });
+
+    it('calcule les masses en mode pourcentage', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 0, ins: 0, sapo: 0, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        component.selectionIngredients = [
+            { ingredient, quantite: 0, pourcentage: 60 },
+            { ingredient: { ...ingredient, id: 2 }, quantite: 0, pourcentage: 40 },
+        ];
+        component.modeDosage = 'pourcentage';
+        component.mettreAJourMasseTotale(500);
+        expect(component.selectionIngredients.map((ligne) => ligne.quantite)).toEqual([300, 200]);
+        expect(component.pourcentageValide).toBeTrue();
+    });
 });

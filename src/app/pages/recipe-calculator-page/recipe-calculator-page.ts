@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './recipe-calculator-page.css',
 })
 export class RecipeCalculatorPage implements OnInit {
+    public modeDosage: 'masse' | 'pourcentage' = 'masse';
 
     // Liste des ingrédients disponibles :
     public ingredientsDispo: Ingredient[] = [];
@@ -114,10 +115,52 @@ export class RecipeCalculatorPage implements OnInit {
         this.masseTotale = this.selectionIngredients.reduce((acc, ligne) => acc + ligne.quantite, 0); // Somme des masse des ingrédients de la recette
         
         this.selectionIngredients.forEach(ligne => {
-            ligne.pourcentage = this.masseTotale > 0 ? + (ligne.quantite / this.masseTotale * 100).toFixed(0) : 0; // Calcul les pourcentages des ingrédients
+            ligne.pourcentage = this.masseTotale > 0
+                ? +(ligne.quantite / this.masseTotale * 100).toFixed(2)
+                : 0;
         });
-        
-    } 
+    }
+
+    public changerModeDosage(mode: 'masse' | 'pourcentage'): void {
+        this.modeDosage = mode;
+        if (mode === 'masse') {
+            this.recalculerQuantites();
+            this.recalculerPourcentages();
+        } else {
+            this.recalculerPourcentages();
+        }
+    }
+
+    public mettreAJourPourcentage(ligne: LigneIngredient, valeur: number | null): void {
+        ligne.pourcentage = Math.min(100, Math.max(0, Number(valeur) || 0));
+        this.recalculerQuantites();
+    }
+
+    public mettreAJourMasseTotale(valeur: number | null): void {
+        this.masseTotale = Math.max(0, Number(valeur) || 0);
+        this.recalculerQuantites();
+    }
+
+    private recalculerQuantites(): void {
+        this.selectionIngredients.forEach((ligne) => {
+            ligne.quantite = +(this.masseTotale * ligne.pourcentage / 100).toFixed(2);
+        });
+    }
+
+    public get totalPourcentage(): number {
+        return +this.selectionIngredients
+            .reduce((total, ligne) => total + ligne.pourcentage, 0)
+            .toFixed(2);
+    }
+
+    public get pourcentageValide(): boolean {
+        return Math.abs(this.totalPourcentage - 100) < 0.01;
+    }
+
+    public get dosageValide(): boolean {
+        return this.selectionIngredients.length > 0 && this.masseTotale > 0 &&
+            (this.modeDosage === 'masse' || this.pourcentageValide);
+    }
 
 
     /**
@@ -126,6 +169,11 @@ export class RecipeCalculatorPage implements OnInit {
      */
     supprimerIngredient(index: number): void {
         this.selectionIngredients.splice(index, 1);
+        if (this.modeDosage === 'masse') {
+            this.recalculerPourcentages();
+        } else {
+            this.recalculerQuantites();
+        }
       }
 
     
