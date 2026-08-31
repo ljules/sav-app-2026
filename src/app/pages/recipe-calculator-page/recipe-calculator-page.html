@@ -1,6 +1,8 @@
-<!-- TITRE & DESCRIPTION DE LA RECETTE  -->
+<div class="row g-4 my-4 align-items-stretch">
+<!-- TITRE & DESCRIPTION DE LA RECETTE -->
 @if (authService.isAuthenticated()) {
-<div class="card my-4">
+<div class="col-12 col-lg-6">
+<div class="card h-100 recipe-identity-card">
     <div class="card-header">
         <h5 class="card-title d-flex align-items-center gap-2">
             <span class="step-number">0</span>
@@ -8,14 +10,14 @@
         </h5>
     </div>
 
-    <div class="card-body">
-        <div class="row g-3 align-items-start">
-            <div class="col-md-5">
+    <div class="card-body d-flex flex-column">
+        <div class="d-flex flex-column gap-3 flex-grow-1">
+            <div>
                 <label for="titre" class="form-label fw-bold">Titre :</label>
                 <input type="text" id="titre" class="form-control"
                     name="titre" [(ngModel)]="nouvelleRecetteDTO.titre">
             </div>
-            <div class="col-md-7">
+            <div class="description-field d-flex flex-column flex-grow-1">
                 <label for="description" class="form-label fw-bold">Description :</label>
                 <textarea id="description" class="form-control"
                     name="description" rows="2"
@@ -24,11 +26,13 @@
         </div>
     </div>
 </div>
+</div>
 }
 
 
 <!-- CHOIX & DOSAGE ALCALI -->
-<div class="card my-4">
+<div class="col-12" [class.col-lg-6]="authService.isAuthenticated()">
+<div class="card h-100">
     <div class="card-header">
         <h5 class="card-title d-flex align-items-center gap-2">
             <span class="step-number">1</span>
@@ -38,7 +42,8 @@
 
     <div class="card-body">
         <div class="row g-4 align-items-start">
-            <div class="col-lg-4">
+            <div [class.col-lg-4]="!authService.isAuthenticated()"
+                [class.col-12]="authService.isAuthenticated()">
                 <label for="surgraissage" class="form-label fw-bold"
                     title="Un surgraissage minimal de 5 % est recommandé pour limiter le risque d'un savon trop caustique.">
                     Surgraissage (%)
@@ -58,7 +63,8 @@
                 }
             </div>
 
-            <div class="col-lg-4">
+            <div [class.col-lg-4]="!authService.isAuthenticated()"
+                [class.col-12]="authService.isAuthenticated()">
                 <div class="form-label fw-bold">Type d'alcali</div>
                 <div class="btn-group w-100" role="group" aria-label="Choix de l'alcali">
                     <input type="radio" class="btn-check" name="typeAlcali" id="alcaliSoude"
@@ -73,7 +79,8 @@
                 </div>
             </div>
 
-            <div class="col-lg-4">
+            <div [class.col-lg-4]="!authService.isAuthenticated()"
+                [class.col-12]="authService.isAuthenticated()">
                 <label for="concentration" class="form-label fw-bold">Concentration de l'alcali (%)</label>
                 <input type="number" id="concentration" class="form-control"
                     name="concentration" min="0" max="100"
@@ -85,6 +92,8 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 
@@ -224,6 +233,57 @@
     <button class="btn btn-success" (click)="onSubmit()" [disabled]="!dosageValide">
         Soumettre la recette
     </button>
+    <button #ouvertureModalEnvoi type="button" class="d-none"
+        data-bs-toggle="modal" data-bs-target="#modalResultatEnvoi"
+        aria-hidden="true" tabindex="-1"></button>
+</div>
+
+<!-- CONFIRMATION DE L'ENVOI AU BACKEND -->
+<div class="modal fade" id="modalResultatEnvoi" tabindex="-1"
+    aria-labelledby="modalResultatEnvoiTitre" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            @if (resultatEnvoi) {
+                <div class="modal-header text-white"
+                    [class.bg-success]="resultatEnvoi === 'succes'"
+                    [class.bg-danger]="resultatEnvoi === 'erreur'">
+                    <h5 class="modal-title" id="modalResultatEnvoiTitre">
+                        @if (resultatEnvoi === 'succes') {
+                            <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
+                            Recette enregistrée
+                        } @else {
+                            <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+                            Échec de l'enregistrement
+                        }
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Fermer"
+                        (click)="fermerModalEnvoi()"></button>
+                </div>
+                <div class="modal-body">
+                    @if (resultatEnvoi === 'succes') {
+                        <p class="mb-0">
+                            La recette a été calculée et enregistrée avec succès.
+                            Les valeurs affichées ont été synchronisées avec celles retournées par le serveur.
+                        </p>
+                    } @else {
+                        <div class="alert alert-danger mb-0" role="alert">
+                            La recette n'a pas pu être enregistrée. Vérifiez les données saisies
+                            et la disponibilité de l'API, puis réessayez.
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn"
+                        [class.btn-success]="resultatEnvoi === 'succes'"
+                        [class.btn-danger]="resultatEnvoi === 'erreur'"
+                        data-bs-dismiss="modal" (click)="fermerModalEnvoi()">
+                        Fermer
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
 </div>
 
 
@@ -293,4 +353,3 @@
 
 </div>
 }
-

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { Recette } from '../../models/recette.model';
 import { AuthService } from '../../services/auth.service';
 import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
@@ -9,13 +10,14 @@ describe('RecipeCalculatorPage', () => {
     let component: RecipeCalculatorPage;
     let fixture: ComponentFixture<RecipeCalculatorPage>;
     let authService: jasmine.SpyObj<AuthService>;
+    let recetteService: jasmine.SpyObj<RecetteService>;
 
     beforeEach(async () => {
         authService = jasmine.createSpyObj<AuthService>('AuthService', ['isAuthenticated']);
         authService.isAuthenticated.and.returnValue(true);
         const ingredientService = jasmine.createSpyObj<IngredientService>('IngredientService', ['getIngredients']);
         ingredientService.getIngredients.and.returnValue(of([]));
-        const recetteService = jasmine.createSpyObj<RecetteService>('RecetteService', ['createRecette']);
+        recetteService = jasmine.createSpyObj<RecetteService>('RecetteService', ['createRecette']);
 
         await TestBed.configureTestingModule({
             imports: [RecipeCalculatorPage],
@@ -47,6 +49,12 @@ describe('RecipeCalculatorPage', () => {
 
     it('initialise la concentration à 90 lors du choix de la soude', () => {
         component.choisirAlcalin(true);
+        expect(component.nouvelleRecetteDTO.avecSoude).toBeTrue();
+        expect(component.nouvelleRecetteDTO.concentrationAlcalin).toBe(90);
+    });
+
+    it('initialise une nouvelle recette avec les valeurs recommandées', () => {
+        expect(component.nouvelleRecetteDTO.surgraissage).toBe(5);
         expect(component.nouvelleRecetteDTO.avecSoude).toBeTrue();
         expect(component.nouvelleRecetteDTO.concentrationAlcalin).toBe(90);
     });
@@ -101,5 +109,33 @@ describe('RecipeCalculatorPage', () => {
         const iode = component.recetteAffichee?.resultats.find(
             (resultat) => resultat.caracteristique.nom === 'Iode');
         expect(iode?.score).toBeCloseTo(78, 8);
+    });
+
+    it('affiche le modal de succès après la réponse officielle du backend', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 0, ins: 0, sapo: 0, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        const recette: Recette = {
+            id: 10, titre: 'Test', description: '', surgraissage: 5,
+            avecSoude: true, concentrationAlcalin: 30, qteAlcalin: 10,
+            apportEnEau: 7, ligneIngredients: [{ ingredient, quantite: 100, pourcentage: 100 }],
+            resultats: [], dateCreation: new Date(),
+        };
+        recetteService.createRecette.and.returnValue(of(recette));
+
+        component.onSubmit();
+
+        expect(component.resultatEnvoi).toBe('succes');
+        expect(component.recetteAffichee).toBe(recette);
+    });
+
+    it('affiche le modal d erreur lorsque l API refuse la recette', () => {
+        recetteService.createRecette.and.returnValue(throwError(() => new Error('API indisponible')));
+
+        component.onSubmit();
+
+        expect(component.resultatEnvoi).toBe('erreur');
     });
 });

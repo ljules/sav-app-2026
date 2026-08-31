@@ -61,6 +61,14 @@ input[readonly] {
     background-color: var(--bs-danger-bg-subtle);
 }
 
+@media (min-width: 992px) {
+    .recipe-identity-card .description-field textarea {
+        flex-grow: 1;
+        min-height: 6rem;
+        resize: vertical;
+    }
+}
+
 @media (max-width: 991.98px) {
     .btn-group[aria-label="Choix de l'alcali"] {
         max-width: 30rem;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Ingredient } from '../../models/ingredient.model';
@@ -16,7 +16,11 @@ import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recet
   styleUrl: './recipe-calculator-page.css',
 })
 export class RecipeCalculatorPage implements OnInit {
+    @ViewChild('ouvertureModalEnvoi')
+    private boutonOuvertureModalEnvoi?: ElementRef<HTMLButtonElement>;
+
     public modeDosage: 'masse' | 'pourcentage' = 'masse';
+    public resultatEnvoi: 'succes' | 'erreur' | null = null;
 
     // Liste des ingrédients disponibles :
     public ingredientsDispo: Ingredient[] = [];
@@ -31,9 +35,9 @@ export class RecipeCalculatorPage implements OnInit {
     id: null,
     titre: '',
     description: '',
-    surgraissage: 0,
-    avecSoude: false,
-    concentrationAlcalin: 0,  // Rajouter le n à la fin
+    surgraissage: 5,
+    avecSoude: true,
+    concentrationAlcalin: 90,
     ligneIngredients: []
     }
 
@@ -258,14 +262,23 @@ export class RecipeCalculatorPage implements OnInit {
                 };
                 this.masseTotale = recette.ligneIngredients.reduce(
                     (total, ligne) => total + (Number(ligne.quantite) || 0), 0);
-                alert("Recette calculée et enregistrée avec succès !");
+                this.ouvrirModalEnvoi('succes');
                 //console.log('Recette reçue du backend :', recette);
 
             },
             error: (err) => {
-                alert("Erreur lors du calcul. Vérifier vos données.");
+                this.ouvrirModalEnvoi('erreur');
                 //console.error('Erreur lors de la création de la recette :', err);                
             }
         });
-    }   
+    }
+
+    public fermerModalEnvoi(): void {
+        this.resultatEnvoi = null;
+    }
+
+    private ouvrirModalEnvoi(resultat: 'succes' | 'erreur'): void {
+        this.resultatEnvoi = resultat;
+        this.boutonOuvertureModalEnvoi?.nativeElement.click();
+    }
 }
