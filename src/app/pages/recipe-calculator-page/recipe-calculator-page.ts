@@ -7,6 +7,7 @@ import { LigneIngredientDTO, RecetteFormDTO } from '../../models/dto.model';
 import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
 import { AuthService } from '../../services/auth.service';
+import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recette.service';
 
 @Component({
   selector: 'app-recipe-calculator-page',
@@ -54,20 +55,24 @@ export class RecipeCalculatorPage implements OnInit {
     constructor(
         private ingredientService: IngredientService,
         private recetteService: RecetteService,
+        private calculRecetteService: CalculRecetteService,
         public authService: AuthService,
     ) {}
 
     // Initialisation : Récupération de la liste des ingrédients via l'API :
     ngOnInit(): void {
         this.ingredientService.getIngredients().subscribe( data => this.ingredientsDispo = data);
+        this.recalculerRecette();
     }
 
     public mettreAJourSurgraissage(valeur: number | null): void {
         this.nouvelleRecetteDTO.surgraissage = Math.max(0, Number(valeur) || 0);
+        this.recalculerRecette();
     }
 
     public mettreAJourConcentration(valeur: number | null): void {
-        this.nouvelleRecetteDTO.concentrationAlcalin = Math.max(0, Number(valeur) || 0);
+        this.nouvelleRecetteDTO.concentrationAlcalin = Math.min(100, Math.max(0, Number(valeur) || 0));
+        this.recalculerRecette();
     }
 
     public choisirAlcalin(avecSoude: boolean): void {
@@ -75,6 +80,7 @@ export class RecipeCalculatorPage implements OnInit {
         if (avecSoude) {
             this.nouvelleRecetteDTO.concentrationAlcalin = 90;
         }
+        this.recalculerRecette();
     }
 
 
@@ -96,6 +102,7 @@ export class RecipeCalculatorPage implements OnInit {
 
         // Optionnel : Réinitialiser le menu déroulant après l'ajout
         this.choixIngredient = null;
+        this.recalculerRecette();
     }
 
 
@@ -112,13 +119,8 @@ export class RecipeCalculatorPage implements OnInit {
      * Recalcule les pourcentages
      */  
     recalculerPourcentages(): void {
-        this.masseTotale = this.selectionIngredients.reduce((acc, ligne) => acc + ligne.quantite, 0); // Somme des masse des ingrédients de la recette
-        
-        this.selectionIngredients.forEach(ligne => {
-            ligne.pourcentage = this.masseTotale > 0
-                ? +(ligne.quantite / this.masseTotale * 100).toFixed(2)
-                : 0;
-        });
+        this.masseTotale = this.calculRecetteService.recalculerPourcentages(this.selectionIngredients);
+        this.recalculerRecette();
     }
 
     public changerModeDosage(mode: 'masse' | 'pourcentage'): void {
@@ -145,6 +147,7 @@ export class RecipeCalculatorPage implements OnInit {
         this.selectionIngredients.forEach((ligne) => {
             ligne.quantite = +(this.masseTotale * ligne.pourcentage / 100).toFixed(2);
         });
+        this.recalculerRecette();
     }
 
     public get totalPourcentage(): number {
@@ -174,7 +177,44 @@ export class RecipeCalculatorPage implements OnInit {
         } else {
             this.recalculerQuantites();
         }
+        this.recalculerRecette();
       }
+
+    private recalculerRecette(): void {
+        const calcul = this.calculRecetteService.calculer(this.selectionIngredients, {
+            surgraissage: this.nouvelleRecetteDTO.surgraissage,
+            avecSoude: this.nouvelleRecetteDTO.avecSoude,
+            concentrationAlcalin: this.nouvelleRecetteDTO.concentrationAlcalin,
+        });
+
+        this.recetteAffichee = {
+            id: this.nouvelleRecetteDTO.id ?? 0,
+            titre: this.nouvelleRecetteDTO.titre,
+            description: this.nouvelleRecetteDTO.description,
+            surgraissage: this.nouvelleRecetteDTO.surgraissage,
+            avecSoude: this.nouvelleRecetteDTO.avecSoude,
+            concentrationAlcalin: this.nouvelleRecetteDTO.concentrationAlcalin,
+            ligneIngredients: this.selectionIngredients,
+            qteAlcalin: calcul.qteAlcalin,
+            apportEnEau: calcul.apportEnEau,
+            resultats: this.creerResultats(calcul),
+            dateCreation: new Date(),
+        };
+    }
+
+    private creerResultats(calcul: ScoresRecette): Recette['resultats'] {
+        return [
+            { score: calcul.iode, caracteristique: { id: 1, nom: 'Iode' } },
+            { score: calcul.ins, caracteristique: { id: 2, nom: 'Indice INS' } },
+            { score: calcul.douceur, caracteristique: { id: 3, nom: 'Douceur' } },
+            { score: calcul.lavant, caracteristique: { id: 4, nom: 'Lavant' } },
+            { score: calcul.volumeMousse, caracteristique: { id: 5, nom: 'Volume de mousse' } },
+            { score: calcul.tenueMousse, caracteristique: { id: 6, nom: 'Tenue de mousse' } },
+            { score: calcul.durete, caracteristique: { id: 7, nom: 'Dureté' } },
+            { score: calcul.solubilite, caracteristique: { id: 8, nom: 'Solubilité' } },
+            { score: calcul.sechage, caracteristique: { id: 9, nom: 'Séchage' } },
+        ];
+    }
 
     
     /**
@@ -202,6 +242,22 @@ export class RecipeCalculatorPage implements OnInit {
         this.recetteService.createRecette(recetteEnvoyee).subscribe({
             next: (recette: Recette) => {
                 this.recetteAffichee = recette; // On récupère la recette avec les scores
+                this.selectionIngredients = recette.ligneIngredients;
+                this.nouvelleRecetteDTO = {
+                    id: recette.id,
+                    titre: recette.titre,
+                    description: recette.description,
+                    surgraissage: recette.surgraissage,
+                    avecSoude: recette.avecSoude,
+                    concentrationAlcalin: recette.concentrationAlcalin,
+                    ligneIngredients: recette.ligneIngredients.map((ligne) => ({
+                        ingredientId: ligne.ingredient.id,
+                        quantite: ligne.quantite,
+                        pourcentage: ligne.pourcentage,
+                    })),
+                };
+                this.masseTotale = recette.ligneIngredients.reduce(
+                    (total, ligne) => total + (Number(ligne.quantite) || 0), 0);
                 alert("Recette calculée et enregistrée avec succès !");
                 //console.log('Recette reçue du backend :', recette);
 

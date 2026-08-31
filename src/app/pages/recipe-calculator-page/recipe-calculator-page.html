@@ -11,12 +11,12 @@
     <div class="card-body">
         <div class="row g-3 align-items-start">
             <div class="col-md-5">
-                <label for="titre" class="form-label">Titre :</label>
+                <label for="titre" class="form-label fw-bold">Titre :</label>
                 <input type="text" id="titre" class="form-control"
                     name="titre" [(ngModel)]="nouvelleRecetteDTO.titre">
             </div>
             <div class="col-md-7">
-                <label for="description" class="form-label">Description :</label>
+                <label for="description" class="form-label fw-bold">Description :</label>
                 <textarea id="description" class="form-control"
                     name="description" rows="2"
                     [(ngModel)]="nouvelleRecetteDTO.description"></textarea>
@@ -76,7 +76,7 @@
             <div class="col-lg-4">
                 <label for="concentration" class="form-label fw-bold">Concentration de l'alcali (%)</label>
                 <input type="number" id="concentration" class="form-control"
-                    name="concentration" min="0"
+                    name="concentration" min="0" max="100"
                     [ngModel]="nouvelleRecetteDTO.concentrationAlcalin"
                     (ngModelChange)="mettreAJourConcentration($event)">
                 @if (nouvelleRecetteDTO.avecSoude) {
@@ -231,11 +231,11 @@
 @if(recetteAffichee) {
 <div class="card my-5 shadow-sm">
     <div class="card-header">
-        <h5 class="card-title mb-0">Analyse de la saponification</h5>
+        <h5 class="card-title mb-0"><span class="step-number">3</span> Analyse de la saponification</h5>
     </div>
     <div class="card-body">
         <div class="row">
-            @for (res of recetteAffichee.resultats; track recetteAffichee.id) {
+            @for (res of recetteAffichee.resultats; track res.caracteristique.id) {
             <div class="col-md-6 mb-4">
                 <div class="d-flex justify-content-between mb-1">
                     <span class="fw-bold">{{ res.caracteristique.nom }}</span>
@@ -261,7 +261,7 @@
         <!-- Affichage de la multiple bar -->
         <div class="mx-2 mt-3">
             <div class="progress-stacked">
-                @for(ligneIngredient of recetteAffichee.ligneIngredients; track recetteAffichee.id) {
+                @for(ligneIngredient of recetteAffichee.ligneIngredients; track ligneIngredient.ingredient.id) {
                 <div    
                     class="progress"
                     role="progressbar"
@@ -278,7 +278,7 @@
         <!-- Légende de la multiple bar -->
         <div class="mx-5 my-2">
             @for(
-                ligneIngredient of recetteAffichee.ligneIngredients; track recetteAffichee.id){
+                ligneIngredient of recetteAffichee.ligneIngredients; track ligneIngredient.ingredient.id){
                 <span class="badge text-{{ couleurIngredient[$index] }}">{{ ligneIngredient.pourcentage }} %</span> :                
                 {{ ligneIngredient.ingredient.nom }}
             }

@@ -88,4 +88,18 @@ describe('RecipeCalculatorPage', () => {
         expect(component.selectionIngredients.map((ligne) => ligne.quantite)).toEqual([300, 200]);
         expect(component.pourcentageValide).toBeTrue();
     });
+
+    it('actualise immédiatement les scores lors d une modification', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 78, ins: 111, sapo: 189, volMousse: 9.838,
+            tenueMousse: 9.152, douceur: 9.26, lavant: 10.192, durete: 10.144,
+            solubilite: 9.298, sechage: 10.194, estCorpsGras: true,
+        };
+        component.selectionIngredients = [{ ingredient, quantite: 100, pourcentage: 0 }];
+        component.recalculerPourcentages();
+
+        const iode = component.recetteAffichee?.resultats.find(
+            (resultat) => resultat.caracteristique.nom === 'Iode');
+        expect(iode?.score).toBeCloseTo(78, 8);
+    });
 });
