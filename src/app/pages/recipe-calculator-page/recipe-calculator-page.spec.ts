@@ -64,6 +64,13 @@ describe('RecipeCalculatorPage', () => {
         fixture.detectChanges();
         expect(fixture.nativeElement.querySelector('#titre')).toBeNull();
         expect(fixture.nativeElement.querySelector('#description')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.recipe-submit-button')).toBeNull();
+        expect(fixture.nativeElement.textContent).toContain(
+            'Connectez-vous ou inscrivez-vous pour enregistrer votre recette.');
+    });
+
+    it('affiche le bouton de soumission pour un utilisateur connecté', () => {
+        expect(fixture.nativeElement.querySelector('.recipe-submit-button')).not.toBeNull();
     });
 
     it('calcule les pourcentages en mode masse', () => {
@@ -147,6 +154,26 @@ describe('RecipeCalculatorPage', () => {
         const iode = component.recetteAffichee?.resultats.find(
             (resultat) => resultat.caracteristique.nom === 'Iode');
         expect(iode?.score).toBeCloseTo(78, 8);
+    });
+
+    it('utilise les plages SoapCalc pour l iode et l INS', () => {
+        expect(component.echelleScore(1)).toEqual(jasmine.objectContaining({
+            min: 0, max: 100, optimalMin: 41, optimalMax: 70,
+        }));
+        expect(component.echelleScore(2)).toEqual(jasmine.objectContaining({
+            min: 0, max: 260, optimalMin: 136, optimalMax: 165,
+        }));
+    });
+
+    it('utilise l échelle Mendrulandia convertie et borne le marqueur visuel', () => {
+        const echelle = component.echelleScore(3);
+        expect(echelle).toEqual(jasmine.objectContaining({
+            min: 0, max: 20, acceptableMin: 8, optimalMin: 9.8,
+            optimalMax: 10.2, acceptableMax: 12,
+        }));
+        expect(component.positionScore(10, echelle)).toBe(50);
+        expect(component.positionScore(-1, echelle)).toBe(0);
+        expect(component.positionScore(25, echelle)).toBe(100);
     });
 
     it('affiche le modal de succès après la réponse officielle du backend', () => {

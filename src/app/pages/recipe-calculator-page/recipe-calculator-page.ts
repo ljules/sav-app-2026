@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Ingredient } from '../../models/ingredient.model';
@@ -8,19 +8,44 @@ import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
 import { AuthService } from '../../services/auth.service';
 import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recette.service';
+import { Chart } from 'chart.js/auto';
+import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
 
 type CleCaracteristique = 'sapo' | 'ins' | 'iode' | 'lavant' | 'douceur' |
     'durete' | 'solubilite' | 'sechage' | 'volMousse' | 'tenueMousse';
 
+interface EchelleScore {
+    min: number;
+    max: number;
+    acceptableMin: number;
+    optimalMin: number;
+    optimalMax: number;
+    acceptableMax: number;
+    description: string;
+}
+
 @Component({
   selector: 'app-recipe-calculator-page',
-  imports: [ FormsModule, CommonModule ],
+  imports: [ FormsModule, CommonModule, RecipeProfileChart ],
   templateUrl: './recipe-calculator-page.html',
   styleUrl: './recipe-calculator-page.css',
 })
-export class RecipeCalculatorPage implements OnInit {
+export class RecipeCalculatorPage implements OnInit, OnDestroy {
     @ViewChild('ouvertureModalEnvoi')
     private boutonOuvertureModalEnvoi?: ElementRef<HTMLButtonElement>;
+    private graphiqueComposition: Chart | null = null;
+    private canvasComposition: HTMLCanvasElement | null = null;
+
+    @ViewChild('compositionChart')
+    set compositionChart(element: ElementRef<HTMLCanvasElement> | undefined) {
+        if (!element) {
+            this.detruireGraphiqueComposition();
+            this.canvasComposition = null;
+            return;
+        }
+        this.canvasComposition = element.nativeElement;
+        this.mettreAJourGraphiqueComposition();
+    }
 
     public modeDosage: 'masse' | 'pourcentage' = 'masse';
     public resultatEnvoi: 'succes' | 'erreur' | null = null;
@@ -68,15 +93,29 @@ export class RecipeCalculatorPage implements OnInit {
     // Affichage de la recette après son calcul :
     public recetteAffichee: Recette | null = null;
 
-    // Couleurs Bootstrap pour représenter ingrédients de la recette :
-    public couleurIngredient = [
-        "bg-info",
-        "bg-success",
-        "bg-warning",
-        "bg-secondary",
-        "bg-primary",
-        "bg-danger"
-    ]
+    private readonly couleursComposition = [
+        '#8aa017', '#7e1fa2', '#0d6efd', '#ffc107', '#0dcaf0',
+        '#dc3545', '#6c757d', '#198754', '#fd7e14', '#6f42c1',
+    ];
+
+    private readonly echellesScores: Record<number, EchelleScore> = {
+        1: {
+            min: 0, max: 100,
+            acceptableMin: 41, optimalMin: 41, optimalMax: 70, acceptableMax: 70,
+            description: 'Plage usuelle SoapCalc : 41 à 70',
+        },
+        2: {
+            min: 0, max: 260,
+            acceptableMin: 136, optimalMin: 136, optimalMax: 165, acceptableMax: 165,
+            description: 'Plage usuelle SoapCalc : 136 à 165',
+        },
+    };
+
+    private readonly echelleProprieteMendrulandia: EchelleScore = {
+        min: 0, max: 20,
+        acceptableMin: 8, optimalMin: 9.8, optimalMax: 10.2, acceptableMax: 12,
+        description: 'Équilibre optimal : 9,8 à 10,2 ; plage acceptable : 8 à 12',
+    };
 
 
     // Injection des services par le constructeur :
@@ -87,10 +126,30 @@ export class RecipeCalculatorPage implements OnInit {
         public authService: AuthService,
     ) {}
 
+    public echelleScore(idCaracteristique: number): EchelleScore {
+        return this.echellesScores[idCaracteristique] ?? this.echelleProprieteMendrulandia;
+    }
+
+    public positionScore(score: number, echelle: EchelleScore): number {
+        if (!Number.isFinite(score) || echelle.max <= echelle.min) {
+            return 0;
+        }
+        const position = ((score - echelle.min) / (echelle.max - echelle.min)) * 100;
+        return Math.min(100, Math.max(0, position));
+    }
+
+    public largeurZone(debut: number, fin: number, echelle: EchelleScore): number {
+        return this.positionScore(fin, echelle) - this.positionScore(debut, echelle);
+    }
+
     // Initialisation : Récupération de la liste des ingrédients via l'API :
     ngOnInit(): void {
         this.ingredientService.getIngredients().subscribe( data => this.ingredientsDispo = data);
         this.recalculerRecette();
+    }
+
+    ngOnDestroy(): void {
+        this.detruireGraphiqueComposition();
     }
 
     public mettreAJourSurgraissage(valeur: number | null): void {
@@ -258,6 +317,59 @@ export class RecipeCalculatorPage implements OnInit {
             resultats: this.creerResultats(calcul),
             dateCreation: new Date(),
         };
+        this.mettreAJourGraphiqueComposition();
+    }
+
+    private mettreAJourGraphiqueComposition(): void {
+        if (!this.canvasComposition || !this.recetteAffichee) return;
+
+        const lignes = this.recetteAffichee.ligneIngredients;
+        const labels = lignes.map((ligne) => ligne.ingredient.nom);
+        const valeurs = lignes.map((ligne) => Number(ligne.pourcentage) || 0);
+        const couleurs = lignes.map((_, index) =>
+            this.couleursComposition[index % this.couleursComposition.length]);
+
+        if (this.graphiqueComposition) {
+            this.graphiqueComposition.data.labels = labels;
+            this.graphiqueComposition.data.datasets[0].data = valeurs;
+            this.graphiqueComposition.data.datasets[0].backgroundColor = couleurs;
+            this.graphiqueComposition.update();
+            return;
+        }
+
+        this.graphiqueComposition = new Chart(this.canvasComposition, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: valeurs,
+                    backgroundColor: couleurs,
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, usePointStyle: true },
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (contexte) =>
+                                `${contexte.label}: ${Number(contexte.raw).toFixed(2)} %`,
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    private detruireGraphiqueComposition(): void {
+        this.graphiqueComposition?.destroy();
+        this.graphiqueComposition = null;
     }
 
     private creerResultats(calcul: ScoresRecette): Recette['resultats'] {
@@ -316,6 +428,7 @@ export class RecipeCalculatorPage implements OnInit {
                 };
                 this.masseTotale = recette.ligneIngredients.reduce(
                     (total, ligne) => total + (Number(ligne.quantite) || 0), 0);
+                this.mettreAJourGraphiqueComposition();
                 this.ouvrirModalEnvoi('succes');
                 //console.log('Recette reçue du backend :', recette);
 

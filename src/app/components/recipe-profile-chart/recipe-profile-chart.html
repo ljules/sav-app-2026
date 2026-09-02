@@ -1,0 +1,9 @@
+@if (afficherGraphique && resultats.length > 0) {
+  <div class="profile-chart-container">
+    <canvas #profileChart aria-label="Profil de la recette"></canvas>
+  </div>
+} @else {
+  <div class="text-muted text-center py-5">
+    Ajoutez des ingrédients pour afficher le profil.
+  </div>
+}

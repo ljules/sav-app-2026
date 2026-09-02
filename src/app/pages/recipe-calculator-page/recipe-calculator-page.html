@@ -291,17 +291,6 @@
     </div>
 </div>
 
-
- <!-- Bouton soumission de la nouvelle recette  -->
-<div class="container mt-4">
-    <button class="btn btn-success" (click)="onSubmit()" [disabled]="!dosageValide">
-        Soumettre la recette
-    </button>
-    <button #ouvertureModalEnvoi type="button" class="d-none"
-        data-bs-toggle="modal" data-bs-target="#modalResultatEnvoi"
-        aria-hidden="true" tabindex="-1"></button>
-</div>
-
 <!-- CONFIRMATION DE L'ENVOI AU BACKEND -->
 <div class="modal fade" id="modalResultatEnvoi" tabindex="-1"
     aria-labelledby="modalResultatEnvoiTitre" aria-hidden="true">
@@ -358,61 +347,108 @@
         <h5 class="card-title mb-0"><span class="step-number">3</span> Analyse de la saponification</h5>
     </div>
     <div class="card-body">
-        <div class="row">
-            @for (res of recetteAffichee.resultats; track res.caracteristique.id) {
-            <div class="col-md-6 mb-4">
-                <div class="d-flex justify-content-between mb-1">
-                    <span class="fw-bold analysis-score-label">{{ res.caracteristique.nom }}</span>
-                    <span class="badge bg-dark">{{ res.score.toFixed(1) }}
-                    </span>
-                </div>
-
-                <div class="progress" style="height: 15px;">
-                    <div class="progress-bar"
-                         role="progressbar"
-                         [style.width.%]="res.score"
-                         [class.bg-success]="res.score >= 40 && res.score <=60"
-                         [class.bg-warning]="res.score < 40 || res.score > 60">
+        <div class="row g-4">
+            <section class="col-lg-6 col-xl-4 composition-panel" aria-labelledby="composition-title">
+                <h6 id="composition-title" class="analysis-section-title composition-section-title">
+                    Composition de la recette
+                </h6>
+                @if (recetteAffichee.ligneIngredients.length > 0) {
+                    <div class="composition-chart-container">
+                        <canvas #compositionChart aria-label="Composition de la recette"></canvas>
+                    </div>
+                } @else {
+                    <div class="text-muted text-center py-5">
+                        Ajoutez des ingrédients pour afficher la composition.
+                    </div>
+                }
+                <div class="composition-amounts bg-body-tertiary border rounded-3 mt-3 p-3
+                    d-flex flex-wrap justify-content-around align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span>Eau :</span>
+                        <strong>{{ recetteAffichee.apportEnEau.toFixed(2) }} g</strong>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span>{{ recetteAffichee.avecSoude ? 'Soude (NaOH)' : 'Potasse (KOH)' }} :</span>
+                        <strong>{{ recetteAffichee.qteAlcalin.toFixed(2) }} g</strong>
                     </div>
                 </div>
-            </div>
-            }
-        </div>
-    </div>
+            </section>
 
-    <!-- Multiple Bar de présentation des ingrédients  -->
-    <div class="m-3 mb-4 p-2 bg-body-tertiary border rounded-3">
-        <!-- Affichage de la multiple bar -->
-        <div class="mx-2 mt-3">
-            <div class="progress-stacked">
-                @for(ligneIngredient of recetteAffichee.ligneIngredients; track ligneIngredient.ingredient.id) {
-                <div    
-                    class="progress"
-                    role="progressbar"
-                    aria-label="{{ ligneIngredient.ingredient.nom }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    [style.width]="ligneIngredient.pourcentage + '%'">
-                    <div class="progress-bar {{ couleurIngredient[$index] }}"></div>
+            <section class="col-lg-6 col-xl-4 profile-panel d-flex flex-column"
+                aria-labelledby="profile-title">
+                <h6 id="profile-title" class="analysis-section-title">
+                    Profil de la recette
+                </h6>
+                <div class="profile-content flex-grow-1 d-flex flex-column">
+                    <div class="profile-chart-wrapper w-100">
+                        <app-recipe-profile-chart
+                            [resultats]="recetteAffichee.resultats"
+                            [afficherGraphique]="recetteAffichee.ligneIngredients.length > 0" />
+                    </div>
+                    <div class="profile-bottom-spacer" aria-hidden="true"></div>
                 </div>
-                }
-            </div>
-        </div>
+            </section>
 
-        <!-- Légende de la multiple bar -->
-        <div class="mx-5 my-2">
-            @for(
-                ligneIngredient of recetteAffichee.ligneIngredients; track ligneIngredient.ingredient.id){
-                <span class="badge text-{{ couleurIngredient[$index] }}">{{ ligneIngredient.pourcentage }} %</span> :                
-                {{ ligneIngredient.ingredient.nom }}
-            }
+            <section class="col-lg-12 col-xl-4 d-flex flex-column" aria-labelledby="scores-title">
+                <h6 id="scores-title" class="analysis-section-title">
+                    Scores de saponification
+                </h6>
+                <div class="scores-content flex-grow-1 d-flex align-items-center">
+                <div class="scores-list w-100">
+                @for (res of recetteAffichee.resultats; track res.caracteristique.id) {
+                    @let echelle = echelleScore(res.caracteristique.id);
+                    <div class="score-line">
+                        <span class="fw-bold analysis-score-label">{{ res.caracteristique.nom }}</span>
+                        <div class="score-reference-track"
+                            role="meter"
+                            [attr.aria-label]="res.caracteristique.nom"
+                            [attr.aria-valuenow]="res.score"
+                            [attr.aria-valuemin]="echelle.min"
+                            [attr.aria-valuemax]="echelle.max"
+                            [attr.aria-valuetext]="res.score.toFixed(1) + '. ' + echelle.description"
+                            [title]="echelle.description">
+                            <span class="score-zone score-zone-low"
+                                [style.width.%]="largeurZone(echelle.min, echelle.acceptableMin, echelle)"></span>
+                            <span class="score-zone score-zone-acceptable-low"
+                                [style.left.%]="positionScore(echelle.acceptableMin, echelle)"
+                                [style.width.%]="largeurZone(echelle.acceptableMin, echelle.optimalMin, echelle)"></span>
+                            <span class="score-zone score-zone-optimal"
+                                [style.left.%]="positionScore(echelle.optimalMin, echelle)"
+                                [style.width.%]="largeurZone(echelle.optimalMin, echelle.optimalMax, echelle)"></span>
+                            <span class="score-zone score-zone-acceptable-high"
+                                [style.left.%]="positionScore(echelle.optimalMax, echelle)"
+                                [style.width.%]="largeurZone(echelle.optimalMax, echelle.acceptableMax, echelle)"></span>
+                            <span class="score-zone score-zone-high"
+                                [style.left.%]="positionScore(echelle.acceptableMax, echelle)"
+                                [style.width.%]="largeurZone(echelle.acceptableMax, echelle.max, echelle)"></span>
+                            <span class="score-marker"
+                                [style.left.%]="positionScore(res.score, echelle)"
+                                aria-hidden="true"></span>
+                        </div>
+                        <span class="badge bg-dark">{{ res.score.toFixed(1) }}</span>
+                    </div>
+                }
+                </div>
+                </div>
+            </section>
         </div>
     </div>
 
-    <div class="card-footer bg-success d-flex justify-content-around text-white">
-        <span>Eau : <b>{{ recetteAffichee.apportEnEau.toFixed(2) }} g</b></span>
-        <span>Alcalin : <b>{{ recetteAffichee.qteAlcalin.toFixed(2) }} g</b>
-        </span>
+    <div class="card-footer analysis-card-footer d-flex justify-content-center align-items-center">
+        @if (authService.isAuthenticated()) {
+            <button class="btn btn-warning recipe-submit-button"
+                (click)="onSubmit()" [disabled]="!dosageValide">
+                <i class="bi bi-cloud-arrow-up-fill me-1" aria-hidden="true"></i>
+                Enregistrer la recette
+            </button>
+        } @else {
+            <p class="fst-italic text-white mb-0 text-center">
+                Connectez-vous ou inscrivez-vous pour enregistrer votre recette.
+            </p>
+        }
+        <button #ouvertureModalEnvoi type="button" class="d-none"
+            data-bs-toggle="modal" data-bs-target="#modalResultatEnvoi"
+            aria-hidden="true" tabindex="-1"></button>
     </div>
 
 </div>

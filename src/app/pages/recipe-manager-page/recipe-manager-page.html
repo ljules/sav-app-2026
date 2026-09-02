@@ -54,7 +54,7 @@
 
                 <!-- Affichage du graphe radar : -->
                 <div class="chart-container mb-3" style="position: relative; height:400px;"> 
-                    <canvas [id]="'chart-' + recette.id"></canvas>
+                    <app-recipe-profile-chart [resultats]="recette.resultats" />
                 </div> 
             </div> 
 
