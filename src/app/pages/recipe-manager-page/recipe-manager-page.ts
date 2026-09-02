@@ -79,10 +79,11 @@ export class RecipeManagerPage implements OnInit {
         new Chart(ctx, { 
             type: 'radar', 
             data: { 
-                labels: recette.resultats.map(res => res.caracteristique.nom), 
+                labels: recette.resultats.map(res => this.libelleRadar(res.caracteristique.nom)),
                 datasets: [{ 
                     label: 'Scores', 
-                    data: recette.resultats.map(res => res.score), 
+                    data: recette.resultats.map(res =>
+                        this.valeurRadar(res.caracteristique.nom, res.score)),
                     fill: true, 
                     backgroundColor: 'rgba(210, 0, 255, 0.2)',
                     borderColor: 'rgb(210, 0, 255)',
@@ -98,9 +99,43 @@ export class RecipeManagerPage implements OnInit {
                     r: { suggestedMin: 0,suggestedMax: 10, ticks: { stepSize: 1 }
             }
                 }, 
-                plugins: { legend: { display: false } } 
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (contexte) => {
+                                const resultat = recette.resultats[contexte.dataIndex];
+                                return this.libelleTooltip(
+                                    resultat.caracteristique.nom,
+                                    resultat.score,
+                                );
+                            },
+                        },
+                    },
+                }
                 } 
             });
+    }
+
+    public libelleRadar(nomCaracteristique: string): string {
+        return this.estIndiceIns(nomCaracteristique)
+            ? 'Indice INS (÷10)'
+            : nomCaracteristique;
+    }
+
+    public valeurRadar(nomCaracteristique: string, score: number): number {
+        return this.estIndiceIns(nomCaracteristique) ? score / 10 : score;
+    }
+
+    public libelleTooltip(nomCaracteristique: string, score: number): string {
+        if (!this.estIndiceIns(nomCaracteristique)) {
+            return `${nomCaracteristique} : ${score}`;
+        }
+        return `Indice INS : ${score} (valeur représentée : ${score / 10})`;
+    }
+
+    private estIndiceIns(nomCaracteristique: string): boolean {
+        return nomCaracteristique.trim().toLocaleUpperCase('fr').includes('INS');
     }
 
     private calculerIngredientLePlusUtilise(): void {
