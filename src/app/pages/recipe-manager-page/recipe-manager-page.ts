@@ -113,29 +113,34 @@ export class RecipeManagerPage implements OnInit {
                         },
                     },
                 }
-                } 
+                }
             });
     }
 
     public libelleRadar(nomCaracteristique: string): string {
-        return this.estIndiceIns(nomCaracteristique)
-            ? 'Indice INS (÷10)'
-            : nomCaracteristique;
+        if (!this.estIndiceReduit(nomCaracteristique)) return nomCaracteristique;
+        return this.estIndiceIns(nomCaracteristique) ? 'Indice INS (÷10)' : 'Iode (÷10)';
     }
 
     public valeurRadar(nomCaracteristique: string, score: number): number {
-        return this.estIndiceIns(nomCaracteristique) ? score / 10 : score;
+        return this.estIndiceReduit(nomCaracteristique) ? score / 10 : score;
     }
 
     public libelleTooltip(nomCaracteristique: string, score: number): string {
-        if (!this.estIndiceIns(nomCaracteristique)) {
+        if (!this.estIndiceReduit(nomCaracteristique)) {
             return `${nomCaracteristique} : ${score}`;
         }
-        return `Indice INS : ${score} (valeur représentée : ${score / 10})`;
+        const libelle = this.estIndiceIns(nomCaracteristique) ? 'Indice INS' : 'Iode';
+        return `${libelle} : ${score} (valeur représentée : ${score / 10})`;
     }
 
     private estIndiceIns(nomCaracteristique: string): boolean {
         return nomCaracteristique.trim().toLocaleUpperCase('fr').includes('INS');
+    }
+
+    private estIndiceReduit(nomCaracteristique: string): boolean {
+        const nomNormalise = nomCaracteristique.trim().toLocaleUpperCase('fr');
+        return nomNormalise.includes('INS') || nomNormalise.includes('IODE');
     }
 
     private calculerIngredientLePlusUtilise(): void {

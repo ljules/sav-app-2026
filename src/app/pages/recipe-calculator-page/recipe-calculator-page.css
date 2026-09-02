@@ -12,6 +12,16 @@
     margin-bottom: 0;
 }
 
+.recipe-top-section .form-label,
+.recipe-top-section .form-text,
+.analysis-score-label {
+    font-size: 0.75rem;
+}
+
+.recipe-top-section .form-control {
+    font-size: 0.75rem;
+}
+
 .step-number {
     display: inline-flex;
     flex: 0 0 2rem;
@@ -30,12 +40,83 @@
 .ingredient-count-badge {
     color: white;
     background-color: var(--purple-charter);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.ingredient-selection-tools .form-label {
+    margin-bottom: 0.35rem;
+}
+
+.ingredient-card .card-body,
+.ingredient-card .card-footer {
+    font-size: 0.75rem;
+}
+
+.ingredient-card .form-control,
+.ingredient-card .form-select,
+.ingredient-card .btn,
+.ingredient-card .input-group-text,
+.ingredient-card .badge,
+.ingredient-card .table {
+    font-size: inherit;
+}
+
+.ingredient-card .ingredient-count-badge {
+    font-size: 0.65rem;
+}
+
+.ingredient-section-title {
+    font-size: 1rem;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.numeric-filter {
+    min-width: 26rem;
+}
+
+.characteristic-select {
+    min-width: 13rem;
+}
+
+.range-input {
+    width: 5.5rem;
+}
+
+.ingredient-picker {
+    min-width: 20rem;
+}
+
+.ingredient-adjuvant-text {
+    color: var(--purple-charter) !important;
+}
+
+.ingredient-adjuvant-progress {
+    background-color: var(--purple-charter);
+}
+
+.btn-outline-charter-purple {
+    --bs-btn-color: var(--purple-charter);
+    --bs-btn-border-color: var(--purple-charter);
+    --bs-btn-hover-color: white;
+    --bs-btn-hover-bg: var(--purple-charter);
+    --bs-btn-hover-border-color: var(--purple-charter);
+    --bs-btn-active-color: white;
+    --bs-btn-active-bg: var(--purple-charter);
+    --bs-btn-active-border-color: var(--purple-charter);
+}
+
+.ingredient-picker option {
     font-weight: 600;
 }
 
 .dosage-mode .btn {
     min-width: 7rem;
+}
+
+.alkali-choice .btn {
+    font-size: 0.875rem;
 }
 
 .total-mass-input {
@@ -49,6 +130,11 @@ input[readonly] {
 
 .card-footer {
     border-top-color: var(--green-charter);
+}
+
+.ingredient-card-footer {
+    color: white;
+    background-color: var(--green-charter);
 }
 
 .form-label[title],
@@ -72,5 +158,21 @@ input[readonly] {
 @media (max-width: 991.98px) {
     .btn-group[aria-label="Choix de l'alcali"] {
         max-width: 30rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .numeric-filter,
+    .ingredient-picker {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .range-input {
+        width: 100%;
+    }
+
+    .ingredient-picker {
+        flex-direction: column;
     }
 }

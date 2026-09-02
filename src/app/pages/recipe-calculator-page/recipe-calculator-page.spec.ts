@@ -97,6 +97,44 @@ describe('RecipeCalculatorPage', () => {
         expect(component.pourcentageValide).toBeTrue();
     });
 
+    it('filtre la liste d ajout par type et exclut les ingrédients déjà choisis', () => {
+        const corpsGras = {
+            id: 1, nom: 'Olive', iode: 78, ins: 111, sapo: 189, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        const adjuvant = { ...corpsGras, id: 2, nom: 'Argile', estCorpsGras: false };
+        component.ingredientsDispo = [corpsGras, adjuvant];
+        component.afficherAdjuvants = false;
+        expect(component.ingredientsDisponiblePourAjout).toEqual([corpsGras]);
+
+        component.selectionIngredients = [{ ingredient: corpsGras, quantite: 0, pourcentage: 0 }];
+        expect(component.ingredientsDisponiblePourAjout).toEqual([]);
+    });
+
+    it('applique le filtre numérique aux seuls corps gras', () => {
+        const olive = {
+            id: 1, nom: 'Olive', iode: 78, ins: 111, sapo: 189, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        const coco = { ...olive, id: 2, nom: 'Coco', sapo: 257 };
+        const argile = { ...olive, id: 3, nom: 'Argile', sapo: 200, estCorpsGras: false };
+        component.ingredientsDispo = [olive, coco, argile];
+        component.valeurMin = 200;
+        component.valeurMax = 280;
+        component.basculerFiltreNumerique();
+
+        expect(component.ingredientsDisponiblePourAjout).toEqual([coco]);
+    });
+
+    it('refuse l activation d une plage numérique incohérente', () => {
+        component.valeurMin = 200;
+        component.valeurMax = 100;
+        component.basculerFiltreNumerique();
+        expect(component.filtreNumeriqueActif).toBeFalse();
+    });
+
     it('actualise immédiatement les scores lors d une modification', () => {
         const ingredient = {
             id: 1, nom: 'Olive', iode: 78, ins: 111, sapo: 189, volMousse: 9.838,

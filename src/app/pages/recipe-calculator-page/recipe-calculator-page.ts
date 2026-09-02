@@ -9,6 +9,9 @@ import { RecetteService } from '../../services/recette.service';
 import { AuthService } from '../../services/auth.service';
 import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recette.service';
 
+type CleCaracteristique = 'sapo' | 'ins' | 'iode' | 'lavant' | 'douceur' |
+    'durete' | 'solubilite' | 'sechage' | 'volMousse' | 'tenueMousse';
+
 @Component({
   selector: 'app-recipe-calculator-page',
   imports: [ FormsModule, CommonModule ],
@@ -29,6 +32,27 @@ export class RecipeCalculatorPage implements OnInit {
     public choixIngredient: Ingredient | null = null;
     public selectionIngredients: LigneIngredient[] = [];
     public masseTotale = 0;
+    public afficherCorpsGras = true;
+    public afficherAdjuvants = true;
+    public caracteristiqueFiltre: CleCaracteristique = 'sapo';
+    public valeurMin: number | null = null;
+    public valeurMax: number | null = null;
+    public filtreNumeriqueActif = false;
+    public readonly caracteristiquesFiltrables: Array<{
+        cle: CleCaracteristique;
+        libelle: string;
+    }> = [
+        { cle: 'sapo', libelle: 'Indice de saponification (SAP)' },
+        { cle: 'ins', libelle: 'Indice INS' },
+        { cle: 'iode', libelle: "Indice d'iode" },
+        { cle: 'lavant', libelle: 'Pouvoir lavant' },
+        { cle: 'douceur', libelle: 'Douceur' },
+        { cle: 'durete', libelle: 'Dureté' },
+        { cle: 'solubilite', libelle: 'Solubilité' },
+        { cle: 'sechage', libelle: 'Séchage' },
+        { cle: 'volMousse', libelle: 'Volume de mousse' },
+        { cle: 'tenueMousse', libelle: 'Tenue de mousse' },
+    ];
 
     // Nouvelle recette :
     public nouvelleRecetteDTO: RecetteFormDTO = {
@@ -111,11 +135,41 @@ export class RecipeCalculatorPage implements OnInit {
 
 
     get ingredientsDisponiblePourAjout(): Ingredient[] {
-        return this.ingredientsDispo.filter(
-            ing => !this.selectionIngredients.some(
-                ligne => ligne.ingredient?.id === ing.id
-            )
-        );
+        return this.ingredientsDispo.filter((ingredient) => {
+            const dejaSelectionne = this.selectionIngredients.some(
+                (ligne) => ligne.ingredient?.id === ingredient.id,
+            );
+            const correspondAuType =
+                (ingredient.estCorpsGras && this.afficherCorpsGras) ||
+                (!ingredient.estCorpsGras && this.afficherAdjuvants);
+
+            if (dejaSelectionne || !correspondAuType) return false;
+            if (!this.filtreNumeriqueActif) return true;
+            if (!ingredient.estCorpsGras || this.plageNumeriqueInvalide) return false;
+
+            const valeur = ingredient[this.caracteristiqueFiltre];
+            const respecteMinimum = this.valeurMin === null || valeur >= this.valeurMin;
+            const respecteMaximum = this.valeurMax === null || valeur <= this.valeurMax;
+            return respecteMinimum && respecteMaximum;
+        });
+    }
+
+    public get plageNumeriqueInvalide(): boolean {
+        return this.valeurMin !== null && this.valeurMax !== null &&
+            this.valeurMin > this.valeurMax;
+    }
+
+    public mettreAJourFiltres(): void {
+        if (this.choixIngredient &&
+            !this.ingredientsDisponiblePourAjout.some(({ id }) => id === this.choixIngredient?.id)) {
+            this.choixIngredient = null;
+        }
+    }
+
+    public basculerFiltreNumerique(): void {
+        if (!this.filtreNumeriqueActif && this.plageNumeriqueInvalide) return;
+        this.filtreNumeriqueActif = !this.filtreNumeriqueActif;
+        this.mettreAJourFiltres();
     }
 
 

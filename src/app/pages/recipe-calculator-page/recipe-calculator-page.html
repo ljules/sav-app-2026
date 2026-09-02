@@ -1,4 +1,4 @@
-<div class="row g-4 my-4 align-items-stretch">
+<div class="row g-4 my-4 align-items-stretch recipe-top-section">
 <!-- TITRE & DESCRIPTION DE LA RECETTE -->
 @if (authService.isAuthenticated()) {
 <div class="col-12 col-lg-6">
@@ -66,16 +66,16 @@
             <div [class.col-lg-4]="!authService.isAuthenticated()"
                 [class.col-12]="authService.isAuthenticated()">
                 <div class="form-label fw-bold">Type d'alcali</div>
-                <div class="btn-group w-100" role="group" aria-label="Choix de l'alcali">
+                <div class="btn-group w-100 alkali-choice" role="group" aria-label="Choix de l'alcali">
                     <input type="radio" class="btn-check" name="typeAlcali" id="alcaliSoude"
                         [checked]="nouvelleRecetteDTO.avecSoude"
                         (change)="choisirAlcalin(true)">
-                    <label class="btn btn-outline-success" for="alcaliSoude">Soude (NaOH)</label>
+                    <label class="btn btn-outline-warning" for="alcaliSoude">Soude (NaOH)</label>
 
                     <input type="radio" class="btn-check" name="typeAlcali" id="alcaliPotasse"
                         [checked]="!nouvelleRecetteDTO.avecSoude"
                         (change)="choisirAlcalin(false)">
-                    <label class="btn btn-outline-success" for="alcaliPotasse">Potasse (KOH)</label>
+                    <label class="btn btn-outline-info" for="alcaliPotasse">Potasse (KOH)</label>
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
 
 
 <!-- CHOIX ET DOSAGE DES INGREDIENTS -->
-<div class="card my-4">
+<div class="card my-4 ingredient-card">
     <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
         <h5 class="card-title d-flex align-items-center gap-2">
             <span class="step-number">2</span>
@@ -112,20 +112,79 @@
 
     <div class="card-body">
         <section aria-labelledby="ingredient-choice-title">
-            <h6 id="ingredient-choice-title" class="fw-bold mb-3">Choix de l'ingrédient</h6>
-            <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch">
-                <select class="form-select flex-grow-1" [(ngModel)]="choixIngredient"
-                    aria-label="Ingrédient à ajouter">
-                    <option [ngValue]="null">Choisir une huile...</option>
-                    @for (ing of ingredientsDisponiblePourAjout; track ing.id) {
-                        <option [ngValue]="ing">{{ ing.nom }}</option>
+            <h6 id="ingredient-choice-title" class="ingredient-section-title fw-bold mb-3">
+                Choix de l'ingrédient
+            </h6>
+            <div class="ingredient-selection-tools d-flex flex-column flex-xl-row align-items-xl-end gap-3">
+                <div class="flex-shrink-0">
+                    <div class="form-label fw-bold">Types affichés</div>
+                    <div class="d-flex gap-2">
+                        <input type="checkbox" class="btn-check" id="calculatorToggleCorpsGras"
+                            autocomplete="off" [(ngModel)]="afficherCorpsGras"
+                            (ngModelChange)="mettreAJourFiltres()">
+                        <label class="btn btn-sm btn-outline-success" for="calculatorToggleCorpsGras">
+                            Corps gras
+                        </label>
+
+                        <input type="checkbox" class="btn-check" id="calculatorToggleAdjuvants"
+                            autocomplete="off" [(ngModel)]="afficherAdjuvants"
+                            (ngModelChange)="mettreAJourFiltres()">
+                        <label class="btn btn-sm btn-outline-charter-purple" for="calculatorToggleAdjuvants">
+                            Adjuvants
+                        </label>
+                    </div>
+                </div>
+
+                <div class="numeric-filter flex-grow-1">
+                    <div class="form-label fw-bold">Filtrer les corps gras par caractéristique</div>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <select class="form-select form-select-sm characteristic-select"
+                            [(ngModel)]="caracteristiqueFiltre"
+                            (ngModelChange)="mettreAJourFiltres()">
+                            @for (caracteristique of caracteristiquesFiltrables; track caracteristique.cle) {
+                                <option [ngValue]="caracteristique.cle">{{ caracteristique.libelle }}</option>
+                            }
+                        </select>
+                        <input type="number" class="form-control form-control-sm range-input"
+                            placeholder="Min" aria-label="Valeur minimale"
+                            [(ngModel)]="valeurMin" (ngModelChange)="mettreAJourFiltres()">
+                        <input type="number" class="form-control form-control-sm range-input"
+                            placeholder="Max" aria-label="Valeur maximale"
+                            [(ngModel)]="valeurMax" (ngModelChange)="mettreAJourFiltres()">
+                        <button type="button" class="btn btn-sm flex-shrink-0"
+                            [class.btn-warning]="filtreNumeriqueActif"
+                            [class.btn-outline-secondary]="!filtreNumeriqueActif"
+                            [disabled]="!filtreNumeriqueActif && plageNumeriqueInvalide"
+                            (click)="basculerFiltreNumerique()">
+                            {{ filtreNumeriqueActif ? 'Désactiver' : 'Activer' }}
+                        </button>
+                    </div>
+                    @if (plageNumeriqueInvalide) {
+                        <small class="text-danger">
+                            La valeur minimale doit être inférieure ou égale à la valeur maximale.
+                        </small>
                     }
-                </select>
-                <button class="btn btn-warning flex-shrink-0"
-                    (click)="ajouterIngredient()"
-                    [disabled]="!choixIngredient">
-                    <i class="bi bi-plus-circle me-1"></i>Ajouter
-                </button>
+                </div>
+
+                <div class="ingredient-picker d-flex gap-2 align-items-stretch flex-grow-1">
+                    <select class="form-select" [(ngModel)]="choixIngredient"
+                        [class.text-success]="choixIngredient?.estCorpsGras"
+                        [class.ingredient-adjuvant-text]="choixIngredient && !choixIngredient.estCorpsGras"
+                        aria-label="Ingrédient à ajouter">
+                        <option [ngValue]="null">Choisir un ingrédient...</option>
+                        @for (ing of ingredientsDisponiblePourAjout; track ing.id) {
+                            <option [ngValue]="ing"
+                                [class.text-success]="ing.estCorpsGras"
+                                [class.ingredient-adjuvant-text]="!ing.estCorpsGras">
+                                {{ ing.nom }}
+                            </option>
+                        }
+                    </select>
+                    <button class="btn btn-primary flex-shrink-0"
+                        (click)="ajouterIngredient()" [disabled]="!choixIngredient">
+                        <i class="bi bi-plus-circle me-1"></i>Ajouter
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -133,15 +192,17 @@
 
         <section aria-labelledby="ingredient-dosage-title">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-                <h6 id="ingredient-dosage-title" class="fw-bold mb-0">Dosage des ingrédients</h6>
+                <h6 id="ingredient-dosage-title" class="ingredient-section-title fw-bold mb-0">
+                    Dosage des ingrédients
+                </h6>
                 <div class="btn-group dosage-mode" role="group" aria-label="Mode de saisie du dosage">
                     <input type="radio" class="btn-check" name="modeDosage" id="modeMasse"
                         [checked]="modeDosage === 'masse'" (change)="changerModeDosage('masse')">
-                    <label class="btn btn-outline-success" for="modeMasse">Masse</label>
+                    <label class="btn btn-outline-secondary" for="modeMasse">Masse</label>
 
                     <input type="radio" class="btn-check" name="modeDosage" id="modePourcentage"
                         [checked]="modeDosage === 'pourcentage'" (change)="changerModeDosage('pourcentage')">
-                    <label class="btn btn-outline-success" for="modePourcentage">Pourcentage</label>
+                    <label class="btn btn-outline-secondary" for="modePourcentage">Pourcentage</label>
                 </div>
             </div>
             <div class="table-responsive">
@@ -157,7 +218,8 @@
             <tbody>
                 @for (ligne of selectionIngredients; track (ligne.ingredient?.id || $index); let i = $index) {
                     <tr>
-                        <td>
+                        <td [class.text-success]="ligne.ingredient.estCorpsGras"
+                            [class.ingredient-adjuvant-text]="!ligne.ingredient.estCorpsGras">
                             {{ ligne.ingredient.nom }}
                             <div class="progress"
                                 role="progressbar"
@@ -165,7 +227,9 @@
                                 [attr.aria-valuenow]="ligne.pourcentage"
                                 aria-valuemin="0"
                                 aria-valuemax="100">
-                                <div class="progress-bar bg-success"
+                                <div class="progress-bar"
+                                    [class.bg-success]="ligne.ingredient.estCorpsGras"
+                                    [class.ingredient-adjuvant-progress]="!ligne.ingredient.estCorpsGras"
                                     [style.width.%]="ligne.pourcentage">
                                 </div>
                             </div>
@@ -215,7 +279,7 @@
         </section>
     </div>
 
-    <div class="card-footer bg-success-subtle d-flex flex-wrap align-items-center gap-2">
+    <div class="card-footer ingredient-card-footer d-flex flex-wrap align-items-center gap-2">
         <label for="masseTotale" class="fw-bold mb-0">Masse totale du savon :</label>
         <div class="input-group input-group-sm total-mass-input">
             <input id="masseTotale" name="masseTotale" type="number" class="form-control"
@@ -289,7 +353,7 @@
 
 <!-- PRESENTATION RECETTE CALCULEE : -->
 @if(recetteAffichee) {
-<div class="card my-5 shadow-sm">
+<div class="card my-5 shadow-sm analysis-card">
     <div class="card-header">
         <h5 class="card-title mb-0"><span class="step-number">3</span> Analyse de la saponification</h5>
     </div>
@@ -298,7 +362,7 @@
             @for (res of recetteAffichee.resultats; track res.caracteristique.id) {
             <div class="col-md-6 mb-4">
                 <div class="d-flex justify-content-between mb-1">
-                    <span class="fw-bold">{{ res.caracteristique.nom }}</span>
+                    <span class="fw-bold analysis-score-label">{{ res.caracteristique.nom }}</span>
                     <span class="badge bg-dark">{{ res.score.toFixed(1) }}
                     </span>
                 </div>
