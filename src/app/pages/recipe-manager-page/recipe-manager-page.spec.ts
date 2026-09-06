@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 
 import { RecetteService } from '../../services/recette.service';
 import { RecipeManagerPage } from './recipe-manager-page';
+import { provideRouter } from '@angular/router';
 
 describe('RecipeManagerPage', () => {
   let component: RecipeManagerPage;
@@ -14,7 +15,10 @@ describe('RecipeManagerPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [RecipeManagerPage],
-      providers: [{ provide: RecetteService, useValue: recetteService }],
+      providers: [
+        { provide: RecetteService, useValue: recetteService },
+        provideRouter([]),
+      ],
     })
     .compileComponents();
 

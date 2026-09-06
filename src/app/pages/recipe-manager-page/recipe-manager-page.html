@@ -68,6 +68,10 @@
                             (click)="ouvrirModale(recette)"> 
                         Détails 
                     </button> 
+                    <a class="btn btn-outline-warning btn-sm"
+                            [routerLink]="['/recipe-calculator', recette.id]">
+                        Modifier
+                    </a>
                     <button class="btn btn-outline-danger btn-sm" 
                             (click)="supprimerRecette(recette.id)"> 
                         Supprimer 

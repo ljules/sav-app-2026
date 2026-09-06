@@ -45,4 +45,11 @@ export class RecetteService {
     createRecette(recette: RecetteFormDTO): Observable<Recette> { 
         return this.http.post<Recette>(this.API_URL_RECETTE, recette); 
     }
+
+    /**
+     * Met à jour une recette existante.
+     */
+    updateRecette(id: number, recette: RecetteFormDTO): Observable<Recette> {
+        return this.http.put<Recette>(`${this.API_URL_RECETTE}/${id}`, recette);
+    }
 }

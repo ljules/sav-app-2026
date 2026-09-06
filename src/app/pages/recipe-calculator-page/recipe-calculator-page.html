@@ -1,3 +1,12 @@
+@if (chargementRecetteEnCours) {
+    <div class="alert alert-info my-4" role="status">Chargement de la recette…</div>
+}
+@if (erreurChargementRecette) {
+    <div class="alert alert-danger my-4" role="alert">
+        La recette demandée n'a pas pu être chargée.
+    </div>
+}
+
 <div class="row g-4 my-4 align-items-stretch recipe-top-section">
 <!-- TITRE & DESCRIPTION DE LA RECETTE -->
 @if (authService.isAuthenticated()) {
@@ -439,7 +448,7 @@
             <button class="btn btn-warning recipe-submit-button"
                 (click)="onSubmit()" [disabled]="!dosageValide">
                 <i class="bi bi-cloud-arrow-up-fill me-1" aria-hidden="true"></i>
-                Enregistrer la recette
+                {{ modeEdition ? 'Enregistrer les modifications' : 'Enregistrer la recette' }}
             </button>
         } @else {
             <p class="fst-italic text-white mb-0 text-center">

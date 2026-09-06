@@ -26,6 +26,7 @@ export const routes: Routes = [
 
     // Recettes :
     { path: 'recipe-calculator', component: RecipeCalculatorPage },
+    { path: 'recipe-calculator/:id', component: RecipeCalculatorPage, canActivate: [authGuard] },
     { path: 'recipe-manager', component: RecipeManagerPage, canActivate: [authGuard]},
 
     // Administration - Gestion :

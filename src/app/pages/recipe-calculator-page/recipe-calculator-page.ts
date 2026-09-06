@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recette.service';
 import { Chart } from 'chart.js/auto';
 import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
+import { ActivatedRoute } from '@angular/router';
 
 type CleCaracteristique = 'sapo' | 'ins' | 'iode' | 'lavant' | 'douceur' |
     'durete' | 'solubilite' | 'sechage' | 'volMousse' | 'tenueMousse';
@@ -49,6 +50,8 @@ export class RecipeCalculatorPage implements OnInit, OnDestroy {
 
     public modeDosage: 'masse' | 'pourcentage' = 'masse';
     public resultatEnvoi: 'succes' | 'erreur' | null = null;
+    public chargementRecetteEnCours = false;
+    public erreurChargementRecette = false;
 
     // Liste des ingrédients disponibles :
     public ingredientsDispo: Ingredient[] = [];
@@ -124,6 +127,7 @@ export class RecipeCalculatorPage implements OnInit, OnDestroy {
         private recetteService: RecetteService,
         private calculRecetteService: CalculRecetteService,
         public authService: AuthService,
+        private route: ActivatedRoute,
     ) {}
 
     public echelleScore(idCaracteristique: number): EchelleScore {
@@ -145,7 +149,62 @@ export class RecipeCalculatorPage implements OnInit, OnDestroy {
     // Initialisation : Récupération de la liste des ingrédients via l'API :
     ngOnInit(): void {
         this.ingredientService.getIngredients().subscribe( data => this.ingredientsDispo = data);
+        const idParam = this.route.snapshot.paramMap.get('id');
+        if (idParam !== null) {
+            const id = Number(idParam);
+            if (Number.isInteger(id) && id > 0) {
+                this.chargerRecette(id);
+                return;
+            }
+            this.erreurChargementRecette = true;
+        }
         this.recalculerRecette();
+    }
+
+    public get modeEdition(): boolean {
+        return this.nouvelleRecetteDTO.id !== null &&
+            this.nouvelleRecetteDTO.id !== undefined;
+    }
+
+    private chargerRecette(id: number): void {
+        this.chargementRecetteEnCours = true;
+        this.erreurChargementRecette = false;
+        this.recetteService.getRecetteById(id).subscribe({
+            next: (recette) => {
+                this.appliquerRecette(recette);
+                this.chargementRecetteEnCours = false;
+            },
+            error: () => {
+                this.chargementRecetteEnCours = false;
+                this.erreurChargementRecette = true;
+                this.recetteAffichee = null;
+            },
+        });
+    }
+
+    private appliquerRecette(recette: Recette): void {
+        this.recetteAffichee = recette;
+        this.selectionIngredients = recette.ligneIngredients.map((ligne) => ({
+            ...ligne,
+            ingredient: { ...ligne.ingredient },
+        }));
+        this.nouvelleRecetteDTO = {
+            id: recette.id,
+            titre: recette.titre,
+            description: recette.description,
+            surgraissage: recette.surgraissage,
+            avecSoude: recette.avecSoude,
+            concentrationAlcalin: recette.concentrationAlcalin,
+            ligneIngredients: recette.ligneIngredients.map((ligne) => ({
+                ingredientId: ligne.ingredient.id,
+                recetteId: recette.id,
+                quantite: ligne.quantite,
+                pourcentage: ligne.pourcentage,
+            })),
+        };
+        this.masseTotale = this.selectionIngredients.reduce(
+            (total, ligne) => total + (Number(ligne.quantite) || 0), 0);
+        this.mettreAJourGraphiqueComposition();
     }
 
     ngOnDestroy(): void {
@@ -409,26 +468,13 @@ export class RecipeCalculatorPage implements OnInit, OnDestroy {
       
 
         // 3. Envoi de la recette à l'API via le service recette :
-        this.recetteService.createRecette(recetteEnvoyee).subscribe({
+        const enregistrement$ = this.modeEdition
+            ? this.recetteService.updateRecette(this.nouvelleRecetteDTO.id!, recetteEnvoyee)
+            : this.recetteService.createRecette(recetteEnvoyee);
+
+        enregistrement$.subscribe({
             next: (recette: Recette) => {
-                this.recetteAffichee = recette; // On récupère la recette avec les scores
-                this.selectionIngredients = recette.ligneIngredients;
-                this.nouvelleRecetteDTO = {
-                    id: recette.id,
-                    titre: recette.titre,
-                    description: recette.description,
-                    surgraissage: recette.surgraissage,
-                    avecSoude: recette.avecSoude,
-                    concentrationAlcalin: recette.concentrationAlcalin,
-                    ligneIngredients: recette.ligneIngredients.map((ligne) => ({
-                        ingredientId: ligne.ingredient.id,
-                        quantite: ligne.quantite,
-                        pourcentage: ligne.pourcentage,
-                    })),
-                };
-                this.masseTotale = recette.ligneIngredients.reduce(
-                    (total, ligne) => total + (Number(ligne.quantite) || 0), 0);
-                this.mettreAJourGraphiqueComposition();
+                this.appliquerRecette(recette);
                 this.ouvrirModalEnvoi('succes');
                 //console.log('Recette reçue du backend :', recette);
 

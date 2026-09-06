@@ -5,19 +5,23 @@ import { AuthService } from '../../services/auth.service';
 import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
 import { RecipeCalculatorPage } from './recipe-calculator-page';
+import { ActivatedRoute } from '@angular/router';
 
 describe('RecipeCalculatorPage', () => {
     let component: RecipeCalculatorPage;
     let fixture: ComponentFixture<RecipeCalculatorPage>;
     let authService: jasmine.SpyObj<AuthService>;
     let recetteService: jasmine.SpyObj<RecetteService>;
+    let routeId: string | null;
 
     beforeEach(async () => {
         authService = jasmine.createSpyObj<AuthService>('AuthService', ['isAuthenticated']);
         authService.isAuthenticated.and.returnValue(true);
+        routeId = null;
         const ingredientService = jasmine.createSpyObj<IngredientService>('IngredientService', ['getIngredients']);
         ingredientService.getIngredients.and.returnValue(of([]));
-        recetteService = jasmine.createSpyObj<RecetteService>('RecetteService', ['createRecette']);
+        recetteService = jasmine.createSpyObj<RecetteService>(
+            'RecetteService', ['createRecette', 'updateRecette', 'getRecetteById']);
 
         await TestBed.configureTestingModule({
             imports: [RecipeCalculatorPage],
@@ -25,6 +29,10 @@ describe('RecipeCalculatorPage', () => {
                 { provide: AuthService, useValue: authService },
                 { provide: IngredientService, useValue: ingredientService },
                 { provide: RecetteService, useValue: recetteService },
+                {
+                    provide: ActivatedRoute,
+                    useValue: { snapshot: { paramMap: { get: () => routeId } } },
+                },
             ],
         }).compileComponents();
 
@@ -202,5 +210,69 @@ describe('RecipeCalculatorPage', () => {
         component.onSubmit();
 
         expect(component.resultatEnvoi).toBe('erreur');
+    });
+
+    it('met à jour une recette existante au lieu de la recréer', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 0, ins: 0, sapo: 0, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        const recette: Recette = {
+            id: 10, titre: 'Test modifié', description: '', surgraissage: 5,
+            avecSoude: true, concentrationAlcalin: 30, qteAlcalin: 10,
+            apportEnEau: 7, ligneIngredients: [{ ingredient, quantite: 100, pourcentage: 100 }],
+            resultats: [], dateCreation: new Date(),
+        };
+        component.nouvelleRecetteDTO = {
+            id: 10, titre: recette.titre, description: '', surgraissage: 5,
+            avecSoude: true, concentrationAlcalin: 30, ligneIngredients: [],
+        };
+        component.selectionIngredients = recette.ligneIngredients;
+        recetteService.updateRecette.and.returnValue(of(recette));
+
+        component.onSubmit();
+
+        expect(recetteService.updateRecette).toHaveBeenCalledWith(10, jasmine.objectContaining({
+            id: 10,
+            titre: 'Test modifié',
+        }));
+        expect(recetteService.createRecette).not.toHaveBeenCalled();
+        expect(component.resultatEnvoi).toBe('succes');
+    });
+
+    it('charge et préremplit une recette depuis l identifiant de route', () => {
+        const ingredient = {
+            id: 1, nom: 'Olive', iode: 0, ins: 0, sapo: 0, volMousse: 0,
+            tenueMousse: 0, douceur: 0, lavant: 0, durete: 0,
+            solubilite: 0, sechage: 0, estCorpsGras: true,
+        };
+        const recette: Recette = {
+            id: 12, titre: 'Recette à modifier', description: 'Description', surgraissage: 8,
+            avecSoude: false, concentrationAlcalin: 45, qteAlcalin: 12,
+            apportEnEau: 15,
+            ligneIngredients: [{ ingredient, quantite: 250, pourcentage: 100 }],
+            resultats: [], dateCreation: new Date(),
+        };
+        routeId = '12';
+        recetteService.getRecetteById.and.returnValue(of(recette));
+        fixture.destroy();
+
+        fixture = TestBed.createComponent(RecipeCalculatorPage);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+
+        expect(recetteService.getRecetteById).toHaveBeenCalledWith(12);
+        expect(component.modeEdition).toBeTrue();
+        expect(component.nouvelleRecetteDTO).toEqual(jasmine.objectContaining({
+            id: 12,
+            titre: 'Recette à modifier',
+            avecSoude: false,
+        }));
+        expect(component.nouvelleRecetteDTO.ligneIngredients[0]).toEqual(jasmine.objectContaining({
+            ingredientId: 1,
+            recetteId: 12,
+        }));
+        expect(component.masseTotale).toBe(250);
     });
 });

@@ -3,10 +3,11 @@ import { Recette } from '../../models/recette.model';
 import { RecetteService } from '../../services/recette.service';
 import { CommonModule } from '@angular/common';
 import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-recipe-manager-page',
-  imports: [CommonModule, RecipeProfileChart],
+  imports: [CommonModule, RecipeProfileChart, RouterLink],
   templateUrl: './recipe-manager-page.html',
   styleUrl: './recipe-manager-page.css',
 })
