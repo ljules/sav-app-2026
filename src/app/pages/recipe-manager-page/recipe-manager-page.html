@@ -51,68 +51,56 @@
     }
 </div>
 
-<!-- Code du modal :  -->
-<div class="modal fade" id="modalDetails" tabindex="-1" aria-hidden="true"> 
-    <div class="modal-dialog modal-lg"> 
-        <div class="modal-content">
-        @if (recetteSelectionnee) { 
-            <div class="modal-header bg-success-subtle"> 
-                <h5 class="modal-title">{{ recetteSelectionnee.titre }}</h5> 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal" 
-                        (click)="fermerModale()"></button> 
-            </div> 
-             
-            <div class="modal-body"> 
-                <p class="detail-description">{{ recetteSelectionnee.description }}</p>
-                <p><strong>Surgraissage :</strong> {{ recetteSelectionnee.surgraissage }} % · <strong>Concentration :</strong> {{ recetteSelectionnee.concentrationAlcalin }} %</p>
-                <h6>Composition de la recette</h6> 
-                <table class="table table-sm mb-4"> 
-                    <thead class="table-light"> 
-                        <tr> 
-                            <th>Ingrédient</th> 
-                            <th class="text-end">Quantité</th> 
-                            <th class="text-end">Pourcentage</th> 
-                        </tr> 
-                    </thead> 
-                    <tbody> 
-                        @for (ligne of recetteSelectionnee.ligneIngredients; track $index) { 
-                        <tr> 
-                            <td>{{ ligne.ingredient.nom }}</td> 
-                            <td class="text-end">{{ ligne.quantite }} g</td> 
-                            <td class="text-end">{{ ligne.pourcentage }} %</td> 
-                        </tr> 
-                        } 
-                    </tbody> 
-                </table> 
- 
-                <div class="alert alert-secondary d-flex justify-content-around"> 
-                    <span><strong>Eau :</strong> {{ recetteSelectionnee.apportEnEau }} g</span> 
-                    <span><strong>{{ recetteSelectionnee.avecSoude ? 'Soude' : 'Potasse' }} :</strong>  
-                          {{ recetteSelectionnee.qteAlcalin }} g</span> 
-                </div> 
- 
-                <h6>Scores de qualité</h6> 
-                <div class="row"> 
-
-
-                    @for (res of recetteSelectionnee.resultats; track res.caracteristique.id) { 
-                    <div class="col-md-6 mb-2"> 
-                        <small>{{ res.caracteristique.nom }} : {{ res.score }}</small> 
-                        <div class="progress" style="height: 10px;"> 
-                            <div class="progress-bar bg-success" [style.width.%]="res.score"></div> 
-                        </div> 
-                    </div> 
-                    } 
-                </div> 
-            </div> 
-             
-            <div class="modal-footer bg-success-subtle"> 
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button> 
-            </div> 
-        } </div> 
+<div class="modal fade" id="modalDetails" tabindex="-1" aria-hidden="true" aria-labelledby="detail-title">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content detail-modal">
+      @if (recetteSelectionnee) {
+        <div class="modal-header detail-header">
+          <h5 class="modal-title" id="detail-title">{{ recetteSelectionnee.titre }}</h5>
+          <span class="detail-superfat">Surgraissage {{ recetteSelectionnee.surgraissage }} %</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer les détails" (click)="fermerModale()"></button>
+        </div>
+        <div class="modal-body detail-body" #detailBody>
+          @if (pageDetails === 'composition') {
+            <h6 class="detail-heading">Description :</h6>
+            <p class="detail-description">{{ recetteSelectionnee.description || 'Aucune description.' }}</p>
+            <h6 class="detail-heading">Composition :</h6>
+            <div class="detail-columns">
+              <div class="detail-table-panel">
+                <table class="detail-table">
+                  <thead><tr><th scope="col">Ingrédient</th><th scope="col">Quantité</th></tr></thead>
+                  <tbody>
+                    @for (ligne of recetteSelectionnee.ligneIngredients; track $index) {
+                      <tr [class.detail-additive]="!ligne.ingredient.estCorpsGras"><td>{{ ligne.ingredient.nom }}</td><td>{{ ligne.quantite | number:'1.0-2':'fr' }} g</td></tr>
+                    }
+                    <tr class="detail-water"><td>EAU</td><td>{{ recetteSelectionnee.apportEnEau | number:'1.0-2':'fr' }} g</td></tr>
+                    <tr class="detail-alkali"><td>ALCALIN : {{ recetteSelectionnee.avecSoude ? 'Soude (NaOH)' : 'Potasse (KOH)' }}</td><td>{{ recetteSelectionnee.qteAlcalin | number:'1.0-2':'fr' }} g</td></tr>
+                  </tbody>
+                  <tfoot><tr><th scope="row">TOTAL</th><td>{{ masseTotaleDetails | number:'1.0-2':'fr' }} g</td></tr></tfoot>
+                </table>
+                <p class="detail-concentration">Concentration de l’alcalin : {{ recetteSelectionnee.concentrationAlcalin }} %</p>
+              </div>
+              <div class="detail-chart-panel">
+                <app-recipe-composition [lignes]="recetteSelectionnee.ligneIngredients" [eau]="recetteSelectionnee.apportEnEau" [alcalin]="recetteSelectionnee.qteAlcalin" [avecSoude]="recetteSelectionnee.avecSoude" [detailed]="true" />
+              </div>
+            </div>
+          } @else {
+            <h6 class="detail-heading">Scores &amp; profil :</h6>
+            <div class="detail-columns detail-profile">
+              <div class="detail-table-panel"><app-recipe-scores [resultats]="recetteSelectionnee.resultats" /></div>
+              <div class="detail-chart-panel"><app-recipe-profile-chart [resultats]="recetteSelectionnee.resultats" /></div>
+            </div>
+          }
+        </div>
+        <div class="modal-footer detail-footer">
+          <button type="button" class="btn detail-navigation" (click)="pageDetails = pageDetails === 'composition' ? 'profil' : 'composition'; detailBody.scrollTop = 0">
+            @if (pageDetails === 'composition') { Voir scores &amp; profil <span aria-hidden="true">&gt;&gt;</span> }
+            @else { <span aria-hidden="true">&lt;&lt;</span> Voir Composition }
+          </button>
+          <button type="button" class="btn detail-pdf" disabled title="Disponible ultérieurement">Générer PDF</button>
+        </div>
+      }
     </div>
+  </div>
 </div>
-
 </div>

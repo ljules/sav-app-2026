@@ -16,3 +16,42 @@
 .recipe-footer .btn { min-width: 25%; font-weight: 700; }
 .detail-description { white-space: pre-wrap; overflow-wrap: anywhere; }
 @media(max-width: 420px) { .recipe-header h5 { font-size: .95rem; } .recipe-visuals { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); } .recipe-footer { gap: .4rem; } }
+.detail-modal { border: 1px solid var(--green-charter); border-radius: 1.2rem; overflow: hidden; }
+.detail-header, .detail-footer { background: var(--green-charter); border: 0; padding: 1rem; gap: 1rem; }
+.detail-header .modal-title { color: white; font-weight: 700; overflow-wrap: anywhere; }
+.detail-superfat { margin-left: auto; background: #00b54a; color: white; font-weight: 700; border-radius: .5rem; padding: .45rem 2rem; white-space: nowrap; }
+.detail-body { height: 32rem; padding: 1.25rem 2.5rem; }
+.detail-heading { color: var(--purple-charter); text-decoration: underline; font-size: 1.4rem; font-weight: 700; margin-bottom: .7rem; }
+.detail-body .detail-description { border-left: 2px solid var(--purple-charter); padding: .7rem; margin: 0 0 1.2rem .4rem; font-style: italic; }
+.detail-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.7rem; }
+.detail-table-panel { min-width: 0; padding: .5rem 1rem; }
+.detail-chart-panel { min-width: 0; border-left: 1px solid var(--purple-charter); padding: .5rem 0 .5rem 1.7rem; }
+.detail-table { width: 100%; border-collapse: collapse; color: #18702a; }
+.detail-table th, .detail-table td { border: 1px solid var(--green-charter); padding: .15rem .45rem; }
+.detail-table td:last-child { text-align: center; white-space: nowrap; }
+.detail-table thead, .detail-table tfoot { background: var(--green-charter); color: black; text-align: center; font-weight: 700; }
+.detail-table tbody tr:nth-child(even) { background: #ddd; }
+.detail-additive { color: var(--purple-charter); }
+.detail-water { color: #006b91; }
+.detail-alkali { color: #d95319; }
+.detail-concentration { font-size: .8rem; color: #595959; margin-top: .5rem; }
+.detail-profile { min-height: 23rem; }
+.detail-profile .detail-table-panel { display: flex; align-items: center; }
+.detail-profile .detail-chart-panel { height: 24rem; }
+.detail-footer { justify-content: space-between; }
+.detail-navigation { margin-left: auto; margin-right: auto; background: var(--purple-charter); color: white; font-weight: 700; }
+.detail-navigation:hover, .detail-navigation:focus-visible { background: #801880; color: white; }
+.detail-navigation span { padding: 0 .5rem; }
+.detail-pdf:disabled { background: #c00; color: white; opacity: 1; font-weight: 700; padding-left: 2rem; padding-right: 2rem; }
+@media(max-width: 767px) {
+  .detail-body { padding: 1rem; }
+  .detail-columns { grid-template-columns: 1fr; gap: 1rem; }
+  .detail-chart-panel { border-left: 0; border-top: 1px solid var(--purple-charter); padding: 1rem 0; }
+  .detail-header { flex-wrap: wrap; }
+  .detail-header .modal-title { width: calc(100% - 3rem); }
+  .detail-header .btn-close { position: absolute; right: 1rem; top: 1.4rem; }
+  .detail-superfat { margin-left: 0; }
+  .detail-footer { justify-content: center; gap: .5rem; }
+  .detail-navigation { margin: 0; }
+  .detail-table-panel { padding: .5rem 0; }
+}

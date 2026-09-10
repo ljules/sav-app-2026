@@ -1,3 +1,6 @@
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import { RecipeScores } from '../../components/recipe-scores/recipe-scores';
 import { RecipeComposition } from '../../components/recipe-composition/recipe-composition';
 import { RecipeExchange } from '../../components/recipe-exchange/recipe-exchange';
 import { Component, OnInit } from '@angular/core';
@@ -7,9 +10,11 @@ import { CommonModule } from '@angular/common';
 import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
 import { RouterLink } from '@angular/router';
 
+registerLocaleData(localeFr);
+
 @Component({
   selector: 'app-recipe-manager-page',
-  imports: [CommonModule, RecipeProfileChart, RouterLink, RecipeExchange, RecipeComposition],
+  imports: [RecipeScores, CommonModule, RecipeProfileChart, RouterLink, RecipeExchange, RecipeComposition],
   templateUrl: './recipe-manager-page.html',
   styleUrl: './recipe-manager-page.css',
 })
@@ -18,6 +23,13 @@ export class RecipeManagerPage implements OnInit {
     public recettes: Recette[] = []
 
     // Propriété pour stocker la recette à afficher dans la modale
+    public pageDetails: 'composition' | 'profil' = 'composition';
+
+    get masseTotaleDetails(): number {
+        const recette = this.recetteSelectionnee;
+        return recette ? recette.ligneIngredients.reduce((total, ligne) => total + ligne.quantite, 0) + recette.apportEnEau + recette.qteAlcalin : 0;
+    }
+
     public recetteSelectionnee: Recette | null = null;
 
     // Propriétés pour les statistiques globales :
@@ -57,6 +69,7 @@ export class RecipeManagerPage implements OnInit {
      * Définit la recette sélectionnée pour l'affichage des détails 
      */ 
     ouvrirModale(recette: Recette): void { 
+        this.pageDetails = 'composition';
         this.recetteSelectionnee = recette; 
     } 
     

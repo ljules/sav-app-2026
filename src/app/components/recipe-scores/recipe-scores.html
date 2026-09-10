@@ -1,0 +1,33 @@
+@for (res of resultats; track res.caracteristique.id) {
+                    @let echelle = echelleScore(res.caracteristique.id);
+                    <div class="score-line">
+                        <span class="fw-bold analysis-score-label">{{ res.caracteristique.nom }}</span>
+                        <div class="score-reference-track"
+                            role="meter"
+                            [attr.aria-label]="res.caracteristique.nom"
+                            [attr.aria-valuenow]="res.score"
+                            [attr.aria-valuemin]="echelle.min"
+                            [attr.aria-valuemax]="echelle.max"
+                            [attr.aria-valuetext]="res.score.toFixed(1) + '. ' + echelle.description"
+                            [title]="echelle.description">
+                            <span class="score-zone score-zone-low"
+                                [style.width.%]="largeurZone(echelle.min, echelle.acceptableMin, echelle)"></span>
+                            <span class="score-zone score-zone-acceptable-low"
+                                [style.left.%]="positionScore(echelle.acceptableMin, echelle)"
+                                [style.width.%]="largeurZone(echelle.acceptableMin, echelle.optimalMin, echelle)"></span>
+                            <span class="score-zone score-zone-optimal"
+                                [style.left.%]="positionScore(echelle.optimalMin, echelle)"
+                                [style.width.%]="largeurZone(echelle.optimalMin, echelle.optimalMax, echelle)"></span>
+                            <span class="score-zone score-zone-acceptable-high"
+                                [style.left.%]="positionScore(echelle.optimalMax, echelle)"
+                                [style.width.%]="largeurZone(echelle.optimalMax, echelle.acceptableMax, echelle)"></span>
+                            <span class="score-zone score-zone-high"
+                                [style.left.%]="positionScore(echelle.acceptableMax, echelle)"
+                                [style.width.%]="largeurZone(echelle.acceptableMax, echelle.max, echelle)"></span>
+                            <span class="score-marker"
+                                [style.left.%]="positionScore(res.score, echelle)"
+                                aria-hidden="true"></span>
+                        </div>
+                        <span class="badge bg-dark">{{ res.score.toFixed(1) }}</span>
+                    </div>
+                }
