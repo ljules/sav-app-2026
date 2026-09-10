@@ -1,3 +1,4 @@
+import { ImportExportCard } from '../../components/import-export-card/import-export-card';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Ingredient } from '../../models/ingredient.model';
@@ -11,7 +12,7 @@ type DirectionTri = 'asc' | 'desc';
 
 @Component({
   selector: 'app-ingredients-manager-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ImportExportCard],
   templateUrl: './ingredients-manager-page.html',
   styleUrl: './ingredients-manager-page.css',
 })

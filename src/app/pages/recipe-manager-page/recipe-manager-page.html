@@ -1,4 +1,5 @@
 <div class="container">
+    <app-recipe-exchange (changed)="chargerRecettes()" />
 
     <div class="alert alert-success mb-4 shadow">
     <h4 class="mb-2">Statistiques sur vos recettes :</h4>
@@ -20,69 +21,35 @@
     </ul>
     </div>
 
-<div class="row"> 
-    @for (recette of recettes; track recette.id) { 
-    <div class="col-md-4 mb-4"> 
-        <div class="card h-100 shadow"> 
-            <div
-                class="card-header p-2"
-                [ngClass]="recette.surgraissage >= 5 ? 'bg-success-subtle' : 'bg-danger-subtle'">
-
-                <h5 class="card-title">{{ recette.titre }}</h5>
-            </div>
-            <div class="card-body"> 
-                <p class="card-text text-truncate">Description : {{ recette.description }}</p> 
-                 
-                <ul class="list-group list-group-flush mb-3"> 
-                    <li class="list-group-item d-flex justify-content-between"> 
-                        <span>Surgraissage :</span> 
-                        <span class="badge bg-info text-dark">
-                            {{ recette.surgraissage }}%
-                        </span> 
-                    </li> 
-                    <li class="list-group-item d-flex justify-content-between"> 
-                        <span>Alcalin :</span> 
-                        <span>
-                            {{ recette.avecSoude ? 'Soude (NaOH)' : 'Potasse (KOH)' }}
-                        </span> 
-                    </li> 
-                    <li class="list-group-item d-flex justify-content-between"> 
-                        <span>Eau :</span> 
-                        <span class="fw-bold">{{ recette.apportEnEau }} g</span> 
-                    </li> 
-                </ul> 
-
-                <!-- Affichage du graphe radar : -->
-                <div class="chart-container mb-3" style="position: relative; height:400px;"> 
-                    <app-recipe-profile-chart [resultats]="recette.resultats" />
-                </div> 
-            </div> 
-
-            <div
-                class="card-footer"
-                [ngClass]="recette.surgraissage >= 5 ? 'bg-success-subtle' : 'bg-danger-subtle'">
-                <div class="mt-4 d-flex justify-content-between mt-auto">               
-                    <button class="btn btn-outline-primary btn-sm"  
-                            data-bs-toggle="modal"  
-                            data-bs-target="#modalDetails" 
-                            (click)="ouvrirModale(recette)"> 
-                        Détails 
-                    </button> 
-                    <a class="btn btn-outline-warning btn-sm"
-                            [routerLink]="['/recipe-calculator', recette.id]">
-                        Modifier
-                    </a>
-                    <button class="btn btn-outline-danger btn-sm" 
-                            (click)="supprimerRecette(recette.id)"> 
-                        Supprimer 
-                    </button> 
-                </div> 
-            </div>            
-        </div> 
-    </div> 
-    } 
+<div class="recipe-grid">
+    @for (recette of recettes; track recette.id) {
+      <article class="recipe-card shadow-sm">
+        <header class="recipe-header">
+          <h5 [title]="recette.titre">{{ recette.titre }}</h5>
+          <span class="superfat" [attr.aria-label]="'Surgraissage : ' + recette.surgraissage + ' %'" title="Surgraissage">{{ recette.surgraissage }} %</span>
+        </header>
+        <div class="recipe-visuals">
+          <section class="composition-panel">
+            <h6>Composition :</h6>
+            <app-recipe-composition [lignes]="recette.ligneIngredients" />
+          </section>
+          <section class="profile-panel">
+            <h6>Profil :</h6>
+            <div class="compact-profile"><app-recipe-profile-chart [resultats]="recette.resultats" [compact]="true" /></div>
+          </section>
+        </div>
+        <div class="recipe-description" [title]="recette.description"><p>{{ recette.description || 'Aucune description.' }}</p></div>
+        <footer class="recipe-footer">
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDetails"
+            [attr.aria-label]="'Détails de ' + recette.titre" (click)="ouvrirModale(recette)">Détails</button>
+          <a class="btn btn-warning btn-sm" [routerLink]="['/recipe-calculator', recette.id]"
+            [attr.aria-label]="'Modifier ' + recette.titre">Modifier</a>
+          <button class="btn btn-danger btn-sm" [attr.aria-label]="'Supprimer ' + recette.titre"
+            (click)="supprimerRecette(recette.id)">Supprimer</button>
+        </footer>
+      </article>
+    }
 </div>
-
 
 <!-- Code du modal :  -->
 <div class="modal fade" id="modalDetails" tabindex="-1" aria-hidden="true"> 
@@ -98,6 +65,8 @@
             </div> 
              
             <div class="modal-body"> 
+                <p class="detail-description">{{ recetteSelectionnee.description }}</p>
+                <p><strong>Surgraissage :</strong> {{ recetteSelectionnee.surgraissage }} % · <strong>Concentration :</strong> {{ recetteSelectionnee.concentrationAlcalin }} %</p>
                 <h6>Composition de la recette</h6> 
                 <table class="table table-sm mb-4"> 
                     <thead class="table-light"> 

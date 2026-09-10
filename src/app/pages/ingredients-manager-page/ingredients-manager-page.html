@@ -1,48 +1,10 @@
 <div class="container">
-    <!-- Import et export CSV -->
-    <div class="card shadow mb-3">
-        <div class="card-header text-light">
-            <i class="bi bi-database-fill-gear"></i> Import / Export des ingrédients
-        </div>
-        <div class="card-body text-light">
-            <div class="row g-4 align-items-end">
-                <div class="col-lg-6 csv-zone">
-                    <h6><i class="bi bi-database-fill-up"></i> Import CSV</h6>
-                    <input
-                        type="file"
-                        class="form-control form-control-sm"
-                        accept=".csv"
-                        (change)="onCsvFileSelected($event)">
-                    <button
-                        class="btn btn-sm btn-warning fw-bold text-black mt-2"
-                        (click)="importerIngredientsDepuisCsv()"
-                        [disabled]="!fichierCsvSelectionne || importEnCours">
-                        <i class="bi bi-upload"></i>
-                        {{ importEnCours ? 'Import en cours...' : 'Importer CSV' }}
-                    </button>
-                </div>
-                <div class="col-lg-6 csv-zone">
-                    <h6><i class="bi bi-database-fill-down"></i> Export CSV</h6>
-                    <p class="small mb-2">
-                        Exporte la liste complète des ingrédients au format utilisé pour l'import.
-                    </p>
-                    <button
-                        class="btn btn-sm btn-success fw-bold"
-                        (click)="exporterIngredientsVersCsv()"
-                        [disabled]="ingredients.length === 0">
-                        <i class="bi bi-download"></i> Exporter CSV
-                    </button>
-                </div>
-            </div>
-
-            @if (messageImport) {
-                <div class="alert alert-success mt-3 mb-0">{{ messageImport }}</div>
-            }
-            @if (erreurImport) {
-                <div class="alert alert-danger mt-3 mb-0">{{ erreurImport }}</div>
-            }
-        </div>
-    </div>
+    <app-import-export-card sujet="des ingrédients" format="CSV" accept=".csv"
+        description="Exporte la liste complète des ingrédients au format utilisé pour l'import."
+        [hasFile]="!!fichierCsvSelectionne" [busy]="importEnCours" [canExport]="ingredients.length > 0"
+        [message]="messageImport" [error]="erreurImport"
+        (fileSelected)="onCsvFileSelected($event)" (importRequested)="importerIngredientsDepuisCsv()"
+        (exportRequested)="exporterIngredientsVersCsv()" />
 
     <div class="card shadow">
 

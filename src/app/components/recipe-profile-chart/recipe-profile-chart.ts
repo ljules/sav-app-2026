@@ -10,6 +10,7 @@ import { Resultat } from '../../models/recette.model';
 export class RecipeProfileChart implements OnChanges, OnDestroy {
   @Input() resultats: Resultat[] = [];
   @Input() afficherGraphique = true;
+  @Input() compact = false;
 
   private graphique: Chart | null = null;
   private canvas: HTMLCanvasElement | null = null;
@@ -26,7 +27,8 @@ export class RecipeProfileChart implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['resultats'] || changes['afficherGraphique']) {
+    if (changes['compact']) this.detruireGraphique();
+    if (changes['resultats'] || changes['afficherGraphique'] || changes['compact']) {
       this.mettreAJourGraphique();
     }
   }
@@ -87,7 +89,7 @@ export class RecipeProfileChart implements OnChanges, OnDestroy {
         responsive: true,
         maintainAspectRatio: false,
         elements: { line: { borderWidth: 2 } },
-        scales: { r: { suggestedMin: 0, suggestedMax: 10, ticks: { stepSize: 1 } } },
+        scales: { r: { suggestedMin: 0, suggestedMax: 10, pointLabels: { display: !this.compact }, ticks: { stepSize: this.compact ? 2 : 1, font: { size: this.compact ? 8 : 12 }, backdropColor: this.compact ? 'transparent' : 'white' } } },
         plugins: {
           legend: { display: false },
           tooltip: {

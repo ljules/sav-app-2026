@@ -1,3 +1,5 @@
+import { RecipeComposition } from '../../components/recipe-composition/recipe-composition';
+import { RecipeExchange } from '../../components/recipe-exchange/recipe-exchange';
 import { Component, OnInit } from '@angular/core';
 import { Recette } from '../../models/recette.model';
 import { RecetteService } from '../../services/recette.service';
@@ -7,7 +9,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-recipe-manager-page',
-  imports: [CommonModule, RecipeProfileChart, RouterLink],
+  imports: [CommonModule, RecipeProfileChart, RouterLink, RecipeExchange, RecipeComposition],
   templateUrl: './recipe-manager-page.html',
   styleUrl: './recipe-manager-page.css',
 })

@@ -1,0 +1,538 @@
+{
+  "format": "sav-app-recettes",
+  "version": "1.0.0",
+  "recettes": [
+    {
+      "titre": "Olive",
+      "description": "Composition à un seul corps gras pour tester une recette minimale.",
+      "surgraissage": 5,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 500
+        }
+      ]
+    },
+    {
+      "titre": "Duo olive et coco",
+      "description": "Deux huiles, un lot de 500 g et une description courte.",
+      "surgraissage": 6,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 375
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 125
+        }
+      ]
+    },
+    {
+      "titre": "Trio avec ricin",
+      "description": "Base olive et coco complétée par 5 % de ricin parmi les corps gras.",
+      "surgraissage": 7,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 350
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 125
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        }
+      ]
+    },
+    {
+      "titre": "Karité et cacao",
+      "description": "Association de deux beurres avec les huiles d’olive, de coco et de ricin.",
+      "surgraissage": 8,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 250
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 75
+        },
+        {
+          "ingredientId": 7,
+          "quantite": 50
+        }
+      ]
+    },
+    {
+      "titre": "Olive et tournesol",
+      "description": "",
+      "surgraissage": 5,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 5,
+          "quantite": 150
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 50
+        }
+      ]
+    },
+    {
+      "titre": "Base à la palme",
+      "description": "Lot de 1 000 g de corps gras pour comparer une composition à quatre ingrédients.",
+      "surgraissage": 6,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 400
+        },
+        {
+          "ingredientId": 4,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 250
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 50
+        }
+      ]
+    },
+    {
+      "titre": "Pépins de raisin",
+      "description": "Petit lot de 250 g avec quatre huiles.",
+      "surgraissage": 5,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 150
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 8,
+          "quantite": 37.5
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 12.5
+        }
+      ]
+    },
+    {
+      "titre": "Argan et karité",
+      "description": "Composition comprenant une petite proportion d’argan et du beurre de karité.",
+      "surgraissage": 8,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 75
+        },
+        {
+          "ingredientId": 9,
+          "quantite": 25
+        }
+      ]
+    },
+    {
+      "titre": "Jojoba — petit lot",
+      "description": "Quantités décimales pour vérifier leur affichage et leur conservation lors des échanges.",
+      "surgraissage": 7,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 162.5
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 10,
+          "quantite": 12.5
+        }
+      ]
+    },
+    {
+      "titre": "Miel",
+      "description": "Base de 500 g de corps gras, accompagnée de 10 g de miel.",
+      "surgraissage": 6,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 325
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 11,
+          "quantite": 10
+        }
+      ]
+    },
+    {
+      "titre": "Aloe vera et olive",
+      "description": "Lot avec un ingrédient du catalogue qui n’est pas un corps gras : l’aloe vera.",
+      "surgraissage": 5,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 350
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 12,
+          "quantite": 25
+        }
+      ]
+    },
+    {
+      "titre": "Charbon actif",
+      "description": "Ajout de 5 g de charbon actif à une base de 500 g de corps gras.",
+      "surgraissage": 7,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 125
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 13,
+          "quantite": 5
+        }
+      ]
+    },
+    {
+      "titre": "Argile verte",
+      "description": "Recette de test à cinq lignes, comprenant 10 g d’argile verte.",
+      "surgraissage": 6,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 4,
+          "quantite": 75
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 14,
+          "quantite": 10
+        }
+      ]
+    },
+    {
+      "titre": "Argile blanche et cacao",
+      "description": "Association olive, coco et cacao avec de l’argile blanche.",
+      "surgraissage": 8,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 325
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 7,
+          "quantite": 75
+        },
+        {
+          "ingredientId": 15,
+          "quantite": 10
+        }
+      ]
+    },
+    {
+      "titre": "Lait d’amande",
+      "description": "Base végétale et lait d’amande référencé dans le catalogue de test.\nCette description comporte deux paragraphes pour vérifier les retours à la ligne.",
+      "surgraissage": 7,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 300
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 75
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 17,
+          "quantite": 25
+        }
+      ]
+    },
+    {
+      "titre": "Lait de chèvre et miel",
+      "description": "Six ingrédients pour tester une composition associant corps gras et plusieurs ajouts.",
+      "surgraissage": 8,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 325
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 18,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 11,
+          "quantite": 5
+        }
+      ]
+    },
+    {
+      "titre": "Romarin et vitamine E",
+      "description": "Petites quantités d’extrait de romarin et de vitamine E pour vérifier la précision des valeurs.",
+      "surgraissage": 5,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 325
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 5,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 19,
+          "quantite": 0.5
+        },
+        {
+          "ingredientId": 20,
+          "quantite": 1.25
+        }
+      ]
+    },
+    {
+      "titre": "Olive, cacao et oxyde de zinc",
+      "description": "Composition de test comprenant l’oxyde de zinc du catalogue, sans allégation de protection solaire.",
+      "surgraissage": 6,
+      "avecSoude": true,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 325
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 7,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 25
+        },
+        {
+          "ingredientId": 16,
+          "quantite": 5
+        }
+      ]
+    },
+    {
+      "titre": "Potasse — olive et ricin",
+      "description": "Variante avec KOH pour tester la sélection de l’alcali et le recalcul associé.",
+      "surgraissage": 2,
+      "avecSoude": false,
+      "concentrationAlcalin": 90,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 350
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 50
+        }
+      ]
+    },
+    {
+      "titre": "Composition à dix ingrédients — olive, coco, karité, cacao et ajouts du catalogue",
+      "description": "Recette destinée à éprouver les cartes avec un titre long et une composition détaillée. Elle réunit six corps gras et quatre ajouts, afin de vérifier la lisibilité des listes, les arrondis et la présentation du total.\nLes quantités des ajouts s’ajoutent aux 1 000 g de corps gras ; les pourcentages seront recalculés par l’application sur l’ensemble des lignes.",
+      "surgraissage": 9,
+      "avecSoude": true,
+      "concentrationAlcalin": 95,
+      "ligneIngredients": [
+        {
+          "ingredientId": 1,
+          "quantite": 500
+        },
+        {
+          "ingredientId": 2,
+          "quantite": 200
+        },
+        {
+          "ingredientId": 3,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 6,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 7,
+          "quantite": 100
+        },
+        {
+          "ingredientId": 9,
+          "quantite": 50
+        },
+        {
+          "ingredientId": 12,
+          "quantite": 20
+        },
+        {
+          "ingredientId": 15,
+          "quantite": 10
+        },
+        {
+          "ingredientId": 19,
+          "quantite": 1
+        },
+        {
+          "ingredientId": 20,
+          "quantite": 2
+        }
+      ]
+    }
+  ]
+}

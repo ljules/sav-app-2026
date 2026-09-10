@@ -1,13 +1,18 @@
-/* Assure que le graphique ne déborde pas de la carte */
-.chart-container { 
-    max-width: 100%; 
-    margin: 0 auto; 
-} 
- 
-canvas { 
-    display: block; 
-    width: 100% !important; 
-    height: auto !important; 
-} 
-
-
+.recipe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.recipe-card { border: 1px solid var(--brown-charter); border-radius: 1rem; overflow: hidden; background: white; min-width: 0; }
+.recipe-header, .recipe-footer { background: var(--green-charter); padding: .6rem .8rem; display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
+.recipe-header { min-height: 3.2rem; }
+.recipe-header h5 { color: #fff; font-size: 1.1rem; font-weight: 700; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.superfat { flex-shrink: 0; background: var(--purple-charter); color: white; border-radius: .3rem; padding: .15rem .8rem; font-size: .9rem; }
+.recipe-visuals { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); padding: .65rem .5rem; }
+.recipe-visuals h6 { font-weight: 700; font-size: .9rem; margin: 0 0 .3rem; }
+.composition-panel { min-width: 0; padding-right: .5rem; }
+.profile-panel { min-width: 0; border-left: 1px solid #aaa; padding-left: .5rem; }
+.compact-profile { height: 155px; }
+.compact-profile app-recipe-profile-chart { min-height: 0; }
+.recipe-description { background: #e2e2e2; border-top: 1px solid #aaa; padding: .35rem .5rem; height: 3.4rem; }
+.recipe-description p { margin: 0; font-style: italic; font-size: .85rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.recipe-footer { border-top: 1px solid var(--brown-charter); }
+.recipe-footer .btn { min-width: 25%; font-weight: 700; }
+.detail-description { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media(max-width: 420px) { .recipe-header h5 { font-size: .95rem; } .recipe-visuals { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); } .recipe-footer { gap: .4rem; } }
