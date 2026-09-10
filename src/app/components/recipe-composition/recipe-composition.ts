@@ -1,3 +1,4 @@
+import { compositionRecette } from '../../utils/recipe-composition';
 import { Component, Input, OnChanges } from '@angular/core';
 import { LigneIngredient } from '../../models/recette.model';
 
@@ -43,20 +44,14 @@ export class RecipeComposition implements OnChanges {
   items: { name: string; percent: string; color: string; label: string }[] = [];
   gradient = '#eee';
   ngOnChanges(): void {
-    const colors = ['#8aa017','#7e1fa2','#087cff','#ffbf00','#e66a43','#219e91','#c75489','#5268a4','#966b35','#648441'];
-    const masses = this.lignes.map(l => ({ name: l.ingredient.nom, quantite: l.quantite }));
-    if (this.eau !== null) masses.push({ name: 'Eau', quantite: this.eau });
-    if (this.alcalin !== null) masses.push({ name: this.avecSoude ? 'Soude (NaOH)' : 'Potasse (KOH)', quantite: this.alcalin });
-    const total = masses.reduce((sum, l) => sum + Math.max(0, l.quantite), 0);
+    const items = compositionRecette(this.lignes, this.eau, this.alcalin, this.avecSoude);
     let offset = 0;
-    const stops: string[] = [];
-    this.items = masses.map((l, i) => {
-      const value = total > 0 ? Math.max(0, l.quantite) / total * 100 : 0;
-      const color = colors[i % colors.length];
-      stops.push(`${color} ${offset}% ${offset + value}%`); offset += value;
-      const percent = value.toLocaleString('fr-FR', { maximumFractionDigits: 1 });
-      return { name: l.name, color, percent, label: `${l.name} : ${l.quantite} g (${percent} %)` };
+    const stops = items.map(item => {
+      const start = offset;
+      offset += item.value;
+      return `${item.color} ${start}% ${offset}%`;
     });
-    this.gradient = total > 0 ? `conic-gradient(${stops.join(',')})` : '#eee';
+    this.items = items;
+    this.gradient = offset > 0 ? `conic-gradient(${stops.join(',')})` : '#eee';
   }
 }

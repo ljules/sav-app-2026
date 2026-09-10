@@ -1,3 +1,5 @@
+import { RecipePdfService } from '../../services/recipe-pdf.service';
+import type { TCreatedPdf } from 'pdfmake/interfaces';
 import { Recette } from '../../models/recette.model';
 import { RecipeComposition } from '../../components/recipe-composition/recipe-composition';
 import { By } from '@angular/platform-browser';
@@ -13,13 +15,18 @@ describe('RecipeManagerPage', () => {
   let component: RecipeManagerPage;
   let fixture: ComponentFixture<RecipeManagerPage>;
 
+  let pdfService: jasmine.SpyObj<RecipePdfService>;
+
   beforeEach(async () => {
+    pdfService = jasmine.createSpyObj<RecipePdfService>('RecipePdfService', ['creer', 'nomFichier']);
+    pdfService.nomFichier.and.returnValue('recette.pdf');
     const recetteService = jasmine.createSpyObj<RecetteService>('RecetteService', ['getRecettes']);
     recetteService.getRecettes.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [RecipeManagerPage],
       providers: [
+        { provide: RecipePdfService, useValue: pdfService },
         { provide: RecetteService, useValue: recetteService },
         provideRouter([]),
         provideHttpClient(),
@@ -73,7 +80,7 @@ describe('RecipeManagerPage', () => {
     next.click(); fixture.detectChanges();
     component.fermerModale(); component.ouvrirModale(recette); fixture.detectChanges();
     expect(component.pageDetails).toBe('composition');
-    expect(modal.querySelector('.detail-pdf').disabled).toBeTrue();
+    expect(modal.querySelector('.detail-pdf').disabled).toBeFalse();
   });
 
   it('labels potash correctly and handles a zero total', () => {
@@ -83,4 +90,47 @@ describe('RecipeManagerPage', () => {
     expect(donut.items.map(item => item.name)).toEqual(['Eau', 'Potasse (KOH)']);
     expect(donut.items.every(item => item.percent === '0')).toBeTrue();
     expect(donut.gradient).toBe('#eee');
-  });});
+  });
+  it('reserves one tab before loading and exports from the profile page', async () => {
+    const pdf = jasmine.createSpyObj<TCreatedPdf>('pdf', ['open', 'download']);
+    pdf.open.and.resolveTo();
+    let resolve!: (pdf: TCreatedPdf) => void;
+    pdfService.creer.and.returnValue(new Promise(done => resolve = done));
+    const tab = { document: { title: '', body: { textContent: '' } }, closed: false, close: jasmine.createSpy() } as unknown as Window;
+    const open = spyOn(window, 'open').and.returnValue(tab);
+    component.ouvrirModale(recette);
+    component.pageDetails = 'profil';
+    const pending = component.genererPdf();
+    expect(open).toHaveBeenCalledOnceWith('', '_blank');
+    expect(component.generationPdf).toBeTrue();
+    await component.genererPdf();
+    expect(pdfService.creer).toHaveBeenCalledTimes(1);
+    resolve(pdf); await pending;
+    expect(pdf.open).toHaveBeenCalledOnceWith(tab);
+    expect(component.generationPdf).toBeFalse();
+    expect(component.erreurPdf).toBe('');
+  });
+
+  it('offers a named download when a popup is blocked', async () => {
+    spyOn(window, 'open').and.returnValue(null);
+    const pdf = jasmine.createSpyObj<TCreatedPdf>('pdf', ['open', 'download']);
+    pdf.download.and.resolveTo();
+    pdfService.creer.and.resolveTo(pdf);
+    component.ouvrirModale(recette);
+    await component.genererPdf();
+    expect(pdf.download).toHaveBeenCalledOnceWith('recette.pdf');
+    expect(pdf.open).not.toHaveBeenCalled();
+    expect(component.informationPdf).toContain('téléchargement');
+  });
+
+  it('closes the waiting tab and allows a retry after an error', async () => {
+    const tab = { document: { title: '', body: { textContent: '' } }, close: jasmine.createSpy() } as unknown as Window;
+    spyOn(window, 'open').and.returnValue(tab);
+    pdfService.creer.and.rejectWith(new Error('loading failed'));
+    component.ouvrirModale(recette);
+    await component.genererPdf();
+    expect(tab.close).toHaveBeenCalled();
+    expect(component.erreurPdf).toContain('réessayer');
+    expect(component.generationPdf).toBeFalse();
+  });
+});

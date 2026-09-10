@@ -42,7 +42,7 @@
 .detail-navigation { margin-left: auto; margin-right: auto; background: var(--purple-charter); color: white; font-weight: 700; }
 .detail-navigation:hover, .detail-navigation:focus-visible { background: #801880; color: white; }
 .detail-navigation span { padding: 0 .5rem; }
-.detail-pdf:disabled { background: #c00; color: white; opacity: 1; font-weight: 700; padding-left: 2rem; padding-right: 2rem; }
+.detail-pdf { background: #c00; color: white; opacity: 1; font-weight: 700; padding-left: 2rem; padding-right: 2rem; }
 @media(max-width: 767px) {
   .detail-body { padding: 1rem; }
   .detail-columns { grid-template-columns: 1fr; gap: 1rem; }

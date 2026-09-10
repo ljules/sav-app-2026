@@ -9,6 +9,7 @@ import { RecetteService } from '../../services/recette.service';
 import { CommonModule } from '@angular/common';
 import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
 import { RouterLink } from '@angular/router';
+import { RecipePdfService } from '../../services/recipe-pdf.service';
 
 registerLocaleData(localeFr);
 
@@ -38,7 +39,41 @@ export class RecipeManagerPage implements OnInit {
 
     public nbRecettesPotasse = 0;
 
-    constructor(private recetteService: RecetteService) {}
+    public generationPdf = false;
+    public erreurPdf = '';
+    public informationPdf = '';
+
+    constructor(private recetteService: RecetteService, private recipePdf: RecipePdfService) {}
+
+    async genererPdf(): Promise<void> {
+        if (!this.recetteSelectionnee || this.generationPdf) return;
+        const recette = structuredClone(this.recetteSelectionnee);
+        this.generationPdf = true;
+        this.erreurPdf = '';
+        this.informationPdf = '';
+        // Reserve the tab during the user gesture, before any asynchronous loading.
+        let onglet: Window | null = null;
+        try {
+            onglet = window.open('', '_blank');
+            if (onglet) {
+                onglet.opener = null;
+                onglet.document.title = 'Génération de la fiche recette';
+                onglet.document.body.textContent = 'Préparation de votre PDF…';
+            }
+            const pdf = await this.recipePdf.creer(recette);
+            if (onglet) {
+                if (!onglet.closed) await pdf.open(onglet);
+            } else {
+                await pdf.download(this.recipePdf.nomFichier(recette));
+                this.informationPdf = 'Le navigateur a bloqué le nouvel onglet. Le PDF a été proposé en téléchargement.';
+            }
+        } catch {
+            onglet?.close();
+            this.erreurPdf = 'La génération du PDF a échoué. Veuillez réessayer.';
+        } finally {
+            this.generationPdf = false;
+        }
+    }
 
     ngOnInit(): void {
         this.chargerRecettes();
@@ -69,6 +104,8 @@ export class RecipeManagerPage implements OnInit {
      * Définit la recette sélectionnée pour l'affichage des détails 
      */ 
     ouvrirModale(recette: Recette): void { 
+        this.erreurPdf = '';
+        this.informationPdf = '';
         this.pageDetails = 'composition';
         this.recetteSelectionnee = recette; 
     } 

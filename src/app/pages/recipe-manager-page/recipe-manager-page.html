@@ -93,11 +93,13 @@
           }
         </div>
         <div class="modal-footer detail-footer">
+          @if (erreurPdf) { <p class="alert alert-danger w-100 mb-0" role="alert">{{ erreurPdf }}</p> }
+          @if (informationPdf) { <p class="alert alert-info w-100 mb-0" role="status">{{ informationPdf }}</p> }
           <button type="button" class="btn detail-navigation" (click)="pageDetails = pageDetails === 'composition' ? 'profil' : 'composition'; detailBody.scrollTop = 0">
             @if (pageDetails === 'composition') { Voir scores &amp; profil <span aria-hidden="true">&gt;&gt;</span> }
             @else { <span aria-hidden="true">&lt;&lt;</span> Voir Composition }
           </button>
-          <button type="button" class="btn detail-pdf" disabled title="Disponible ultérieurement">Générer PDF</button>
+          <button type="button" class="btn detail-pdf" [disabled]="generationPdf" [attr.aria-busy]="generationPdf" (click)="genererPdf()">{{ generationPdf ? 'Génération…' : 'Générer PDF' }}</button>
         </div>
       }
     </div>

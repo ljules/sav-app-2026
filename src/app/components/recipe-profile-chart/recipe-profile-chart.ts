@@ -1,3 +1,4 @@
+import { libelleRadar, valeurRadar, estIndiceIns, estIndiceReduit } from '../../utils/recipe-radar';
 import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { Resultat } from '../../models/recette.model';
@@ -37,20 +38,14 @@ export class RecipeProfileChart implements OnChanges, OnDestroy {
     this.detruireGraphique();
   }
 
-  public libelleRadar(nomCaracteristique: string): string {
-    if (!this.estIndiceReduit(nomCaracteristique)) return nomCaracteristique;
-    return this.estIndiceIns(nomCaracteristique) ? 'Indice INS (÷10)' : 'Iode (÷10)';
-  }
-
-  public valeurRadar(nomCaracteristique: string, score: number): number {
-    return this.estIndiceReduit(nomCaracteristique) ? score / 10 : score;
-  }
+  libelleRadar = libelleRadar;
+  valeurRadar = valeurRadar;
 
   public libelleTooltip(nomCaracteristique: string, score: number): string {
-    if (!this.estIndiceReduit(nomCaracteristique)) {
+    if (!estIndiceReduit(nomCaracteristique)) {
       return `${nomCaracteristique} : ${score}`;
     }
-    const libelle = this.estIndiceIns(nomCaracteristique) ? 'Indice INS' : 'Iode';
+    const libelle = estIndiceIns(nomCaracteristique) ? 'Indice INS' : 'Iode';
     return `${libelle} : ${score} (valeur représentée : ${score / 10})`;
   }
 
@@ -103,15 +98,6 @@ export class RecipeProfileChart implements OnChanges, OnDestroy {
         },
       },
     });
-  }
-
-  private estIndiceIns(nomCaracteristique: string): boolean {
-    return nomCaracteristique.trim().toLocaleUpperCase('fr').includes('INS');
-  }
-
-  private estIndiceReduit(nomCaracteristique: string): boolean {
-    const nomNormalise = nomCaracteristique.trim().toLocaleUpperCase('fr');
-    return nomNormalise.includes('INS') || nomNormalise.includes('IODE');
   }
 
   private detruireGraphique(): void {
