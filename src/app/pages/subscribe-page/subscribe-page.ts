@@ -39,16 +39,33 @@ export class SubscribePage {
         }
         this.envoiEnCours = true;
         this.authService.subscribe(this.userInfo).subscribe({
-            next: () => {
+            next: (response) => {
                 this.envoiEnCours = false;
+                if (response?.error != null) {
+                    this.errorMessage = this.messageEchec(response.error);
+                    return;
+                }
+                if (response?.message !== 'Inscription réussie. Un email de confirmation vous a été envoyé.') {
+                    this.errorMessage = 'L’inscription n’a pas été confirmée par le serveur. Veuillez réessayer ultérieurement.';
+                    return;
+                }
                 this.inscriptionEnvoyee = true;
                 this.userInfo.password = '';
                 this.doubleInputPwd = '';
             },
-            error: () => {
+            error: (error) => {
                 this.envoiEnCours = false;
-                this.errorMessage = 'La création du compte a échoué. Vérifiez vos informations et réessayez.';
+                this.errorMessage = this.messageEchec(error.error?.error);
             }
         });
+    }
+
+    private messageEchec(error: unknown): string {
+        if (typeof error === 'string' && error.trim()) {
+            return error.trim() === 'Email déjà utilisé'
+                ? 'Cette adresse email est déjà utilisée. Connectez-vous à votre compte ou utilisez une autre adresse email.'
+                : error;
+        }
+        return 'La création du compte a échoué. Vérifiez vos informations et réessayez.';
     }
 }

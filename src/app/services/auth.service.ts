@@ -84,8 +84,8 @@ export class AuthService {
         };
     }
 
-    subscribe(userInfo: {username: string, email: string, password: string }): Observable<{message: string}> {
-        return this.http.post<{message: string}>(`${this.API_URL}/register`, userInfo, {
+    subscribe(userInfo: {username: string, email: string, password: string }): Observable<{message?: string; error?: string}> {
+        return this.http.post<{message?: string; error?: string}>(`${this.API_URL}/register`, userInfo, {
             context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
         });
     }
