@@ -58,8 +58,10 @@
         </div>
     </div>
 
-    <div class="modal fade" id="profilModal" tabindex="-1"
+    <div #profilModal class="modal fade" id="profilModal" tabindex="-1"
+        (hidden.bs.modal)="apresFermetureModal()"
         aria-labelledby="profilModalLabel" aria-hidden="true">
+        <button #fermetureApresEnregistrement type="button" hidden data-bs-dismiss="modal" aria-label="Fermer après enregistrement"></button>
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 @if (profilEnEdition) {

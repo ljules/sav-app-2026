@@ -18,6 +18,7 @@ describe('AccountManagerPage', () => {
         nouveauMotDePasse: null,
         role: { id: 2, nom: 'Utilisateur', nomLogic: 'ROLE_UTILISATEUR' },
         estBanned: false,
+        estActif: true,
         recettes: [],
     };
 
@@ -64,5 +65,40 @@ describe('AccountManagerPage', () => {
         component.enregistrerProfil();
         expect(profilService.updateProfil).toHaveBeenCalled();
         expect(authService.logout).toHaveBeenCalled();
+    });
+
+    for (const estActif of [true, false]) {
+        it(`préserve estActif=${estActif} lors de la sauvegarde`, () => {
+            component.profil = { ...profil, estActif };
+            component.ouvrirModification();
+            component.enregistrerProfil();
+            expect(profilService.updateProfil).toHaveBeenCalledWith(jasmine.objectContaining({
+                estActif, estBanned: false, nouveauMotDePasse: null,
+            }));
+        });
+    }
+
+    it('bloque la sauvegarde si le serveur ne fournit pas estActif', () => {
+        component.profil = { ...profil, estActif: undefined };
+        component.ouvrirModification();
+        component.enregistrerProfil();
+        expect(profilService.updateProfil).not.toHaveBeenCalled();
+        expect(component.erreurEnregistrement).toContain('activation');
+    });
+
+    it('attend la fermeture Bootstrap avant de déconnecter', () => {
+        component.ouvrirModification();
+        fixture.detectChanges();
+        const modal: HTMLElement = fixture.nativeElement.querySelector('#profilModal');
+        modal.classList.add('show');
+        const fermeture: HTMLButtonElement = modal.querySelector('button[hidden]')!;
+        const click = spyOn(fermeture, 'click');
+        component.enregistrerProfil();
+        expect(click).toHaveBeenCalled();
+        expect(authService.logout).not.toHaveBeenCalled();
+        modal.classList.remove('show');
+        modal.dispatchEvent(new Event('hidden.bs.modal'));
+        expect(authService.logout).toHaveBeenCalledTimes(1);
+        expect(component.profilEnEdition).toBeNull();
     });
 });

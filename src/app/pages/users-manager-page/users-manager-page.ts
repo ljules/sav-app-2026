@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Role, Utilisateur, UtilisateurFormDTO } from '../../models/utilisateur.model';
 import { UtilisateurService } from '../../services/utilisateur.service';
 
-type ColonneTri = 'id' | 'username' | 'email' | 'estBanned' | 'role' | 'dateCreation';
+type ColonneTri = 'id' | 'username' | 'email' | 'estBanned' | 'estActif' | 'role' | 'dateCreation';
 type DirectionTri = 'asc' | 'desc';
 
 @Component({
@@ -28,6 +28,8 @@ export class UsersManagerPage implements OnInit {
     public afficherUtilisateurs = true;
     public afficherActifs = true;
     public afficherInactifs = true;
+    public afficherActives = true;
+    public afficherNonActives = true;
     public colonneTri: ColonneTri | null = null;
     public directionTri: DirectionTri | null = null;
     public readonly taillePage = 10;
@@ -87,7 +89,11 @@ export class UsersManagerPage implements OnInit {
             const correspondStatut =
                 (!utilisateur.estBanned && this.afficherActifs) ||
                 (utilisateur.estBanned && this.afficherInactifs);
-            return correspondRecherche && correspondRole && correspondStatut;
+            const correspondActivation =
+                (utilisateur.estActif === true && this.afficherActives) ||
+                (utilisateur.estActif === false && this.afficherNonActives) ||
+                (utilisateur.estActif == null && this.afficherActives && this.afficherNonActives);
+            return correspondRecherche && correspondRole && correspondStatut && correspondActivation;
         });
 
         if (!this.colonneTri || !this.directionTri) return resultat;
@@ -101,8 +107,8 @@ export class UsersManagerPage implements OnInit {
                 return (new Date(a.dateCreation ?? 0).getTime() -
                     new Date(b.dateCreation ?? 0).getTime()) * facteur;
             }
-            if (colonne === 'estBanned') {
-                return (Number(a.estBanned) - Number(b.estBanned)) * facteur;
+            if (colonne === 'estBanned' || colonne === 'estActif') {
+                return (Number(a[colonne] ?? -1) - Number(b[colonne] ?? -1)) * facteur;
             }
             const valeurA = a[colonne];
             const valeurB = b[colonne];
@@ -171,6 +177,7 @@ export class UsersManagerPage implements OnInit {
             email: '',
             nouveauMotDePasse: '',
             estBanned: false,
+            estActif: false,
             role: roleUtilisateur,
             recettes: [],
         };
@@ -184,8 +191,9 @@ export class UsersManagerPage implements OnInit {
             email: utilisateur.email,
             nouveauMotDePasse: null,
             estBanned: utilisateur.estBanned,
+            estActif: utilisateur.estActif,
             role: this.roles.find((role) => role.id === utilisateur.role.id) ?? utilisateur.role,
-            recettes: utilisateur.recettes ?? [],
+            recettes: utilisateur.recettes,
         };
     }
 

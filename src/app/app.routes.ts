@@ -11,6 +11,7 @@ import { AboutPage } from './pages/about-page/about-page';
 import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
 import { authGuard } from './guards/auth-guard';
 import { ConfirmInscriptionPage } from './pages/confirm-inscription-page/confirm-inscription-page';
+import { PasswordRecoveryPage } from './pages/password-recovery-page/password-recovery-page';
 
 export const routes: Routes = [
 
@@ -22,6 +23,8 @@ export const routes: Routes = [
     { path: 'login', component: LoginPage },
     { path: 'subscribe', component: SubscribePage},
     { path: 'confirm-inscription', component: ConfirmInscriptionPage },
+    { path: 'mdp-oublie', component: PasswordRecoveryPage },
+    { path: 'reset-mdp', component: PasswordRecoveryPage, data: { reset: true } },
 
     // Compte utilisateur :
     { path: 'account',component: AccountManagerPage, canActivate: [authGuard] },

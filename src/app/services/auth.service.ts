@@ -96,6 +96,23 @@ export class AuthService {
             context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
         });
     }
+
+    demanderResetMotDePasse(email: string): Observable<void> {
+        return this.http.post<void>(`${this.API_URL}/mdp-oublie`, { email }, {
+            context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
+        });
+    }
+
+    resetMotDePasse(key: string, body: {
+        nouveauMotDePasse: string;
+        nouveauMotDePasseConfirmation: string;
+        code: number;
+    }): Observable<{result?: string; errors?: string[]}> {
+        return this.http.post<{result?: string; errors?: string[]}>(`${this.API_URL}/mdp-reset`, body, {
+            params: { key },
+            context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
+        });
+    }
 }   
 
 

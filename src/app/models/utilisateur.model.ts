@@ -13,6 +13,7 @@ export interface Utilisateur {
     email: string;
     nouveauMotDePasse: string | null;
     estBanned: boolean;
+    estActif?: boolean;
     role: Role;
     recettes: Recette[] | null;
     dateCreation?: string;
@@ -24,6 +25,7 @@ export interface UtilisateurFormDTO {
     email: string;
     nouveauMotDePasse: string | null;
     estBanned: boolean;
+    estActif?: boolean;
     role: Role;
     recettes: Recette[] | null;
 }

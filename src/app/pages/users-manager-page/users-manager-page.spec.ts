@@ -18,6 +18,7 @@ describe('UsersManagerPage', () => {
             email: 'zoe@example.fr',
             nouveauMotDePasse: null,
             estBanned: true,
+            estActif: true,
             role: roleUtilisateur,
             recettes: [],
             dateCreation: '2026-02-01T10:00:00',
@@ -28,6 +29,7 @@ describe('UsersManagerPage', () => {
             email: 'admin@example.fr',
             nouveauMotDePasse: null,
             estBanned: false,
+            estActif: false,
             role: roleAdmin,
             recettes: [],
             dateCreation: '2026-01-01T10:00:00',
@@ -72,6 +74,52 @@ describe('UsersManagerPage', () => {
         component.changerTri('username');
         expect(component.utilisateursFiltresTries.map((u) => u.username)).toEqual(['Zoé', 'Admin']);
     });
+
+    it('filtre activation et bannissement indépendamment', () => {
+        component.afficherNonActives = false;
+        expect(component.utilisateursFiltresTries.map(u => u.username)).toEqual(['Zoé']);
+        component.afficherInactifs = false;
+        expect(component.utilisateursFiltresTries).toEqual([]);
+        component.afficherNonActives = true;
+        component.afficherActives = false;
+        expect(component.utilisateursFiltresTries.map(u => u.username)).toEqual(['Admin']);
+    });
+
+    it('trie les comptes par activation dans les deux sens', () => {
+        component.changerTri('estActif');
+        expect(component.utilisateursFiltresTries.map(u => u.username)).toEqual(['Admin', 'Zoé']);
+        component.changerTri('estActif');
+        expect(component.utilisateursFiltresTries.map(u => u.username)).toEqual(['Zoé', 'Admin']);
+    });
+
+    it('réinitialise la pagination au changement du filtre activation', async () => {
+        component.pageCourante = 2;
+        const input: HTMLInputElement = fixture.nativeElement.querySelector('#toggleActivated');
+        input.click();
+        await fixture.whenStable();
+        expect(component.pageCourante).toBe(1);
+        expect(component.utilisateursAffiches.map(u => u.username)).toEqual(['Admin']);
+    });
+
+    for (const estActif of [true, false]) {
+        it(`enregistre estActif=${estActif} sans modifier le bannissement ni le mot de passe`, async () => {
+            const original = { ...utilisateurs[0], estActif: !estActif, recettes: null };
+            component.editerUtilisateur(original);
+            fixture.detectChanges();
+            await fixture.whenStable();
+            const input: HTMLInputElement = fixture.nativeElement.querySelector('#modalEstActif');
+            input.click();
+            await fixture.whenStable();
+            const attendu = { ...component.utilisateurSelectionne!, estActif };
+            service.updateUtilisateur.and.returnValue(of({ ...original, estActif }));
+            component.saveUtilisateur();
+            expect(service.updateUtilisateur).toHaveBeenCalledOnceWith(original.id, attendu);
+            expect(attendu.estBanned).toBeTrue();
+            expect(attendu.nouveauMotDePasse).toBeNull();
+            expect(attendu.recettes).toBeNull();
+            expect(original.estActif).toBe(!estActif);
+        });
+    }
 
     it('initialise un nouvel utilisateur avec le rôle utilisateur', () => {
         component.creerNouvelUtilisateur();
