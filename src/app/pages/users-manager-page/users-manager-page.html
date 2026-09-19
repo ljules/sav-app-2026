@@ -44,14 +44,14 @@
                     </div>
 
                     <div class="col-lg-3 col-md-5">
-                        <div class="form-label fw-bold">Statuts affichés</div>
+                        <div class="form-label fw-bold">État</div>
                         <div class="d-flex gap-2 flex-wrap">
                             <input type="checkbox" class="btn-check" id="toggleActive" autocomplete="off"
                                 [(ngModel)]="afficherActifs" (ngModelChange)="reinitialiserPage()">
-                            <label class="btn btn-sm btn-outline-success" for="toggleActive">Actifs</label>
+                            <label class="btn btn-sm btn-outline-success" for="toggleActive">Autorisés</label>
                             <input type="checkbox" class="btn-check" id="toggleInactive" autocomplete="off"
                                 [(ngModel)]="afficherInactifs" (ngModelChange)="reinitialiserPage()">
-                            <label class="btn btn-sm btn-outline-danger" for="toggleInactive">Inactifs</label>
+                            <label class="btn btn-sm btn-outline-danger" for="toggleInactive">Bannis</label>
                         </div>
                     </div>
                 </div>
@@ -79,8 +79,8 @@
                                     [class.btn-success]="estTriActif('email')" [class.btn-secondary]="!estTriActif('email')"
                                     (click)="changerTri('email')">{{ symboleTri('email') }}</button>
                             </th>
-                            <th title="Statut du compte">
-                                <div>Statut</div>
+                            <th title="État du compte">
+                                <div>État</div>
                                 <button type="button" class="btn btn-sm sort-btn"
                                     [class.btn-success]="estTriActif('estBanned')" [class.btn-secondary]="!estTriActif('estBanned')"
                                     (click)="changerTri('estBanned')">{{ symboleTri('estBanned') }}</button>
@@ -110,7 +110,7 @@
                                 <td>
                                     <span class="badge" [class.text-bg-success]="!item.estBanned"
                                         [class.text-bg-danger]="item.estBanned">
-                                        {{ item.estBanned ? 'Inactif' : 'Actif' }}
+                                        {{ item.estBanned ? 'Bannis' : 'Autorisé' }}
                                     </span>
                                 </td>
                                 <td>
@@ -222,7 +222,7 @@
                                     <div class="form-check form-switch mb-2">
                                         <input id="modalEstBanned" name="modalEstBanned" type="checkbox"
                                             class="form-check-input" [(ngModel)]="utilisateurSelectionne.estBanned">
-                                        <label for="modalEstBanned" class="form-check-label">Compte inactif/banni</label>
+                                        <label for="modalEstBanned" class="form-check-label">Compte banni</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

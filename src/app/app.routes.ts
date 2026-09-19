@@ -10,6 +10,7 @@ import { IngredientsManagerPage } from './pages/ingredients-manager-page/ingredi
 import { AboutPage } from './pages/about-page/about-page';
 import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
 import { authGuard } from './guards/auth-guard';
+import { ConfirmInscriptionPage } from './pages/confirm-inscription-page/confirm-inscription-page';
 
 export const routes: Routes = [
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
     // Pages d'authentification :
     { path: 'login', component: LoginPage },
     { path: 'subscribe', component: SubscribePage},
+    { path: 'confirm-inscription', component: ConfirmInscriptionPage },
 
     // Compte utilisateur :
     { path: 'account',component: AccountManagerPage, canActivate: [authGuard] },

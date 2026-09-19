@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+
+export const PUBLIC_REGISTRATION_REQUEST = new HttpContextToken(() => false);
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -82,14 +84,17 @@ export class AuthService {
         };
     }
 
-    subscribe(userInfo : {username: string, email: string, password: string }): Observable<any> {
-        return this.http.post(`${this.API_URL}/register`, userInfo).pipe(
-            tap((response: any) => {
-                if (response.token){
-                    localStorage.setItem(this.TOKEN_KEY, response.token);
-                }
-            }
-        ))
+    subscribe(userInfo: {username: string, email: string, password: string }): Observable<{message: string}> {
+        return this.http.post<{message: string}>(`${this.API_URL}/register`, userInfo, {
+            context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
+        });
+    }
+
+    confirmInscription(key: string): Observable<{result: string}> {
+        return this.http.get<{result: string}>(`${this.API_URL}/confirm-inscription`, {
+            params: { key },
+            context: new HttpContext().set(PUBLIC_REGISTRATION_REQUEST, true),
+        });
     }
 }   
 

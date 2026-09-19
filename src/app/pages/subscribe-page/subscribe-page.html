@@ -6,6 +6,14 @@
                 <h5 class="card-title">Inscription</h5>
             </div>
             <div class="card-body">
+                @if (inscriptionEnvoyee) {
+                    <div role="status">
+                        <h5>Consultez vos emails</h5>
+                        <p>Un email de confirmation a été envoyé à <strong>{{ userInfo.email }}</strong>.</p>
+                        <p>Cliquez sur le lien reçu pour activer votre compte. Ce lien est valable pendant 24 heures.</p>
+                        <p class="mb-0">Si vous ne trouvez pas cet email, pensez à vérifier vos courriers indésirables.</p>
+                    </div>
+                } @else {
                 <!-- MESSAGE D'ERREUR -->
                 @if (errorMessage) { 
                     <div class="alert alert-danger p-2 small"> 
@@ -14,7 +22,8 @@
                 } 
 
                 <!-- FORMULAIRE D'INSCRIPTION  -->
-                <form (ngSubmit)="onSubmit()"> 
+                <form #inscriptionForm="ngForm" (ngSubmit)="onSubmit()">
+                    <fieldset [disabled]="envoiEnCours">
                     <div class="mb-3"> 
                         <label class="form-label">Login :</label> 
                         <input type="text" name="login" class="form-control"  
@@ -46,10 +55,12 @@
 
 
                     <button type="submit" class="btn btn-success w-100"
-                        [disabled]="userInfo.password.length === 0 || userInfo.password !== doubleInputPwd">
-                        Créer votre compte 
+                        [disabled]="envoiEnCours || inscriptionForm.invalid || userInfo.password.length === 0 || userInfo.password !== doubleInputPwd">
+                        {{ envoiEnCours ? 'Envoi en cours…' : 'Créer votre compte' }}
                     </button> 
+                    </fieldset>
                 </form> 
+                }
                 
             </div>
             <div class="card-footer bg-success-subtle">

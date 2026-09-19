@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -23,25 +22,32 @@ export class SubscribePage {
 
     // Message de signalement d'erreur :
     public errorMessage: string | null = null;
+    public inscriptionEnvoyee = false;
+    public envoiEnCours = false;
 
     constructor(
-        private authService: AuthService,
-        private router: Router
+        private authService: AuthService
     ) {}
 
     onSubmit(): void {
-        this.errorMessage = null; // Réinitialisation du message
-        console.log(`Objet userInfo transmis : 
-            username: ${this.userInfo.username}
-            email : ${this.userInfo.email}
-            mot de passe : ${this.userInfo.password}`);
+        if (this.envoiEnCours || this.inscriptionEnvoyee) return;
+        this.errorMessage = null;
+        if (!this.userInfo.username.trim() || !this.userInfo.email.trim() ||
+            !this.userInfo.password || this.userInfo.password !== this.doubleInputPwd) {
+            this.errorMessage = 'Complétez les champs et vérifiez la confirmation du mot de passe.';
+            return;
+        }
+        this.envoiEnCours = true;
         this.authService.subscribe(this.userInfo).subscribe({
             next: () => {
-                // Redirection vers la page du calculateur :
-                this.router.navigate(['/recipe-calculator']);
+                this.envoiEnCours = false;
+                this.inscriptionEnvoyee = true;
+                this.userInfo.password = '';
+                this.doubleInputPwd = '';
             },
-            error: (err) => {
-                this.errorMessage="Erreur durant la création du compte"
+            error: () => {
+                this.envoiEnCours = false;
+                this.errorMessage = 'La création du compte a échoué. Vérifiez vos informations et réessayez.';
             }
         });
     }

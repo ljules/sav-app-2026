@@ -1,10 +1,12 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService, PUBLIC_REGISTRATION_REQUEST } from '../services/auth.service';
 import { catchError, throwError } from 'rxjs';
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+    // L'inscription et l'activation sont publiques, même avec une ancienne session locale.
+    if (req.context.get(PUBLIC_REGISTRATION_REQUEST)) return next(req);
     const authService = inject(AuthService);
     const token = authService.getToken();
 
