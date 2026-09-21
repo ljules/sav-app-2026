@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RecipeProfileChart } from './recipe-profile-chart';
+import { Chart } from 'chart.js';
 
 describe('RecipeProfileChart', () => {
   let component: RecipeProfileChart;
@@ -14,6 +15,29 @@ describe('RecipeProfileChart', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('affiche et actualise un radar avec les composants Chart.js sélectionnés', () => {
+    fixture.componentRef.setInput('resultats', [
+      { caracteristique: { id: 1, nom: 'Douceur' }, score: 5 },
+      { caracteristique: { id: 2, nom: 'Dureté' }, score: 7 },
+      { caracteristique: { id: 3, nom: 'Lavant' }, score: 3 },
+    ]);
+    fixture.detectChanges();
+    const canvas = fixture.nativeElement.querySelector('canvas') as HTMLCanvasElement;
+    const chart = Chart.getChart(canvas)!;
+    expect(chart).toBeDefined();
+    expect(chart.data.datasets[0].data).toEqual([5, 7, 3]);
+    expect(chart.isPluginEnabled('filler')).toBeTrue();
+    expect(chart.isPluginEnabled('tooltip')).toBeTrue();
+
+    fixture.componentRef.setInput('resultats', [
+      { caracteristique: { id: 1, nom: 'Douceur' }, score: 8 },
+    ]);
+    fixture.detectChanges();
+    expect(chart.data.datasets[0].data).toEqual([8]);
+    fixture.destroy();
+    expect(Chart.getChart(canvas)).toBeUndefined();
   });
 
   it('réduit au dixième les indices INS et Iode uniquement', () => {

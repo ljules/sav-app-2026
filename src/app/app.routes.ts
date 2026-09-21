@@ -1,17 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './pages/home-page/home-page';
-import { LoginPage } from './pages/login-page/login-page';
-import { SubscribePage } from './pages/subscribe-page/subscribe-page';
-import { AccountManagerPage } from './pages/account-manager-page/account-manager-page';
-import { RecipeCalculatorPage } from './pages/recipe-calculator-page/recipe-calculator-page';
-import { RecipeManagerPage } from './pages/recipe-manager-page/recipe-manager-page';
-import { UsersManagerPage } from './pages/users-manager-page/users-manager-page';
-import { IngredientsManagerPage } from './pages/ingredients-manager-page/ingredients-manager-page';
-import { AboutPage } from './pages/about-page/about-page';
-import { LegalNoticePage } from './pages/legal-notice-page/legal-notice-page';
 import { authGuard } from './guards/auth-guard';
-import { ConfirmInscriptionPage } from './pages/confirm-inscription-page/confirm-inscription-page';
-import { PasswordRecoveryPage } from './pages/password-recovery-page/password-recovery-page';
 
 export const routes: Routes = [
 
@@ -20,29 +9,29 @@ export const routes: Routes = [
     { path: 'home', component: HomePage },
 
     // Pages d'authentification :
-    { path: 'login', component: LoginPage },
-    { path: 'subscribe', component: SubscribePage},
-    { path: 'confirm-inscription', component: ConfirmInscriptionPage },
-    { path: 'mdp-oublie', component: PasswordRecoveryPage },
-    { path: 'reset-mdp', component: PasswordRecoveryPage, data: { reset: true } },
+    { path: 'login', loadComponent: () => import('./pages/login-page/login-page').then(m => m.LoginPage) },
+    { path: 'subscribe', loadComponent: () => import('./pages/subscribe-page/subscribe-page').then(m => m.SubscribePage)},
+    { path: 'confirm-inscription', loadComponent: () => import('./pages/confirm-inscription-page/confirm-inscription-page').then(m => m.ConfirmInscriptionPage) },
+    { path: 'mdp-oublie', loadComponent: () => import('./pages/password-recovery-page/password-recovery-page').then(m => m.PasswordRecoveryPage) },
+    { path: 'reset-mdp', loadComponent: () => import('./pages/password-recovery-page/password-recovery-page').then(m => m.PasswordRecoveryPage), data: { reset: true } },
 
     // Compte utilisateur :
-    { path: 'account',component: AccountManagerPage, canActivate: [authGuard] },
+    { path: 'account',loadComponent: () => import('./pages/account-manager-page/account-manager-page').then(m => m.AccountManagerPage), canActivate: [authGuard] },
 
     // Recettes :
-    { path: 'recipe-calculator', component: RecipeCalculatorPage },
-    { path: 'recipe-calculator/:id', component: RecipeCalculatorPage, canActivate: [authGuard] },
-    { path: 'recipe-manager', component: RecipeManagerPage, canActivate: [authGuard]},
+    { path: 'recipe-calculator', loadComponent: () => import('./pages/recipe-calculator-page/recipe-calculator-page').then(m => m.RecipeCalculatorPage) },
+    { path: 'recipe-calculator/:id', loadComponent: () => import('./pages/recipe-calculator-page/recipe-calculator-page').then(m => m.RecipeCalculatorPage), canActivate: [authGuard] },
+    { path: 'recipe-manager', loadComponent: () => import('./pages/recipe-manager-page/recipe-manager-page').then(m => m.RecipeManagerPage), canActivate: [authGuard]},
 
     // Administration - Gestion :
-    { path: 'users-manager', component: UsersManagerPage, canActivate: [authGuard] },
-    { path: 'ingredients-manager', component: IngredientsManagerPage, canActivate: [authGuard]},
+    { path: 'users-manager', loadComponent: () => import('./pages/users-manager-page/users-manager-page').then(m => m.UsersManagerPage), canActivate: [authGuard] },
+    { path: 'ingredients-manager', loadComponent: () => import('./pages/ingredients-manager-page/ingredients-manager-page').then(m => m.IngredientsManagerPage), canActivate: [authGuard]},
 
     // A propos :
-    { path: "about", component: AboutPage },
+    { path: "about", loadComponent: () => import('./pages/about-page/about-page').then(m => m.AboutPage) },
 
     // Mentions légales :
-    {path: "legal-notice", component: LegalNoticePage},
+    {path: "legal-notice", loadComponent: () => import('./pages/legal-notice-page/legal-notice-page').then(m => m.LegalNoticePage)},
     
     // Redirection par défaut vers home (en cas d'url invalide) :
     {path: '**', redirectTo: 'home'}    // Toujours mis en dernier !

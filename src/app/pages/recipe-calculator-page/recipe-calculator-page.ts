@@ -9,9 +9,11 @@ import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
 import { AuthService } from '../../services/auth.service';
 import { CalculRecetteService, ScoresRecette } from '../../services/calcul-recette.service';
-import { Chart } from 'chart.js/auto';
+import { ArcElement, Chart, DoughnutController, Legend, Tooltip } from 'chart.js';
 import { RecipeProfileChart } from '../../components/recipe-profile-chart/recipe-profile-chart';
 import { ActivatedRoute } from '@angular/router';
+
+Chart.register(DoughnutController, ArcElement, Legend, Tooltip);
 
 type CleCaracteristique = 'sapo' | 'ins' | 'iode' | 'lavant' | 'douceur' |
     'durete' | 'solubilite' | 'sechage' | 'volMousse' | 'tenueMousse';

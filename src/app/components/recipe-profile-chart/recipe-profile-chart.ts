@@ -1,7 +1,9 @@
 import { libelleRadar, valeurRadar, estIndiceIns, estIndiceReduit } from '../../utils/recipe-radar';
 import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
-import { Chart } from 'chart.js/auto';
+import { Chart, Filler, LineElement, PointElement, RadarController, RadialLinearScale, Tooltip } from 'chart.js';
 import { Resultat } from '../../models/recette.model';
+
+Chart.register(RadarController, RadialLinearScale, LineElement, PointElement, Filler, Tooltip);
 
 @Component({
   selector: 'app-recipe-profile-chart',

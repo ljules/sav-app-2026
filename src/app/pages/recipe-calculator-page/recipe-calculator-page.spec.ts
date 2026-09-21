@@ -6,6 +6,7 @@ import { IngredientService } from '../../services/ingredient.service';
 import { RecetteService } from '../../services/recette.service';
 import { RecipeCalculatorPage } from './recipe-calculator-page';
 import { ActivatedRoute } from '@angular/router';
+import { Chart } from 'chart.js';
 
 describe('RecipeCalculatorPage', () => {
     let component: RecipeCalculatorPage;
@@ -162,6 +163,16 @@ describe('RecipeCalculatorPage', () => {
         const iode = component.recetteAffichee?.resultats.find(
             (resultat) => resultat.caracteristique.nom === 'Iode');
         expect(iode?.score).toBeCloseTo(78, 8);
+        fixture.detectChanges();
+        const canvas = fixture.nativeElement.querySelector(
+            'canvas[aria-label="Composition de la recette"]') as HTMLCanvasElement;
+        const chart = Chart.getChart(canvas)!;
+        expect(chart).toBeDefined();
+        expect(chart.data.datasets[0].data).toEqual([100]);
+        expect(chart.isPluginEnabled('legend')).toBeTrue();
+        expect(chart.isPluginEnabled('tooltip')).toBeTrue();
+        fixture.destroy();
+        expect(Chart.getChart(canvas)).toBeUndefined();
     });
 
     it('utilise les plages SoapCalc pour l iode et l INS', () => {
