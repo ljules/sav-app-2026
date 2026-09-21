@@ -1,29 +1,9 @@
 <div class="home-page">
     <h2>Bienvenue sur notre application</h2>
-    <h3>Nous sommes le {{ dateJour | date:'d/MM/yyyy' }}</h3>
 
-    <div class="alert alert-success" role="alert">
-        <b>La recette du jour :</b> {{ titreRecetteDuJour }}, 
-        <i>{{ descriptionRecetteDuJour }}</i>
-    </div>
-
-
-    <div class="alert alert-success" role="alert">
-        A votre disposition : {{ ingredients.length }} ingrédients <br>
-        Vous avez : {{ recettes.length }} recettes
-    </div>
-
-    <div class="alert alert-success" role="alert">
-        Votre dernière création : {{ derniereRecetteSaisie?.titre }}
-        <br>
-        Description : <i>{{ derniereRecetteSaisie?.description }}</i>
-        <br>
-        Date de création : {{ derniereRecetteSaisie?.dateCreation| date:'le d/MM/yyyy à HH:mm' }}
-    </div>
-    
 
     <p>
-        Avec notre application vous allez pouvoir formuler vos propres recettes de savon
+        Avec notre application, vous allez pouvoir formuler vos propres recettes de savon
         en utilisant la saponification à froid.
     </p>
 
@@ -33,7 +13,7 @@
             alt="Logo standard de la société ADEPRO"
             style="width: 300px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
         </div>
-    
+
         <div class="col-12 col-lg-5 text-center py-4 ms-0">
             <img    src="./backgrounds/fond-01.jpeg"
             alt="Logo standard de la société ADEPRO"
@@ -44,12 +24,160 @@
     <p>
         Vous pouvez calculer des recettes avec la rubrique <a routerLink="/recipe-calculator"><b>"Calculateur"</b></a>.
         Mais vous pourrez également sauvegarder vos recettes pour les retrouver ultérieurement en vous inscrivant.
+        L'inscription permet également d'accéder à la fonction d'exportation PDF de vos recettes.
     </p>
 
+
+    <h2>Fonctionnement de notre calculateur de recettes </h2>
     <p>
-        Ce site vous est mis à disposition par la société <b>ADEPRO</b>.
+        Sans inscription, vous pouvez utiliser notre calculateur pour élaborer et évaluer vos recettes. L'utilisation est
+        simple et intuitive.
     </p>
-    
+
+    <h3><b><u>Étape 1 :</u></b> Choix du corps alcalin </h3>
+    <p>
+        Vous pourrez choisir entre de la <b>soude</b> (NaOH) et de la <b>potasse</b> (KOH) et préciser la concentration en %.
+    </p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_savon/Etape01_choix_alcali.png"
+            alt="Capture du formulaire de sélection de l'alcali."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+
+    <h3><b><u>Étape 2 :</u></b> Choix et dosage des ingrédients </h3>
+        <p>
+            La seconde étape consistera à rajouter vos ingrédients : des corps gras et d'éventuels adjuvants. Vous pourrez doser vos ingrédients selon
+            votre convenance, en masse ou en pourcentage de la masse totale.
+        </p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_savon/Etape02_choix_et_dosage_ingredients.png"
+            alt="Capture du formulaire de sélection et de dosage des ingrédients."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+
+    <h3><b><u>Étape 3 :</u></b> Analyse des résultats </h3>
+        <p>
+            Consultez la composition de votre recette, les quantités d'eau et de soude ou de potasse calculées,
+            ainsi que le profil et les scores de saponification. Pour chaque caractéristique, le repère sur la barre
+            situe votre score par rapport aux plages de référence. Survolez la barre pour consulter ces plages.
+            Vous pouvez ensuite ajuster les ingrédients et leurs proportions pour faire évoluer le profil de votre recette.
+        </p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_savon/Etape03_analyse_resultats.png"
+            alt="Capture de la présentation des résultats."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+
+    <h2>Pourquoi s'inscrire ?</h2>
+
+    <p>
+        Créez un compte pour enregistrer vos recettes, les retrouver et les exporter au format PDF.
+    </p>
+
+        <h3>L'inscription vous permet :</h3>
+
+        <h4>De lister l'ensemble de vos recettes :</h4>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_gestion_recettes/Etape01_acces_recettes.png"
+            alt="Présentation de vos recettes."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+
+        <h4>De retrouver la composition et les scores de vos recettes :</h4>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_gestion_recettes/Etape02a_consultation_recette.png"
+            alt="Vue détaillée de la recette : la composition."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_gestion_recettes/Etape02b_consultation_recette.png"
+            alt="Vue détaillée de la recette : les scores."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+        <h4>De générer une fiche de vos recettes au format PDF :</h4>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_gestion_recettes/Etape03_generation_pdf.png"
+            alt="Génération du PDF de la recette."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+    <h2>Comment s'inscrire ?</h2>
+
+    <p>L'inscription est simple et gratuite : il suffit d'une adresse électronique valide.</p>
+
+
+    <h3><b><u>Étape 1 :</u></b> Accéder à la page d'inscription </h3>
+
+    <p>Accédez à la page d'inscription en utilisant le lien disponible dans la barre d'authentification.</p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_inscription/Etape01_inscription.png"
+            alt="Accès à la page d'inscription."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+    <h3><b><u>Étape 2 :</u></b> Renseigner vos informations </h3>
+    <p>
+        Renseignez :
+    </p>
+    <ul>
+        <li>Un identifiant pour votre compte</li>
+        <li>Une adresse électronique valide</li>
+        <li>Un mot de passe</li>
+    </ul>
+
+    <p>
+        Puis cliquez sur <b>"Créer votre compte"</b>. Un message vous confirmera la création de votre compte
+        et vous invitera à consulter votre messagerie pour l'activer.
+    </p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_inscription/Etape02_envoi_formulaire.png"
+            alt="Confirmation de l'envoi du formulaire d'inscription."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+    <h3><b><u>Étape 3 :</u></b> Activer votre compte </h3>
+    <p>
+        Ouvrez le courriel d'activation reçu dans votre messagerie, puis cliquez sur le lien d'activation.
+    </p>
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_inscription/Etape03_ouverture_email.png"
+            alt="Courriel contenant le lien d'activation du compte."
+            style="width: 100%; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+    <h3><b><u>Étape 4 :</u></b> Vous connecter </h3>
+    <p>
+        Une fois votre compte activé, connectez-vous avec votre identifiant et votre mot de passe.
+    </p>
+
+
+        <div class="col-12 col-lg-5 text-center py-4 ms-0">
+            <img    src="./img/tuto_inscription/Etape04_compte_active.png"
+            alt="Confirmation de l'activation du compte et invitation à se connecter."
+            style="width: 400px; box-shadow: 10px 10px 20px rgb(0, 0, 0, 0.5);">
+        </div>
+
+        <h2>Qui sommes-nous ?</h2>
+
+    <p>
+        Ce site est mis à votre disposition par la société <b>ADEPRO</b>.
+    </p>
+
     <div class="text-center mt-3 mb-4">
         <img    src="./logos/adepro_logo_trans.png"
         alt="Logo standard de la société ADEPRO"
@@ -57,6 +185,6 @@
     </div>
 
     <p>
-        Découvrez en plus à notre sujet en consultant la rubrique <a routerLink="/about"><b>"A propos"</b></a>.
-    </p>    
+        Découvrez-en plus à notre sujet en consultant la rubrique <a routerLink="/about"><b>"À propos"</b></a>.
+    </p>
 </div>
