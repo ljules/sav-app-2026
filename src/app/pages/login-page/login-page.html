@@ -20,13 +20,13 @@
  
                     <form (ngSubmit)="onSubmit()"> 
                         <div class="mb-3"> 
-                            <label class="form-label">Identifiant (Email)</label> 
-                            <input type="text" name="username" class="form-control"  
+                            <label for="login-username" class="form-label">Identifiant (Email)</label>
+                            <input type="text" id="login-username" name="username" autocomplete="username" class="form-control"
                                    [(ngModel)]="credentials.identifier" required> 
                         </div> 
                         <div class="mb-3"> 
-                            <label class="form-label">Mot de passe</label> 
-                            <input type="password" name="password" class="form-control"  
+                            <label for="login-password" class="form-label">Mot de passe</label>
+                            <input type="password" id="login-password" name="password" autocomplete="current-password" class="form-control"
                                    [(ngModel)]="credentials.password" required> 
                         </div> 
                         <button type="submit" class="btn btn-success w-100"> 
@@ -43,5 +43,3 @@
         </div> 
     </div>
 </div>
-
->

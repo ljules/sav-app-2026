@@ -24,6 +24,7 @@
   
     .logo {
         height: var(--top-bar-height);
+        width: auto;
     }  
     
     .user-menu {        
