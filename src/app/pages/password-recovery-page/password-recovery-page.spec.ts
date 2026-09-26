@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -31,7 +32,7 @@ describe('PasswordRecoveryPage', () => {
         const { page, fixture, http } = setup();
         page.envoyer(form);
         page.envoyer(form);
-        const req = http.expectOne('http://localhost:8080/auth/mdp-oublie');
+        const req = http.expectOne(`${environment.apiUrl}/auth/mdp-oublie`);
         expect(req.request.method).toBe('POST');
         expect(req.request.body).toEqual({ email: 'test@example.com' });
         expect(req.request.headers.has('Authorization')).toBeFalse();
@@ -44,12 +45,12 @@ describe('PasswordRecoveryPage', () => {
         const { page, http } = setup();
         page.confirmationEmail = 'other@example.com';
         page.envoyer(form);
-        http.expectNone('http://localhost:8080/auth/mdp-oublie');
+        http.expectNone(`${environment.apiUrl}/auth/mdp-oublie`);
     });
     it('transmet le jeton et le code numérique puis propose la connexion', () => {
         const { page, fixture, http } = setup(true);
         page.envoyer(form);
-        const req = http.expectOne('http://localhost:8080/auth/mdp-reset?key=test-key');
+        const req = http.expectOne(`${environment.apiUrl}/auth/mdp-reset?key=test-key`);
         expect(req.request.body).toEqual({ nouveauMotDePasse: 'new-password', nouveauMotDePasseConfirmation: 'new-password', code: 123456 });
         req.flush({ result: 'ok' });
         fixture.detectChanges();
@@ -60,7 +61,7 @@ describe('PasswordRecoveryPage', () => {
     it('affiche les erreurs métier retournées avec HTTP 200', () => {
         const { page, http } = setup(true);
         page.envoyer(form);
-        http.expectOne('http://localhost:8080/auth/mdp-reset?key=test-key').flush({ errors: ['expiration du code'] });
+        http.expectOne(`${environment.apiUrl}/auth/mdp-reset?key=test-key`).flush({ errors: ['expiration du code'] });
         expect(page.termine).toBeFalse();
         expect(page.erreur).toContain('expiré');
         expect(page.enCours).toBeFalse();
@@ -83,7 +84,7 @@ describe('PasswordRecoveryPage', () => {
     it('permet de réessayer après une erreur réseau', () => {
         const { page, http } = setup();
         page.envoyer(form);
-        http.expectOne('http://localhost:8080/auth/mdp-oublie').error(new ProgressEvent('error'));
+        http.expectOne(`${environment.apiUrl}/auth/mdp-oublie`).error(new ProgressEvent('error'));
         expect(page.enCours).toBeFalse();
         expect(page.termine).toBeFalse();
         expect(page.erreur).toContain('réessayer');

@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -10,7 +11,8 @@ import { RecetteFormDTO } from '../models/dto.model';
 })
 
 export class RecetteService {
-    private readonly API_URL_RECETTE = 'http://localhost:8080/api-savon/v1/recette';
+    private readonly apiUrl = environment.apiUrl;
+    private readonly API_URL_RECETTE = `${this.apiUrl}/api-savon/v1/recette`;
 
     constructor(private http: HttpClient) {}
 

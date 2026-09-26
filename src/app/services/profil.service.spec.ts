@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -7,7 +8,7 @@ import { ProfilService } from './profil.service';
 describe('ProfilService', () => {
     let service: ProfilService;
     let httpTesting: HttpTestingController;
-    const url = 'http://localhost:8080/api-savon/v1/profil';
+    const url = `${environment.apiUrl}/api-savon/v1/profil`;
     const role = { id: 2, nom: 'Utilisateur', nomLogic: 'ROLE_UTILISATEUR' };
 
     beforeEach(() => {

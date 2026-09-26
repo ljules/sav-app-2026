@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -7,9 +8,10 @@ import { Ingredient } from '../models/ingredient.model';
     providedIn: 'root' // Le service est disponible dans toute l'application
 })
 export class IngredientService {
+    private readonly apiUrl = environment.apiUrl;
 
     // URL de base de notre API : 
-    private readonly API_URL_INGREDIENT = 'http://localhost:8080/api-savon/v1/ingredient';
+    private readonly API_URL_INGREDIENT = `${this.apiUrl}/api-savon/v1/ingredient`;
 
     constructor(private http: HttpClient) { }
 

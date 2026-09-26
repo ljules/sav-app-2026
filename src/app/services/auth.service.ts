@@ -1,38 +1,63 @@
+import { environment } from '../../environments/environment';
 import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { catchError, defer, finalize, map, Observable, of, shareReplay, tap, throwError } from 'rxjs';
+import { AUTH_REFRESH_MARGIN_SECONDS } from '../auth.config';
 
 export const PUBLIC_REGISTRATION_REQUEST = new HttpContextToken(() => false);
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private readonly API_URL = "http://localhost:8080/auth";
+    private readonly apiUrl = environment.apiUrl;
+    private readonly API_URL = `${this.apiUrl}/auth`;
     private readonly TOKEN_KEY = "savapp_jwt_token";
+    private readonly REFRESH_TOKEN_KEY = 'savapp_refresh_token';
+    private readonly refreshMarginSeconds = inject(AUTH_REFRESH_MARGIN_SECONDS);
+    private refreshInFlight$: Observable<string> | null = null;
+    private sessionVersion = 0;
     private router = inject(Router); 
-
-    // Signal pour suivre l'état de la connexion :
-    //public isAuthenticated = signal<boolean>(this.hasToken()); // A COMMENTER
 
     constructor(private http: HttpClient) { }
 
-    login(credential: any): Observable<any> {
-        localStorage.removeItem(this.TOKEN_KEY); // Suppresion d'un éventuel jeton déjà existant
-        return this.http.post(`${this.API_URL}/login`, credential).pipe(
-            tap((response: any) => {
-                if (response.token) {
-                    localStorage.setItem(this.TOKEN_KEY, response.token);
-                    //this.isAuthenticated.set(true); A COMMENTER
-                }
-            })
-        )
+    login(credential: { identifier: string; password: string }): Observable<{ token: string; refreshToken: string }> {
+        return defer(() => {
+            this.clearTokens();
+            const version = this.sessionVersion;
+            return this.http.post<{ token: string; refreshToken: string }>(`${this.API_URL}/login`, credential).pipe(
+                tap(response => {
+                    if (version !== this.sessionVersion) throw new Error('Session remplacée.');
+                    this.storeTokens(response.token, response.refreshToken);
+                })
+            );
+        });
+    }
+
+    private storeTokens(accessToken: string, refreshToken: string): void {
+        if (!accessToken || !refreshToken || typeof accessToken !== 'string' || typeof refreshToken !== 'string') {
+            throw new Error('Réponse de tokens incomplète.');
+        }
+        // Écritures synchrones avant de libérer les requêtes en attente.
+        try {
+            localStorage.setItem(this.TOKEN_KEY, accessToken);
+            localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+        } catch (error) {
+            this.logout();
+            throw error;
+        }
+    }
+
+    private clearTokens(): void {
+        this.sessionVersion++;
+        this.refreshInFlight$ = null;
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     }
     logout(message?: string): void {
-        localStorage.removeItem(this.TOKEN_KEY);
+        this.clearTokens();
         if (message) {
             sessionStorage.setItem('savapp_auth_message', message);
         }
-        //this.isAuthenticated.set(false); A COMMENTER
         this.router.navigate(['/login']); // AJOUTER LE REDIRECTION
     }
 
@@ -44,8 +69,46 @@ export class AuthService {
     getToken(): string | null {
         return localStorage.getItem(this.TOKEN_KEY);
     }
-    private hasToken(): boolean {      
-        return !!localStorage.getItem(this.TOKEN_KEY);
+    getValidAccessToken(): Observable<string | null> {
+        return defer(() => {
+            if (this.refreshInFlight$) return this.refreshInFlight$;
+            const token = this.getToken();
+            if (!token) return of(null);
+            const exp = this.getDecodedToken()?.exp;
+            if (typeof exp === 'number' && Number.isFinite(exp) &&
+                exp * 1000 > Date.now() + this.refreshMarginSeconds * 1000) return of(token);
+            return this.refreshAccessToken();
+        });
+    }
+
+    private refreshAccessToken(): Observable<string> {
+        const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+        if (!refreshToken) {
+            this.logout();
+            return throwError(() => new Error('Refresh token absent.'));
+        }
+        const version = this.sessionVersion;
+        const refresh$: Observable<string> = this.http.post<{ accessToken: string; refreshToken: string }>(
+            `${this.API_URL}/refresh`, { refreshToken }
+        ).pipe(
+            map(response => {
+                // Une réponse tardive ne doit pas annuler un logout ou un nouveau login.
+                if (version !== this.sessionVersion) throw new Error('Session remplacée.');
+                this.storeTokens(response.accessToken, response.refreshToken);
+                return response.accessToken;
+            }),
+            catchError(error => {
+                if (version === this.sessionVersion) this.logout();
+                return throwError(() => error);
+            }),
+            finalize(() => {
+                if (this.refreshInFlight$ === refresh$) this.refreshInFlight$ = null;
+            }),
+            // Terminer la rotation même si une requête en attente est annulée.
+            shareReplay({ bufferSize: 1, refCount: false })
+        );
+        this.refreshInFlight$ = refresh$;
+        return refresh$;
     }
 
     isAuthenticated(): boolean {
@@ -57,7 +120,9 @@ export class AuthService {
         if (!token) return null;
         try {
             const payload = token.split('.')[1];
-            return JSON.parse(atob(payload));
+            const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+            const bytes = Uint8Array.from(atob(base64), char => char.charCodeAt(0));
+            return JSON.parse(new TextDecoder().decode(bytes));
         } catch (e) {
             return null;
         }

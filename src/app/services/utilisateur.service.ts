@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Role, Utilisateur, UtilisateurFormDTO } from '../models/utilisateur.model';
@@ -7,9 +8,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UtilisateurService {
+    private readonly apiUrl = environment.apiUrl;
     // URL de base de notre API : 
-    private readonly API_URL_UTILISATEUR = 'http://localhost:8080/api-savon/v1/utilisateur';
-    private readonly API_URL_ROLE = 'http://localhost:8080/api-savon/v1/role';
+    private readonly API_URL_UTILISATEUR = `${this.apiUrl}/api-savon/v1/utilisateur`;
+    private readonly API_URL_ROLE = `${this.apiUrl}/api-savon/v1/role`;
 
     constructor(private http: HttpClient) { }
 

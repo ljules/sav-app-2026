@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -5,7 +6,8 @@ import { Utilisateur, UtilisateurFormDTO } from '../models/utilisateur.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfilService {
-    private readonly API_URL_PROFIL = 'http://localhost:8080/api-savon/v1/profil';
+    private readonly apiUrl = environment.apiUrl;
+    private readonly API_URL_PROFIL = `${this.apiUrl}/api-savon/v1/profil`;
 
     constructor(private http: HttpClient) {}
 
